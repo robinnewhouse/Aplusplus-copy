@@ -1,6 +1,7 @@
-package ca.ubc.cpsc310.client;
+package ca.ubc.cpsc310.parkme.client;
 
-import ca.ubc.cpsc310.shared.FieldVerifier;
+import ca.ubc.cpsc310.parkme.shared.FieldVerifier;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

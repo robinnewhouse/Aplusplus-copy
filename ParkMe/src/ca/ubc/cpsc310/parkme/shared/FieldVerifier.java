@@ -1,4 +1,4 @@
-package ca.ubc.cpsc310.shared;
+package ca.ubc.cpsc310.parkme.shared;
 
 /**
  * <p>

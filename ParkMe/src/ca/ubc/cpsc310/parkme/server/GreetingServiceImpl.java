@@ -1,7 +1,8 @@
-package ca.ubc.cpsc310.server;
+package ca.ubc.cpsc310.parkme.server;
 
-import ca.ubc.cpsc310.client.GreetingService;
-import ca.ubc.cpsc310.shared.FieldVerifier;
+import ca.ubc.cpsc310.parkme.client.GreetingService;
+import ca.ubc.cpsc310.parkme.shared.FieldVerifier;
+
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
