@@ -11,9 +11,9 @@
   <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
 
-  <!-- Inherit Google Maps and AjaxLoader                                  -->
+  <!-- Inherit Google Maps                                 -->
   <inherits name="com.google.maps.gwt.GoogleMaps" />
-  <inherits name="com.google.gwt.ajaxloader.AjaxLoader" />
+<!--   <inherits name="com.google.gwt.ajaxloader.AjaxLoader" /> -->
 
   <!-- Specify the app entry point class.                         -->
   <entry-point class='ca.ubc.cpsc310.client.ParkMe'/>
