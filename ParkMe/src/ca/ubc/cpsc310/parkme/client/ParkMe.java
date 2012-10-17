@@ -8,6 +8,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -40,10 +41,36 @@ public class ParkMe implements EntryPoint {
 	Button loginButton = new Button("Login");			
 	VerticalPanel SearchPanel = new VerticalPanel();  //TODO - Figure out how to implement this properly!
 	VerticalPanel mapPanel = new VerticalPanel();  //TODO - Frances implement this properly - just reserving space now!
+
+	private final LoadDataServiceAsync loadDataService = GWT.create(LoadDataService.class);
+
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+		// LOAD DATA but we only have to do this once ?
+		loadDataService.loadData(new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				// ERROR
+				Window.alert("ERROR LOADING DATA");
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				// TODO Auto-generated method stub
+				// SUCCESS Data has been loaded
+				Window.alert("DATA LOADED SUCCESSFULLY");
+			}
+
+		});
+
+		// DOWNLAOD DATA
+
+
+
 		//TODO Make first row of Results Table the title
 		RootPanel.get("parkMe").add(mainHorzPanel);
 		mainHorzPanel.add(leftVertPanel);
@@ -55,19 +82,19 @@ public class ParkMe implements EntryPoint {
 		TitleHorzPanel.add(titleLabel);
 		TitleHorzPanel.add(loginButton);
 		rightVertPanel.add(SearchPanel);
-		
+
 		// Set up map options
 		MapOptions options  = MapOptions.create() ;
 		options.setCenter(LatLng.create(49.251, 123.119));   
-	    options.setZoom(8) ;
-	    options.setMapTypeId(MapTypeId.ROADMAP);
-	    options.setDraggable(true);
-	    options.setMapTypeControl(true);
-	    options.setScaleControl(true) ;
-	    options.setScrollwheel(true) ;
-	    
-	    // Add map to mapPanel
-	    GoogleMap theMap = GoogleMap.create(mapPanel.getElement(), options) ;
+		options.setZoom(8) ;
+		options.setMapTypeId(MapTypeId.ROADMAP);
+		options.setDraggable(true);
+		options.setMapTypeControl(true);
+		options.setScaleControl(true) ;
+		options.setScrollwheel(true) ;
+
+		// Add map to mapPanel
+		GoogleMap theMap = GoogleMap.create(mapPanel.getElement(), options) ;
 		rightVertPanel.add(mapPanel);
 
 	}

@@ -139,5 +139,9 @@ public class ParkingLocHandler extends DefaultHandler {
 		
 	}
 	
+	public List<ParkingLoc> getParkingLocList() {
+		return parking;
+	}
+	
 }
 
