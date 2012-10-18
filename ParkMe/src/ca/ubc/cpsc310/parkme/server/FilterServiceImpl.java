@@ -8,6 +8,7 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
+import ca.ubc.cpsc310.parkme.client.Criteria;
 import ca.ubc.cpsc310.parkme.client.FilterService;
 import ca.ubc.cpsc310.parkme.client.ParkingLocation;
 
@@ -21,15 +22,42 @@ public class FilterServiceImpl extends RemoteServiceServlet implements FilterSer
 		return PMF.getPersistenceManager();
 	}
 
-	public ParkingLocation[] getParking() {
+	public ParkingLocation[] getParking(Criteria crit) {
 		PersistenceManager pm = getPersistenceManager();
 		ParkingLocation[] parkingLocArray;
 		try {
-			Query q = pm.newQuery(ParkingLoc.class, "price <= 2.00");
+			/**
+			Query priceQuery = pm.newQuery(ParkingLoc.class);
+			priceQuery.setResult("priceResult");
+			priceQuery.setFilter("price <= maxPrice");
 			
-			List<ParkingLoc> parkingLocs = (List<ParkingLoc>) q.execute();
+			Query timeQuery = pm.newQuery(ParkingLoc.class);
+			timeQuery.setResult("timeResult");
+			timeQuery.setFilter("limit >= minTime");
+			**/
+			
+			Query q = pm.newQuery(ParkingLoc.class);
+			
+			q.setFilter("price <= maxPrice");
+			//q.setFilter("limit >= minTime");
+			q.declareParameters("double maxPrice");
+	
+	
+			List<ParkingLoc> parkingLocsPrice = (List<ParkingLoc>) q.execute(crit.getMaxPrice());
+			
+			System.out.println("Total parking with matching price: " + parkingLocsPrice.size());
+			
+			double minTime = crit.getMinTime();
+			List<ParkingLoc> parkingLocs = new ArrayList<ParkingLoc>();
+			for (ParkingLoc p : parkingLocsPrice) {
+				if (p.getLimit() >= minTime) {
+					parkingLocs.add(p);
+				}
+			}
+			
 			int size = parkingLocs.size();
 			
+			System.out.println("Total parking with matching price and limit: " + size);
 			parkingLocArray = new ParkingLocation[size];
 			
 			for (int i=0; i<size; i++) {

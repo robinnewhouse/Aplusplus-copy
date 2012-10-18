@@ -32,11 +32,14 @@ import com.google.maps.gwt.client.MapTypeId;
  */
 public class ParkMe implements EntryPoint {
 
+	private TextBox priceFilterTextBox = new TextBox();
+	private TextBox timeFilterTextBox = new TextBox();
+	
 	private Button loadDataButton = new Button("Load Data");
 	private Button displayDataButton = new Button("Display Data");
 	private Button clearDataButton = new Button("Clear Data");
 	private VerticalPanel mainPanel = new VerticalPanel();
-	private Button filter1Button = new Button("Parking Price <= 2");
+	private Button filterButton = new Button("Filter Results");
 	HorizontalPanel mainHorzPanel = new HorizontalPanel();
 	VerticalPanel leftVertPanel = new VerticalPanel();
 	Button favoritesButton = new Button("Favorites");
@@ -61,7 +64,9 @@ public class ParkMe implements EntryPoint {
 		mainPanel.add(loadDataButton);
 		mainPanel.add(displayDataButton);
 		mainPanel.add(clearDataButton);
-		mainPanel.add(filter1Button);
+		mainPanel.add(priceFilterTextBox);
+		mainPanel.add(timeFilterTextBox);
+		mainPanel.add(filterButton);
 		mainPanel.add(resultsFlexTable);
 		initializeResultsFlexTable();
 
@@ -123,9 +128,10 @@ public class ParkMe implements EntryPoint {
 		});
 
 		// Listen for mouse events on the Parking < 2 Data button.
-		filter1Button.addClickHandler(new ClickHandler() {
+		filterButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				displayFilter1();
+				System.out.println("I have clicked on filter button");
+				displayFilter();
 			}
 		});
 	}
@@ -187,8 +193,12 @@ public class ParkMe implements EntryPoint {
 		resultsFlexTable.setText(row, 2, Double.toString(parkingLoc.getLimit()));
 	}
 
-	private void displayFilter1() {
-		filterService.getParking(new AsyncCallback<ParkingLocation[]>() {
+	private void displayFilter() {
+		System.out.println("I'm at displayFilter1");
+		double maxPrice = Double.parseDouble(priceFilterTextBox.getText()); 
+		double minTime = Double.parseDouble(timeFilterTextBox.getText());
+		Criteria crit = new Criteria(0,maxPrice,minTime);
+		filterService.getParking(crit, new AsyncCallback<ParkingLocation[]>() {
 
 			@Override
 			public void onFailure(Throwable caught) {

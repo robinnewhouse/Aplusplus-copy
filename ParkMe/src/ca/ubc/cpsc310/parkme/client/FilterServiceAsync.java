@@ -4,6 +4,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface FilterServiceAsync {
 
-	void getParking(AsyncCallback<ParkingLocation[]> callback);
+	void getParking(Criteria crit, AsyncCallback<ParkingLocation[]> callback);
 
 }
