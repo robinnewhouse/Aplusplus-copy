@@ -93,6 +93,7 @@ public class LoadDataServiceImpl  extends RemoteServiceServlet implements LoadDa
 			int size = parkingLocs.size();
 			parkingLocArray = new ParkingLocation[size];
 			for (int i=0; i<size; i++) {
+				
 				String parkingID = parkingLocs.get(i).getParkingID();
 				double price = parkingLocs.get(i).getPrice();
 				double limit = parkingLocs.get(i).getLimit();
