@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	version="2.5"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee                http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee                http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
+	<!-- Default page to serve -->
+	<welcome-file-list>
+		<welcome-file>ParkMe.html</welcome-file>
+	</welcome-file-list>
+	
 	<!-- Servlets -->
 	<servlet>
 		<servlet-name>greetServlet</servlet-name>
@@ -15,27 +17,21 @@
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>loadDataServlet</servlet-name>
+		<servlet-name>loadServlet</servlet-name>
 		<servlet-class>ca.ubc.cpsc310.parkme.server.LoadDataServiceImpl</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>loadDataServlet</servlet-name>
+		<servlet-name>loadServlet</servlet-name>
 		<url-pattern>/parkme/load</url-pattern>
 	</servlet-mapping>
-
-
-	<!-- Default page to serve -->
-	<welcome-file-list>
-		<welcome-file>ParkMe.html</welcome-file>
-	</welcome-file-list>
 
 	<servlet>
 		<servlet-name>SystemServiceServlet</servlet-name>
 		<servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
 		<init-param>
 			<param-name>services</param-name>
-			<param-value />
+			<param-value/>
 		</init-param>
 	</servlet>
 
