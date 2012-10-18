@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.maps.gwt.client.GoogleMap;
@@ -32,15 +33,27 @@ import com.google.maps.gwt.client.MapTypeId;
  */
 public class ParkMe implements EntryPoint {
 
+	// FILTER UI STUFF
+	
 	private TextBox priceFilterTextBox = new TextBox();
 	private TextBox timeFilterTextBox = new TextBox();
 
+	private Label maxPriceLabel = new Label("Maximum Price: ");
+	
+	private HorizontalPanel pricePanel = new HorizontalPanel();
+	private HorizontalPanel timePanel = new HorizontalPanel();
+
+	private Label minTimeLabel = new Label("Minimum Time Limit: ");
+	
 	private Button loadDataButton = new Button("Load Data");
-	private Button displayDataButton = new Button("Display Data");
+	private Button displayDataButton = new Button("Display All Data");
 	private Button clearDataButton = new Button("Clear Data");
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private Button filterButton = new Button("Filter Results");
-	
+
+	private ScrollPanel resultsScroll = new ScrollPanel();
+
+	private HorizontalPanel tabPanel = new HorizontalPanel();
 	
 	HorizontalPanel mainHorzPanel = new HorizontalPanel();
 	VerticalPanel leftVertPanel = new VerticalPanel();
@@ -63,41 +76,71 @@ public class ParkMe implements EntryPoint {
 
 
 		RootPanel.get("parkMe").add(mainPanel);
-		mainPanel.add(loadDataButton);
-		mainPanel.add(displayDataButton);
+		//mainPanel.add(loadDataButton);
+		//mainPanel.add(displayDataButton);
 
-		mainPanel.add(clearDataButton);
-		mainPanel.add(priceFilterTextBox);
-		mainPanel.add(timeFilterTextBox);
-		mainPanel.add(filterButton);
-		mainPanel.add(resultsFlexTable);
-		initializeResultsFlexTable();
+		//mainPanel.add(clearDataButton);
+	
+		//mainPanel.add(timeFilterTextBox);
+		//mainPanel.add(filterButton);
+		//mainPanel.add(resultsFlexTable);
 		
+		pricePanel.add(maxPriceLabel);
+		pricePanel.add(priceFilterTextBox);
+		
+		priceFilterTextBox.setHeight("1em");
+		timeFilterTextBox.setHeight("1em");
+		
+		timePanel.add(minTimeLabel);
+		timePanel.add(timeFilterTextBox);
+		
+		mainPanel.add(pricePanel);
+		mainPanel.add(timePanel);
+		
+		tabPanel.add(historyButton);
+		tabPanel.add(favoritesButton);
+		tabPanel.add(loadDataButton);
+		tabPanel.add(displayDataButton);
+		tabPanel.add(clearDataButton);
+		tabPanel.add(filterButton);
+		mainPanel.add(tabPanel);
+		
+		initializeResultsFlexTable();
+
 		//TODO Make first row of Results Table the title
 		RootPanel.get("parkMe").add(mainHorzPanel);
-		mainHorzPanel.add(leftVertPanel);
-		leftVertPanel.add(favoritesButton);
-		leftVertPanel.add(historyButton);
-		leftVertPanel.add(loadDataButton);
-		leftVertPanel.add(displayDataButton);
-		leftVertPanel.add(resultsFlexTable);
+		//mainHorzPanel.add(leftVertPanel);
+		//leftVertPanel.add(favoritesButton);
+		//leftVertPanel.add(historyButton);
+		//leftVertPanel.add(loadDataButton);
+		//leftVertPanel.add(displayDataButton);
+		
+		resultsScroll.add(resultsFlexTable);
+		mainHorzPanel.add(resultsScroll);
+		//leftVertPanel.add(resultsScroll);
 		mainHorzPanel.add(rightVertPanel);
-		rightVertPanel.add(TitleHorzPanel);
-		TitleHorzPanel.add(titleLabel);
-		TitleHorzPanel.add(loginButton);
-		rightVertPanel.add(SearchPanel);
-		
+		//rightVertPanel.add(TitleHorzPanel);
+		//TitleHorzPanel.add(titleLabel);
+		//TitleHorzPanel.add(loginButton);
+		//rightVertPanel.add(SearchPanel);
+
+		mainPanel.add(mainHorzPanel);
 		// Set sizes for elements
-		mainHorzPanel.setSize("100%", Window.getClientHeight() + "px");
-		leftVertPanel.setSize(0.3*Window.getClientWidth() + "px", "100%");
-		rightVertPanel.setSize(0.7*Window.getClientWidth() + "px",  "100%");
-		mapPanel.setSize("100%", "100%");
 		
+		resultsScroll.setSize(0.3*Window.getClientWidth()-20 + "px", "100%");
+		//mainPanel.setSize("100%", Window.getClientHeight() + "px");
+		mainHorzPanel.setSize("100%", Window.getClientHeight()-160 + "px");
+		//leftVertPanel.setSize(0.3*Window.getClientWidth()-20 + "px", "100%");
+		rightVertPanel.setSize(0.7*Window.getClientWidth()-20 + "px",  "100%");
+		mapPanel.setSize("100%", "100%");
+
 		// Give panels borders for debugging purposes
-		mainHorzPanel.setBorderWidth(5);
-		leftVertPanel.setBorderWidth(5);
-		rightVertPanel.setBorderWidth(5);
-		mapPanel.setBorderWidth(5);
+		//mainHorzPanel.setBorderWidth(5);
+		//leftVertPanel.setBorderWidth(5);
+		//rightVertPanel.setBorderWidth(5);
+		mainPanel.setSpacing(10);
+	
+		mapPanel.setBorderWidth(1);
 
 
 		// Set up map options
@@ -144,6 +187,20 @@ public class ParkMe implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				System.out.println("I have clicked on filter button");
 				displayFilter();
+			}
+		});
+
+		// price filter
+		priceFilterTextBox.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				priceFilterTextBox.setText("");
+			}
+		});
+
+		// time filter
+		timeFilterTextBox.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				timeFilterTextBox.setText("");
 			}
 		});
 	}
@@ -206,9 +263,10 @@ public class ParkMe implements EntryPoint {
 	}
 
 	private void displayFilter() {
-		System.out.println("I'm at displayFilter1");
+
 		double maxPrice = Double.parseDouble(priceFilterTextBox.getText()); 
 		double minTime = Double.parseDouble(timeFilterTextBox.getText());
+
 		Criteria crit = new Criteria(0,maxPrice,minTime);
 		filterService.getParking(crit, new AsyncCallback<ParkingLocation[]>() {
 
@@ -221,7 +279,7 @@ public class ParkMe implements EntryPoint {
 			@Override
 			public void onSuccess(ParkingLocation[] result) {
 				// TODO Auto-generated method stub
-				Window.alert("Successfully displayed data <= 2");
+				Window.alert("Successfully displayed filtered data");
 
 
 				displayParkings(result);

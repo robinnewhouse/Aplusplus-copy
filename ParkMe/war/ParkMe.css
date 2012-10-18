@@ -8,6 +8,12 @@ h1 {
 	text-align: center;
 }
 
+.gwtButton{
+	background-color:blue;
+	color: black;
+	font-style: italic;	
+}
+
 .sendButton {
 	display: block;
 	font-size: 16pt;
