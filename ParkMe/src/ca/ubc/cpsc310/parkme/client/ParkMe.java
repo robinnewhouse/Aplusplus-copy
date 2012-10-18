@@ -1,22 +1,14 @@
 package ca.ubc.cpsc310.parkme.client;
 
-import java.util.List;
-
-import ca.ubc.cpsc310.parkme.client.ParkingLocation;
-import ca.ubc.cpsc310.parkme.shared.FieldVerifier;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -27,6 +19,8 @@ import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.MapTypeId;
 import com.google.maps.gwt.client.Marker;
+import com.google.maps.gwt.client.Polyline;
+import com.google.maps.gwt.client.PolylineOptions;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -41,8 +35,7 @@ public class ParkMe implements EntryPoint {
 	private Button clearDataButton = new Button("Clear Data");
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private Button filterButton = new Button("Filter Results");
-	
-	
+
 	HorizontalPanel mainHorzPanel = new HorizontalPanel();
 	VerticalPanel leftVertPanel = new VerticalPanel();
 	Button favoritesButton = new Button("Favorites");
@@ -51,17 +44,23 @@ public class ParkMe implements EntryPoint {
 	VerticalPanel rightVertPanel = new VerticalPanel();
 	HorizontalPanel TitleHorzPanel = new HorizontalPanel();
 	Label titleLabel = new Label("Park Me");
-	Button loginButton = new Button("Login");			
-	VerticalPanel SearchPanel = new VerticalPanel();  //TODO - Figure out how to implement this properly!
-	VerticalPanel mapPanel = new VerticalPanel();  //TODO - Frances implement this properly - just reserving space now!
+	Button loginButton = new Button("Login");
+	VerticalPanel SearchPanel = new VerticalPanel(); // TODO - Figure out how to
+														// implement this
+														// properly!
+	VerticalPanel mapPanel = new VerticalPanel(); // TODO - Frances implement
+													// this properly - just
+													// reserving space now!
 
-	private final LoadDataServiceAsync loadDataService = GWT.create(LoadDataService.class);
-	private final FilterServiceAsync filterService = GWT.create(FilterService.class);
+	private final LoadDataServiceAsync loadDataService = GWT
+			.create(LoadDataService.class);
+	private final FilterServiceAsync filterService = GWT
+			.create(FilterService.class);
+
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-
 
 		RootPanel.get("parkMe").add(mainPanel);
 		mainPanel.add(loadDataButton);
@@ -73,8 +72,8 @@ public class ParkMe implements EntryPoint {
 		mainPanel.add(filterButton);
 		mainPanel.add(resultsFlexTable);
 		initializeResultsFlexTable();
-		
-		//TODO Make first row of Results Table the title
+
+		// TODO Make first row of Results Table the title
 		RootPanel.get("parkMe").add(mainHorzPanel);
 		mainHorzPanel.add(leftVertPanel);
 		leftVertPanel.add(favoritesButton);
@@ -87,45 +86,61 @@ public class ParkMe implements EntryPoint {
 		TitleHorzPanel.add(titleLabel);
 		TitleHorzPanel.add(loginButton);
 		rightVertPanel.add(SearchPanel);
-		
+
 		// Set sizes for elements
 		mainHorzPanel.setSize("100%", Window.getClientHeight() + "px");
-		leftVertPanel.setSize(0.3*Window.getClientWidth() + "px", "100%");
-		rightVertPanel.setSize(0.7*Window.getClientWidth() + "px",  "100%");
+		leftVertPanel.setSize(0.3 * Window.getClientWidth() + "px", "100%");
+		rightVertPanel.setSize(0.7 * Window.getClientWidth() + "px", "100%");
 		mapPanel.setSize("100%", "100%");
-		
+
 		// Give panels borders for debugging purposes
 		mainHorzPanel.setBorderWidth(5);
 		leftVertPanel.setBorderWidth(5);
 		rightVertPanel.setBorderWidth(5);
 		mapPanel.setBorderWidth(5);
 
-
 		// Set up map options
-		MapOptions options  = MapOptions.create() ;
-		options.setCenter(LatLng.create(49.251, -123.119));   
-		options.setZoom(11) ;
+		MapOptions options = MapOptions.create();
+		options.setCenter(LatLng.create(49.251, -123.119));
+		options.setZoom(11);
 		options.setMapTypeId(MapTypeId.ROADMAP);
 		options.setDraggable(true);
 		options.setMapTypeControl(true);
-		options.setScaleControl(true) ;
-		options.setScrollwheel(true) ;
+		options.setScaleControl(true);
+		options.setScrollwheel(true);
 
 		// Add map to mapPanel
-		GoogleMap theMap = GoogleMap.create(mapPanel.getElement(), options) ;
+		GoogleMap theMap = GoogleMap.create(mapPanel.getElement(), options);
 		rightVertPanel.add(mapPanel);
-		
-		//testing - Robin//
-		LatLng location = LatLng.create(49.251, -123.119);
-		theMap.setCenter(location);
-		Marker marker = Marker.create();
-		marker.setMap(theMap);
-		marker.setPosition(location);
-		    location = LatLng.create(49.253, -123.119);
-		    theMap.setCenter(location);
-		    marker = Marker.create();
-		    marker.setMap(theMap);
-		    marker.setPosition(location);
+
+		// testing - Robin//
+		LatLng location1 = LatLng.create(49.251, -123.119);
+		LatLng location2 = LatLng.create(49.281, -123.119);
+
+		theMap.setCenter(location1);
+
+		LatLng[] latlongs = new LatLng[2];
+		latlongs[0] = location1;
+		latlongs[1] = location2;
+		Polyline polyline1 = Polyline.create();
+		polyline1.setMap(theMap);
+		JsArray jsarraypath = JsArray.createArray().cast(); // how to make a
+															// polypath
+		jsarraypath.push(location1);
+		jsarraypath.push(location2);
+
+		// x: 49.251 , y: -123.119;
+		PolylineOptions polyoptions = PolylineOptions.create();
+		polyoptions.setClickable(true);
+		polyline1.setOptions(polyoptions);
+		polyline1.setPath(jsarraypath);
+
+		Marker marker1 = Marker.create();
+		Marker marker2 = Marker.create();
+		marker1.setMap(theMap);
+		marker2.setMap(theMap);
+		marker1.setPosition(location1);
+		marker2.setPosition(location2);
 
 		// Listen for mouse events on the Load Data button.
 		// In the end, this should only be accessible by an admin
@@ -209,20 +224,25 @@ public class ParkMe implements EntryPoint {
 
 	private void displayParking(final ParkingLocation parkingLoc) {
 		int row = resultsFlexTable.getRowCount();
-		//		resultsFlexTable.setWidget(row, 0, new Label(parkingLoc.getParkingID()));
-		//		resultsFlexTable.setWidget(row, 1, new Label(Double.toString(parkingLoc.getPrice())));
-		//		resultsFlexTable.setWidget(row, 2, new Label(Double.toString(parkingLoc.getLimit())));
+		// resultsFlexTable.setWidget(row, 0, new
+		// Label(parkingLoc.getParkingID()));
+		// resultsFlexTable.setWidget(row, 1, new
+		// Label(Double.toString(parkingLoc.getPrice())));
+		// resultsFlexTable.setWidget(row, 2, new
+		// Label(Double.toString(parkingLoc.getLimit())));
 
 		resultsFlexTable.setText(row, 0, parkingLoc.getParkingID());
-		resultsFlexTable.setText(row, 1, Double.toString(parkingLoc.getPrice()));
-		resultsFlexTable.setText(row, 2, Double.toString(parkingLoc.getLimit()));
+		resultsFlexTable
+				.setText(row, 1, Double.toString(parkingLoc.getPrice()));
+		resultsFlexTable
+				.setText(row, 2, Double.toString(parkingLoc.getLimit()));
 	}
 
 	private void displayFilter() {
 		System.out.println("I'm at displayFilter1");
-		double maxPrice = Double.parseDouble(priceFilterTextBox.getText()); 
+		double maxPrice = Double.parseDouble(priceFilterTextBox.getText());
 		double minTime = Double.parseDouble(timeFilterTextBox.getText());
-		Criteria crit = new Criteria(0,maxPrice,minTime);
+		Criteria crit = new Criteria(0, maxPrice, minTime);
 		filterService.getParking(crit, new AsyncCallback<ParkingLocation[]>() {
 
 			@Override
@@ -235,7 +255,6 @@ public class ParkMe implements EntryPoint {
 			public void onSuccess(ParkingLocation[] result) {
 				// TODO Auto-generated method stub
 				Window.alert("Successfully displayed data <= 2");
-
 
 				displayParkings(result);
 			}
