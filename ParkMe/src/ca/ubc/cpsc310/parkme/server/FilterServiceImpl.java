@@ -37,7 +37,7 @@ public class FilterServiceImpl extends RemoteServiceServlet implements FilterSer
 			**/
 			
 			Query q = pm.newQuery(ParkingLoc.class);
-			
+			// LOOK AT GQL
 			q.setFilter("price <= maxPrice");
 			//q.setFilter("limit >= minTime");
 			q.declareParameters("double maxPrice");
