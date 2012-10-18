@@ -27,34 +27,34 @@ public class ParkingLocHandler extends DefaultHandler {
 	private Double currentEndLat;
 	private Double currentEndLong;
 
-	
+
 	public ParkingLocHandler() {
 		isRate = false;
 		isLimit = false;
 		isCoord = false;
-		
+
 	}
-	
+
 	@Override
 	public void startDocument() throws SAXException {
-		System.out.println("Starting KML Parser");
-	    parking = new ArrayList<ParkingLoc>();
-	    
+		// System.out.println("Starting KML Parser");
+		parking = new ArrayList<ParkingLoc>();
+
 	}
-	
+
 	@Override
-    public void startElement(String uri, String localName,
-                    String qName, Attributes attributes) throws SAXException {
-		
+	public void startElement(String uri, String localName,
+			String qName, Attributes attributes) throws SAXException {
+
 		if (qName.equalsIgnoreCase("Placemark")){
 			//System.out.println("Parsing Placemark");
-	        this.currentParking = new ParkingLoc();
-	        String parkingID = attributes.getValue("id");
-	        currentParking.setParkingID(parkingID);
-	        System.out.println("Parking ID: " + currentParking.getParkingID());
-	    }
-		
-	
+			this.currentParking = new ParkingLoc();
+			String parkingID = attributes.getValue("id");
+			currentParking.setParkingID(parkingID);
+			// System.out.println("Parking ID: " + currentParking.getParkingID());
+		}
+
+
 		else if (qName.equalsIgnoreCase("SimpleData")) {
 
 			String attr = attributes.getValue("name");
@@ -64,46 +64,48 @@ public class ParkingLocHandler extends DefaultHandler {
 			else if (attr.equalsIgnoreCase("LIMIT")) {
 				isLimit = true;
 			}
-		
+
 		}
 		else if (qName.equals("coordinates")) {
 			isCoord = true;
 		}
 	}
-	
+
 	@Override
 	public void endElement(String uri, String localName, String qName)
-	        throws SAXException {
+			throws SAXException {
 
 
-	    if (this.currentParking != null){
+		if (this.currentParking != null){
 
-	        if(localName.equalsIgnoreCase("Placemark")){
-	            parking.add(currentParking);               
-	        }
-	        
-	    }
-	    }
-	
-	
+			if(qName.equalsIgnoreCase("Placemark")){
+				parking.add(currentParking);
+			}
+
+		}
+
+
+	}
+
+
 	@Override
 	public void characters(char[] ch, int start, int length) // method called with the text contents in between the start and end tags of an XML document element.
-	        throws SAXException {
+			throws SAXException {
 
 		if (isRate) {
 			String price = new String(ch, start+1, length-1);
 			Double rate = Double.parseDouble(price);
 			currentParking.setPrice(rate);
 			isRate = false;
-			System.out.println("Rate: " + currentParking.getPrice());
+			// System.out.println("Rate: " + currentParking.getPrice());
 		}
 		else if (isLimit) {
 			Double limit = Double.parseDouble(new String(ch, start, length-2));
 			currentParking.setLimit(limit);
 			isLimit = false;
-			System.out.println("Limit: " + currentParking.getLimit());
+			// System.out.println("Limit: " + currentParking.getLimit());
 		}
-		
+
 		else if (isCoord) {
 
 			String coord = (new String(ch, start, length));
@@ -113,35 +115,37 @@ public class ParkingLocHandler extends DefaultHandler {
 			currentParking.setEndLat(currentEndLat);
 			currentParking.setEndLong(currentEndLong);
 			isCoord = false;
-			System.out.println("Start Coord: " + currentParking.getStartLat() + ", " + 
-					currentParking.getStartLong());
-			System.out.println("End Coord: " + currentParking.getEndLat() + ", " + 
-					currentParking.getEndLong());
-			
+			//	System.out.println("Start Coord: " + currentParking.getStartLat() + ", " + 
+			//		currentParking.getStartLong());
+			//	System.out.println("End Coord: " + currentParking.getEndLat() + ", " + 
+			//		currentParking.getEndLong());
+
 			currentStartLat = 0.0;
 			currentStartLong = 0.0;
 			currentEndLat = 0.0;
 			currentEndLong = 0.0;
 		}
-		
+
 	}
-	
+
 	public void parseCoord(String location) {
 		Matcher coord = coordPattern.matcher(location);
 		if (coord.matches()) {
-				currentStartLat = Double.parseDouble(coord.group(1));
-				currentStartLong = Double.parseDouble(coord.group(2));
-				currentEndLat = Double.parseDouble(coord.group(3));
-				currentEndLong = Double.parseDouble(coord.group(4));
-			
-		
-        }
-		
+			currentStartLat = Double.parseDouble(coord.group(1));
+			currentStartLong = Double.parseDouble(coord.group(2));
+			currentEndLat = Double.parseDouble(coord.group(3));
+			currentEndLong = Double.parseDouble(coord.group(4));
+
+
+		}
+
 	}
-	
+
 	public List<ParkingLoc> getParkingLocList() {
+		System.out.println("I'm returning parking with size " + parking.size());
+		
 		return parking;
 	}
-	
+
 }
 
