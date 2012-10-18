@@ -71,8 +71,6 @@ public class ParkMe implements EntryPoint {
 		initializeResultsFlexTable();
 
 
-
-
 		//TODO Make first row of Results Table the title
 		RootPanel.get("parkMe").add(mainHorzPanel);
 		mainHorzPanel.add(leftVertPanel);
