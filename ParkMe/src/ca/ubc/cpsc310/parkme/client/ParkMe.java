@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.maps.gwt.client.GoogleMap;
@@ -50,6 +51,7 @@ public class ParkMe implements EntryPoint {
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private Button filterButton = new Button("Filter Results");
 
+	private ScrollPanel resultsScroll = new ScrollPanel();
 
 	private HorizontalPanel tabPanel = new HorizontalPanel();
 	
@@ -107,12 +109,15 @@ public class ParkMe implements EntryPoint {
 
 		//TODO Make first row of Results Table the title
 		RootPanel.get("parkMe").add(mainHorzPanel);
-		mainHorzPanel.add(leftVertPanel);
+		//mainHorzPanel.add(leftVertPanel);
 		//leftVertPanel.add(favoritesButton);
 		//leftVertPanel.add(historyButton);
 		//leftVertPanel.add(loadDataButton);
 		//leftVertPanel.add(displayDataButton);
-		leftVertPanel.add(resultsFlexTable);
+		
+		resultsScroll.add(resultsFlexTable);
+		mainHorzPanel.add(resultsScroll);
+		//leftVertPanel.add(resultsScroll);
 		mainHorzPanel.add(rightVertPanel);
 		//rightVertPanel.add(TitleHorzPanel);
 		//TitleHorzPanel.add(titleLabel);
@@ -122,17 +127,19 @@ public class ParkMe implements EntryPoint {
 		mainPanel.add(mainHorzPanel);
 		// Set sizes for elements
 		
-	
+		resultsScroll.setSize(0.3*Window.getClientWidth()-20 + "px", "100%");
 		//mainPanel.setSize("100%", Window.getClientHeight() + "px");
-		mainHorzPanel.setSize("100%", Window.getClientHeight()-140 + "px");
-		leftVertPanel.setSize(0.3*Window.getClientWidth()-10 + "px", "100%");
-		rightVertPanel.setSize(0.7*Window.getClientWidth()-10 + "px",  "100%");
+		mainHorzPanel.setSize("100%", Window.getClientHeight()-160 + "px");
+		//leftVertPanel.setSize(0.3*Window.getClientWidth()-20 + "px", "100%");
+		rightVertPanel.setSize(0.7*Window.getClientWidth()-20 + "px",  "100%");
 		mapPanel.setSize("100%", "100%");
 
 		// Give panels borders for debugging purposes
 		//mainHorzPanel.setBorderWidth(5);
 		//leftVertPanel.setBorderWidth(5);
 		//rightVertPanel.setBorderWidth(5);
+		mainPanel.setSpacing(10);
+	
 		mapPanel.setBorderWidth(1);
 
 
