@@ -34,7 +34,7 @@ public class ParkMe implements EntryPoint {
 
 	private TextBox priceFilterTextBox = new TextBox();
 	private TextBox timeFilterTextBox = new TextBox();
-	
+
 	private Button loadDataButton = new Button("Load Data");
 	private Button displayDataButton = new Button("Display Data");
 	private Button clearDataButton = new Button("Clear Data");
@@ -73,7 +73,6 @@ public class ParkMe implements EntryPoint {
 
 
 
-		/*
 		//TODO Make first row of Results Table the title
 		RootPanel.get("parkMe").add(mainHorzPanel);
 		mainHorzPanel.add(leftVertPanel);
@@ -88,6 +87,18 @@ public class ParkMe implements EntryPoint {
 		TitleHorzPanel.add(loginButton);
 		rightVertPanel.add(SearchPanel);
 
+		// Set sizes for elements
+		mainHorzPanel.setSize("100%", Window.getClientHeight() + "px");
+		leftVertPanel.setSize("100%", "100%");
+		rightVertPanel.setSize("100%",  "100%");
+		mapPanel.setSize("100%", "100%");
+
+		// Give panels borders for debugging purposes
+		mainHorzPanel.setBorderWidth(5);
+		leftVertPanel.setBorderWidth(5);
+		rightVertPanel.setBorderWidth(5);
+		mapPanel.setBorderWidth(5);
+
 		// Set up map options
 		MapOptions options  = MapOptions.create() ;
 		options.setCenter(LatLng.create(49.251, 123.119));   
@@ -100,7 +111,7 @@ public class ParkMe implements EntryPoint {
 
 		// Add map to mapPanel
 		GoogleMap theMap = GoogleMap.create(mapPanel.getElement(), options) ;
-		rightVertPanel.add(mapPanel);*/
+		rightVertPanel.add(mapPanel);
 
 		// Listen for mouse events on the Load Data button.
 		// In the end, this should only be accessible by an admin
@@ -211,7 +222,7 @@ public class ParkMe implements EntryPoint {
 				// TODO Auto-generated method stub
 				Window.alert("Successfully displayed data <= 2");
 
-				
+
 				displayParkings(result);
 			}
 
