@@ -32,10 +32,14 @@ import com.google.maps.gwt.client.MapTypeId;
  */
 public class ParkMe implements EntryPoint {
 
+	private TextBox priceFilterTextBox = new TextBox();
+	private TextBox timeFilterTextBox = new TextBox();
+
 	private Button loadDataButton = new Button("Load Data");
 	private Button displayDataButton = new Button("Display Data");
+	private Button clearDataButton = new Button("Clear Data");
 	private VerticalPanel mainPanel = new VerticalPanel();
-	
+	private Button filterButton = new Button("Filter Results");
 	HorizontalPanel mainHorzPanel = new HorizontalPanel();
 	VerticalPanel leftVertPanel = new VerticalPanel();
 	Button favoritesButton = new Button("Favorites");
@@ -49,19 +53,24 @@ public class ParkMe implements EntryPoint {
 	VerticalPanel mapPanel = new VerticalPanel();  //TODO - Frances implement this properly - just reserving space now!
 
 	private final LoadDataServiceAsync loadDataService = GWT.create(LoadDataService.class);
-
+	private final FilterServiceAsync filterService = GWT.create(FilterService.class);
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+
+
 		RootPanel.get("parkMe").add(mainPanel);
 		mainPanel.add(loadDataButton);
 		mainPanel.add(displayDataButton);
+		mainPanel.add(clearDataButton);
+		mainPanel.add(priceFilterTextBox);
+		mainPanel.add(timeFilterTextBox);
+		mainPanel.add(filterButton);
 		mainPanel.add(resultsFlexTable);
-		resultsFlexTable.setText(0, 0, "Parking ID");
-		resultsFlexTable.setText(0, 1, "Price");
-		resultsFlexTable.setText(0, 2, "Limit");
-
+		initializeResultsFlexTable();
+		
+		
 		//TODO Make first row of Results Table the title
 		RootPanel.get("parkMe").add(mainHorzPanel);
 		mainHorzPanel.add(leftVertPanel);
@@ -88,6 +97,7 @@ public class ParkMe implements EntryPoint {
 		rightVertPanel.setBorderWidth(5);
 		mapPanel.setBorderWidth(5);
 
+
 		// Set up map options
 		MapOptions options  = MapOptions.create() ;
 		options.setCenter(LatLng.create(49.251, 123.119));   
@@ -101,7 +111,7 @@ public class ParkMe implements EntryPoint {
 		// Add map to mapPanel
 		GoogleMap theMap = GoogleMap.create(mapPanel.getElement(), options) ;
 		rightVertPanel.add(mapPanel);
-		
+
 		// Listen for mouse events on the Load Data button.
 		// In the end, this should only be accessible by an admin
 		loadDataButton.addClickHandler(new ClickHandler() {
@@ -114,6 +124,24 @@ public class ParkMe implements EntryPoint {
 		displayDataButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				displayData();
+			}
+		});
+
+		// Listen for mouse events on the Clear Data button.
+		clearDataButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				System.out.println(resultsFlexTable.getRowCount());
+				resultsFlexTable.removeAllRows();
+				System.out.println(resultsFlexTable.getRowCount());
+				initializeResultsFlexTable();
+			}
+		});
+
+		// Listen for mouse events on the Parking < 2 Data button.
+		filterButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				System.out.println("I have clicked on filter button");
+				displayFilter();
 			}
 		});
 	}
@@ -149,7 +177,7 @@ public class ParkMe implements EntryPoint {
 
 			@Override
 			public void onSuccess(ParkingLocation[] result) {
-				
+
 				// TODO Auto-generated method stub
 				displayParkings(result);
 				Window.alert("Successfully displayed data");
@@ -166,8 +194,46 @@ public class ParkMe implements EntryPoint {
 
 	private void displayParking(final ParkingLocation parkingLoc) {
 		int row = resultsFlexTable.getRowCount();
+		//		resultsFlexTable.setWidget(row, 0, new Label(parkingLoc.getParkingID()));
+		//		resultsFlexTable.setWidget(row, 1, new Label(Double.toString(parkingLoc.getPrice())));
+		//		resultsFlexTable.setWidget(row, 2, new Label(Double.toString(parkingLoc.getLimit())));
+
 		resultsFlexTable.setText(row, 0, parkingLoc.getParkingID());
 		resultsFlexTable.setText(row, 1, Double.toString(parkingLoc.getPrice()));
 		resultsFlexTable.setText(row, 2, Double.toString(parkingLoc.getLimit()));
 	}
+
+	private void displayFilter() {
+		System.out.println("I'm at displayFilter1");
+		double maxPrice = Double.parseDouble(priceFilterTextBox.getText()); 
+		double minTime = Double.parseDouble(timeFilterTextBox.getText());
+		Criteria crit = new Criteria(0,maxPrice,minTime);
+		filterService.getParking(crit, new AsyncCallback<ParkingLocation[]>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				Window.alert("Error getting parking");
+			}
+
+			@Override
+			public void onSuccess(ParkingLocation[] result) {
+				// TODO Auto-generated method stub
+				Window.alert("Successfully displayed data <= 2");
+
+
+				displayParkings(result);
+			}
+
+		});
+	}
+
+	private void initializeResultsFlexTable() {
+		resultsFlexTable.setText(0, 0, "Parking ID");
+		resultsFlexTable.setText(0, 1, "Price");
+		resultsFlexTable.setText(0, 2, "Limit");
+		resultsFlexTable.getRowFormatter().addStyleName(0, "resultListHeader");
+		resultsFlexTable.setCellPadding(6);
+	}
+
 }
