@@ -26,6 +26,7 @@ import com.google.maps.gwt.client.GoogleMap;
 import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.MapTypeId;
+import com.google.maps.gwt.client.Marker;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -113,6 +114,18 @@ public class ParkMe implements EntryPoint {
 		// Add map to mapPanel
 		GoogleMap theMap = GoogleMap.create(mapPanel.getElement(), options) ;
 		rightVertPanel.add(mapPanel);
+		
+		//testing - Robin//
+		LatLng location = LatLng.create(49.251, -123.119);
+		theMap.setCenter(location);
+		Marker marker = Marker.create();
+		marker.setMap(theMap);
+		marker.setPosition(location);
+		    location = LatLng.create(49.253, -123.119);
+		    theMap.setCenter(location);
+		    marker = Marker.create();
+		    marker.setMap(theMap);
+		    marker.setPosition(location);
 
 		// Listen for mouse events on the Load Data button.
 		// In the end, this should only be accessible by an admin
