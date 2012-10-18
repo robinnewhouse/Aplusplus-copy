@@ -61,7 +61,7 @@ public class ParkMe implements EntryPoint {
 		resultsFlexTable.setText(0, 0, "Parking ID");
 		resultsFlexTable.setText(0, 1, "Price");
 		resultsFlexTable.setText(0, 2, "Limit");
-/*
+
 		//TODO Make first row of Results Table the title
 		RootPanel.get("parkMe").add(mainHorzPanel);
 		mainHorzPanel.add(leftVertPanel);
@@ -75,6 +75,18 @@ public class ParkMe implements EntryPoint {
 		TitleHorzPanel.add(titleLabel);
 		TitleHorzPanel.add(loginButton);
 		rightVertPanel.add(SearchPanel);
+		
+		// Set sizes for elements
+		mainHorzPanel.setSize("100%", Window.getClientHeight() + "px");
+		leftVertPanel.setSize("100%", "100%");
+		rightVertPanel.setSize("100%",  "100%");
+		mapPanel.setSize("100%", "100%");
+		
+		// Give panels borders for debugging purposes
+		mainHorzPanel.setBorderWidth(5);
+		leftVertPanel.setBorderWidth(5);
+		rightVertPanel.setBorderWidth(5);
+		mapPanel.setBorderWidth(5);
 
 		// Set up map options
 		MapOptions options  = MapOptions.create() ;
@@ -88,7 +100,7 @@ public class ParkMe implements EntryPoint {
 
 		// Add map to mapPanel
 		GoogleMap theMap = GoogleMap.create(mapPanel.getElement(), options) ;
-		rightVertPanel.add(mapPanel);*/
+		rightVertPanel.add(mapPanel);
 		
 		// Listen for mouse events on the Load Data button.
 		// In the end, this should only be accessible by an admin
