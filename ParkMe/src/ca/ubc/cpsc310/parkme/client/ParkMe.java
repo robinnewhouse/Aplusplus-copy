@@ -40,6 +40,8 @@ public class ParkMe implements EntryPoint {
 	private Button clearDataButton = new Button("Clear Data");
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private Button filterButton = new Button("Filter Results");
+	
+	
 	HorizontalPanel mainHorzPanel = new HorizontalPanel();
 	VerticalPanel leftVertPanel = new VerticalPanel();
 	Button favoritesButton = new Button("Favorites");
@@ -63,14 +65,14 @@ public class ParkMe implements EntryPoint {
 		RootPanel.get("parkMe").add(mainPanel);
 		mainPanel.add(loadDataButton);
 		mainPanel.add(displayDataButton);
+
 		mainPanel.add(clearDataButton);
 		mainPanel.add(priceFilterTextBox);
 		mainPanel.add(timeFilterTextBox);
 		mainPanel.add(filterButton);
 		mainPanel.add(resultsFlexTable);
 		initializeResultsFlexTable();
-
-
+		
 		//TODO Make first row of Results Table the title
 		RootPanel.get("parkMe").add(mainHorzPanel);
 		mainHorzPanel.add(leftVertPanel);
@@ -84,23 +86,24 @@ public class ParkMe implements EntryPoint {
 		TitleHorzPanel.add(titleLabel);
 		TitleHorzPanel.add(loginButton);
 		rightVertPanel.add(SearchPanel);
-
+		
 		// Set sizes for elements
 		mainHorzPanel.setSize("100%", Window.getClientHeight() + "px");
-		leftVertPanel.setSize("100%", "100%");
-		rightVertPanel.setSize("100%",  "100%");
+		leftVertPanel.setSize(0.3*Window.getClientWidth() + "px", "100%");
+		rightVertPanel.setSize(0.7*Window.getClientWidth() + "px",  "100%");
 		mapPanel.setSize("100%", "100%");
-
+		
 		// Give panels borders for debugging purposes
 		mainHorzPanel.setBorderWidth(5);
 		leftVertPanel.setBorderWidth(5);
 		rightVertPanel.setBorderWidth(5);
 		mapPanel.setBorderWidth(5);
 
+
 		// Set up map options
 		MapOptions options  = MapOptions.create() ;
-		options.setCenter(LatLng.create(49.251, 123.119));   
-		options.setZoom(8) ;
+		options.setCenter(LatLng.create(49.251, -123.119));   
+		options.setZoom(11) ;
 		options.setMapTypeId(MapTypeId.ROADMAP);
 		options.setDraggable(true);
 		options.setMapTypeControl(true);
