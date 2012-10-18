@@ -40,6 +40,8 @@ public class ParkMe implements EntryPoint {
 	private Button clearDataButton = new Button("Clear Data");
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private Button filterButton = new Button("Filter Results");
+	
+	
 	HorizontalPanel mainHorzPanel = new HorizontalPanel();
 	VerticalPanel leftVertPanel = new VerticalPanel();
 	Button favoritesButton = new Button("Favorites");
@@ -63,13 +65,13 @@ public class ParkMe implements EntryPoint {
 		RootPanel.get("parkMe").add(mainPanel);
 		mainPanel.add(loadDataButton);
 		mainPanel.add(displayDataButton);
+
 		mainPanel.add(clearDataButton);
 		mainPanel.add(priceFilterTextBox);
 		mainPanel.add(timeFilterTextBox);
 		mainPanel.add(filterButton);
 		mainPanel.add(resultsFlexTable);
 		initializeResultsFlexTable();
-		
 		
 		//TODO Make first row of Results Table the title
 		RootPanel.get("parkMe").add(mainHorzPanel);

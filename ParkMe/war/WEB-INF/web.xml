@@ -51,6 +51,12 @@
 	<servlet-mapping>
 		<servlet-name>SystemServiceServlet</servlet-name>
 		<url-pattern>/_ah/spi/*</url-pattern>
+<<<<<<< HEAD
 	</servlet-mapping>
 	
 </web-app>
+=======
+	</servlet-mapping>
+	
+</web-app>
+>>>>>>> refs/remotes/origin/HEAD
