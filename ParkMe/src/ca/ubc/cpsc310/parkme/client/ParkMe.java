@@ -87,8 +87,8 @@ public class ParkMe implements EntryPoint {
 		
 		// Set sizes for elements
 		mainHorzPanel.setSize("100%", Window.getClientHeight() + "px");
-		leftVertPanel.setSize("100%", "100%");
-		rightVertPanel.setSize("100%",  "100%");
+		leftVertPanel.setSize(0.3*Window.getClientWidth() + "px", "100%");
+		rightVertPanel.setSize(0.7*Window.getClientWidth() + "px",  "100%");
 		mapPanel.setSize("100%", "100%");
 		
 		// Give panels borders for debugging purposes
@@ -100,8 +100,8 @@ public class ParkMe implements EntryPoint {
 
 		// Set up map options
 		MapOptions options  = MapOptions.create() ;
-		options.setCenter(LatLng.create(49.251, 123.119));   
-		options.setZoom(8) ;
+		options.setCenter(LatLng.create(49.251, -123.119));   
+		options.setZoom(11) ;
 		options.setMapTypeId(MapTypeId.ROADMAP);
 		options.setDraggable(true);
 		options.setMapTypeControl(true);
