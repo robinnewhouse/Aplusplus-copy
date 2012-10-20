@@ -1,8 +1,9 @@
 package ca.ubc.cpsc310.parkme.client;
 
+import java.util.ArrayList;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -19,9 +20,6 @@ import com.google.maps.gwt.client.GoogleMap;
 import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.MapTypeId;
-import com.google.maps.gwt.client.Marker;
-import com.google.maps.gwt.client.Polyline;
-import com.google.maps.gwt.client.PolylineOptions;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -163,33 +161,22 @@ public class ParkMe implements EntryPoint {
 		rightVertPanel.add(mapPanel);
 
 		// testing - Robin//
-		LatLng location1 = LatLng.create(49.251, -123.119);
-		LatLng location2 = LatLng.create(49.281, -123.119);
+		MapOperater mapOperator = new MapOperater(theMap);
+		// mapOperator.testStuff();
 
-		theMap.setCenter(location1);
+		ParkingLocation testLocation1 = new ParkingLocation("test1", 1.00,
+				2.00, 49.251, -123.119, 49.261, -123.129);
+		ParkingLocation testLocation2 = new ParkingLocation("test2", 2.00,
+				2.00, 49.271, -123.139, 49.281, -123.149);
+		ParkingLocation testLocation3 = new ParkingLocation("test3", 3.00,
+				2.00, 49.291, -123.159, 49.301, -123.169);
 
-		LatLng[] latlongs = new LatLng[2];
-		latlongs[0] = location1;
-		latlongs[1] = location2;
-		Polyline polyline1 = Polyline.create();
-		polyline1.setMap(theMap);
-		JsArray jsarraypath = JsArray.createArray().cast(); // how to make a
-															// polypath
-		jsarraypath.push(location1);
-		jsarraypath.push(location2);
+		ArrayList<ParkingLocation> testList = new ArrayList<ParkingLocation>();
+		testList.add(testLocation1);
+		testList.add(testLocation2);
+		testList.add(testLocation3);
 
-		// x: 49.251 , y: -123.119;
-		PolylineOptions polyoptions = PolylineOptions.create();
-		polyoptions.setClickable(true);
-		polyline1.setOptions(polyoptions);
-		polyline1.setPath(jsarraypath);
-
-		Marker marker1 = Marker.create();
-		Marker marker2 = Marker.create();
-		marker1.setMap(theMap);
-		marker2.setMap(theMap);
-		marker1.setPosition(location1);
-		marker2.setPosition(location2);
+		mapOperator.testStuff(testList);
 
 		// Listen for mouse events on the Load Data button.
 		// In the end, this should only be accessible by an admin
