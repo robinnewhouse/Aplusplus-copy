@@ -8,4 +8,6 @@ public interface LoadDataServiceAsync {
 
 	public void loadData(AsyncCallback<Void> async);
 	void getParking(AsyncCallback<ParkingLocation[]> async);
+	void setStreet(String street, String ID, AsyncCallback<Void> callback);
+	void getUnknownStreets(AsyncCallback<ParkingLocation[]> callback);
 }

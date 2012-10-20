@@ -36,3 +36,23 @@ h1 {
 	color: white;
 	font-style: bold;
 }
+
+.parking1 {
+	background-color: #66CD00;
+}
+
+.parking2 {
+	background-color: #FFE303;
+}
+
+.parking3 {
+	background-color: #FF7F24;
+}
+
+.parking4 {
+	background-color: #FF0000;
+}
+
+.street {
+	font-style: bold;
+}
