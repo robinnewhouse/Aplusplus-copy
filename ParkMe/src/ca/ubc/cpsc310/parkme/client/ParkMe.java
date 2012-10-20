@@ -9,10 +9,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -42,53 +46,51 @@ public class ParkMe implements EntryPoint {
 
 
 	// GEOCODER
-		private Geocoder geocoder = Geocoder.create();
+	private Geocoder geocoder = Geocoder.create();
 
-		// FILTER UI STUFF
+	// FILTER UI STUFF
 
-		private Button getAddressesButton = new Button("Load Street Information");
+	private Button getAddressesButton = new Button("Load Street Information");
 
-		private TextBox priceFilterTextBox = new TextBox();
-		private TextBox timeFilterTextBox = new TextBox();
+	private TextBox priceFilterTextBox = new TextBox();
+	private TextBox timeFilterTextBox = new TextBox();
 
-		private Label maxPriceLabel = new Label("Maximum Price: ");
+	private Label maxPriceLabel = new Label("Maximum Price: ");
 
-		private HorizontalPanel pricePanel = new HorizontalPanel();
-		private HorizontalPanel timePanel = new HorizontalPanel();
+	private HorizontalPanel pricePanel = new HorizontalPanel();
+	private HorizontalPanel timePanel = new HorizontalPanel();
 
-		private Label minTimeLabel = new Label("Minimum Time Limit: ");
+	private Label minTimeLabel = new Label("Minimum Time Limit: ");
 
-		private Button loadDataButton = new Button("Load Data");
-		private Button displayDataButton = new Button("Display All Data");
-		private Button clearDataButton = new Button("Clear Data");
-		private VerticalPanel mainPanel = new VerticalPanel();
-		private Button filterButton = new Button("Filter Results");
+	private Button loadDataButton = new Button("Load Data");
+	private Button displayDataButton = new Button("Display All Data");
+	private Button clearDataButton = new Button("Clear Data");
+	private VerticalPanel mainPanel = new VerticalPanel();
+	private Button filterButton = new Button("Filter Results");
 
-		private ScrollPanel resultsScroll = new ScrollPanel();
+	private ScrollPanel resultsScroll = new ScrollPanel();
 
-		private HorizontalPanel tabPanel = new HorizontalPanel();
+	private HorizontalPanel tabPanel = new HorizontalPanel();
 
-		private HorizontalPanel mainHorzPanel = new HorizontalPanel();
-		private VerticalPanel leftVertPanel = new VerticalPanel();
-		private Button favoritesButton = new Button("Favorites");
-		private Button historyButton = new Button("History");
-		private FlexTable resultsFlexTable = new FlexTable();
-		private VerticalPanel rightVertPanel = new VerticalPanel();
-		private HorizontalPanel TitleHorzPanel = new HorizontalPanel();
-		private Label titleLabel = new Label("Park Me");
-		private Button loginButton = new Button("Login");			
-		private VerticalPanel SearchPanel = new VerticalPanel();  //TODO - Figure out how to implement this properly!
-		private VerticalPanel mapPanel = new VerticalPanel();  //TODO - Frances implement this properly - just reserving space now!
-		private final LoadDataServiceAsync loadDataService = GWT.create(LoadDataService.class);
-		private final FilterServiceAsync filterService = GWT.create(FilterService.class);
+	private HorizontalPanel mainHorzPanel = new HorizontalPanel();
+	private VerticalPanel leftVertPanel = new VerticalPanel();
+	private Button favoritesButton = new Button("Favorites");
+	private Button historyButton = new Button("History");
+	private FlexTable resultsFlexTable = new FlexTable();
+	private VerticalPanel rightVertPanel = new VerticalPanel();
+	private HorizontalPanel TitleHorzPanel = new HorizontalPanel();
+	private Label titleLabel = new Label("Park Me");
+	private Button loginButton = new Button("Login");			
+	private VerticalPanel SearchPanel = new VerticalPanel();  //TODO - Figure out how to implement this properly!
+	private VerticalPanel mapPanel = new VerticalPanel();  //TODO - Frances implement this properly - just reserving space now!
+	private final LoadDataServiceAsync loadDataService = GWT.create(LoadDataService.class);
+	private final FilterServiceAsync filterService = GWT.create(FilterService.class);
+
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
 
-		RootPanel.get("parkMe").add(mainPanel);
-		// mainPanel.add(loadDataButton);
-		// mainPanel.add(displayDataButton);
 
 		RootPanel.get("parkMe").add(mainPanel);
 
@@ -119,11 +121,6 @@ public class ParkMe implements EntryPoint {
 		mainHorzPanel.add(resultsScroll);
 		mainHorzPanel.add(rightVertPanel);
 
-		// rightVertPanel.add(TitleHorzPanel);
-		// TitleHorzPanel.add(titleLabel);
-		// TitleHorzPanel.add(loginButton);
-		// rightVertPanel.add(SearchPanel);
-
 		mainPanel.add(mainHorzPanel);
 
 		// Set sizes for elements
@@ -135,15 +132,16 @@ public class ParkMe implements EntryPoint {
 		mainPanel.setSpacing(10);
 		mapPanel.setBorderWidth(1);
 
+
 		// Set up map options
-		MapOptions options = MapOptions.create();
-		options.setCenter(LatLng.create(49.251, -123.119));
-		options.setZoom(11);
+		MapOptions options  = MapOptions.create() ;
+		options.setCenter(LatLng.create(49.251, -123.119));   
+		options.setZoom(11) ;
 		options.setMapTypeId(MapTypeId.ROADMAP);
 		options.setDraggable(true);
 		options.setMapTypeControl(true);
-		options.setScaleControl(true);
-		options.setScrollwheel(true);
+		options.setScaleControl(true) ;
+		options.setScrollwheel(true) ;
 
 		// Add map to mapPanel
 		GoogleMap theMap = GoogleMap.create(mapPanel.getElement(), options);
@@ -161,7 +159,7 @@ public class ParkMe implements EntryPoint {
 		Polyline polyline1 = Polyline.create();
 		polyline1.setMap(theMap);
 		JsArray jsarraypath = JsArray.createArray().cast(); // how to make a
-															// polypath
+		// polypath
 		jsarraypath.push(location1);
 		jsarraypath.push(location2);
 
@@ -292,10 +290,10 @@ public class ParkMe implements EntryPoint {
 
 	private void displayFilter() {
 
-		double maxPrice = Double.parseDouble(priceFilterTextBox.getText());
+		double maxPrice = Double.parseDouble(priceFilterTextBox.getText()); 
 		double minTime = Double.parseDouble(timeFilterTextBox.getText());
 
-		Criteria crit = new Criteria(0, maxPrice, minTime);
+		Criteria crit = new Criteria(0,maxPrice,minTime);
 		filterService.getParking(crit, new AsyncCallback<ParkingLocation[]>() {
 
 			@Override
@@ -307,16 +305,16 @@ public class ParkMe implements EntryPoint {
 			@Override
 			public void onSuccess(ParkingLocation[] result) {
 				// TODO Auto-generated method stub
-
 				Window.alert("Successfully displayed filtered data");
 				displayParkings(result);
 			}
 
 		});
 	}
+
 	private void getLocations(final ParkingLocation[] parkingLocs) {
 
-		
+
 		final int size = parkingLocs.length;
 		Window.alert("Fetching street information for " + size + " parking locations.");
 
