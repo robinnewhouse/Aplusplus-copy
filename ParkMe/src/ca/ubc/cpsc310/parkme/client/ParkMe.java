@@ -2,7 +2,9 @@ package ca.ubc.cpsc310.parkme.client;
 
 import java.util.ArrayList;
 
+
 import ca.ubc.cpsc310.parkme.client.ParkingLocation;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
@@ -62,7 +64,7 @@ public class ParkMe implements EntryPoint {
 	private ScrollPanel resultsScroll = new ScrollPanel();
 
 	private HorizontalPanel tabPanel = new HorizontalPanel();
-private GoogleMap theMap;
+	private GoogleMap theMap;
 	private HorizontalPanel mainHorzPanel = new HorizontalPanel();
 	private VerticalPanel leftVertPanel = new VerticalPanel();
 	private Button favoritesButton = new Button("Favorites");
@@ -74,19 +76,20 @@ private GoogleMap theMap;
 	private Label titleLabel = new Label("Park Me");
 	private Button loginButton = new Button("Login");
 	private VerticalPanel SearchPanel = new VerticalPanel(); // TODO - Figure
-																// out how to
-																// implement
-																// this
-																// properly!
+	// out how to
+	// implement
+	// this
+	// properly!
 	private VerticalPanel mapPanel = new VerticalPanel(); // TODO - Frances
-															// implement this
-															// properly - just
-															// reserving space
-															// now!
+	// implement this
+	// properly - just
+	// reserving space
+	// now!
 	private final LoadDataServiceAsync loadDataService = GWT
 			.create(LoadDataService.class);
 	private final FilterServiceAsync filterService = GWT
 			.create(FilterService.class);
+
 	private final ParkingLocServiceAsync parkService = GWT
 			.create(ParkingLocService.class);
 
@@ -129,7 +132,7 @@ private GoogleMap theMap;
 
 		// Set sizes for elements
 		resultsScroll
-				.setSize(0.3 * Window.getClientWidth() - 20 + "px", "100%");
+		.setSize(0.3 * Window.getClientWidth() - 20 + "px", "100%");
 		resultsFlexTable.setSize(0.3 * Window.getClientWidth() - 20 + "px",
 				"100%");
 		mainHorzPanel.setSize("100%", Window.getClientHeight() - 160 + "px");
@@ -215,19 +218,19 @@ private GoogleMap theMap;
 				parkService.getParking(parkingID,
 						new AsyncCallback<ParkingLocation>() {
 
-							@Override
-							public void onFailure(Throwable caught) {
-								// TODO Auto-generated method stub
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
 
-							}
+					}
 
-							@Override
-							public void onSuccess(ParkingLocation result) {
-								// TODO Auto-generated method stub
-								displayPopup(result);
-							}
+					@Override
+					public void onSuccess(ParkingLocation result) {
+						// TODO Auto-generated method stub
+						displayPopup(result);
+					}
 
-						});
+				});
 
 			}
 		});
@@ -260,6 +263,7 @@ private GoogleMap theMap;
 
 			@Override
 			public void onSuccess(ParkingLocation[] result) {
+
 				displayParkings(result);
 				Window.alert("Successfully displayed data");
 			}
@@ -322,6 +326,7 @@ private GoogleMap theMap;
 		});
 	}
 
+
 	private void getLocations(final ParkingLocation[] parkingLocs) {
 
 		final int size = parkingLocs.length;
@@ -367,16 +372,16 @@ private GoogleMap theMap;
 								parkingLoc.getParkingID(),
 								new AsyncCallback<Void>() {
 
-									@Override
-									public void onFailure(Throwable caught) {
-										// TODO Auto-generated method stub
-									}
+							@Override
+							public void onFailure(Throwable caught) {
+								// TODO Auto-generated method stub
+							}
 
-									@Override
-									public void onSuccess(Void result) {
-										// TODO Auto-generated method stub
-									}
-								});
+							@Override
+							public void onSuccess(Void result) {
+								// TODO Auto-generated method stub
+							}
+						});
 					} else {
 						Window.alert("ERROR " + status.getValue()
 								+ "\n please wait");
@@ -397,20 +402,20 @@ private GoogleMap theMap;
 
 	private void getAllLocations() {
 		loadDataService
-				.getUnknownStreets(new AsyncCallback<ParkingLocation[]>() {
+		.getUnknownStreets(new AsyncCallback<ParkingLocation[]>() {
 
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert("Error getting parking");
-					}
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Error getting parking");
+			}
 
-					@Override
-					public void onSuccess(ParkingLocation[] result) {
-						Window.alert("Loading Parking Streets. Please Wait.");
-						getLocations(result);
-					}
+			@Override
+			public void onSuccess(ParkingLocation[] result) {
+				Window.alert("Loading Parking Streets. Please Wait.");
+				getLocations(result);
+			}
 
-				});
+		});
 	}
 
 	private void displayPopup(ParkingLocation parkingLoc) {
@@ -430,11 +435,12 @@ private GoogleMap theMap;
 		info.add(rate);
 		info.add(limit);
 		infoPopup.add(info);
-		
+
 		int left = (int) (Window.getClientWidth() * 0.65);
 		int top = 160 + (Window.getClientHeight()-160)/2;
 		infoPopup.setPopupPosition(left, top);
-				
+
+
 		infoPopup.show();
 	}
 }
