@@ -11,13 +11,22 @@ public class ParkingLocation implements Serializable {
 	private double startLong;
 	private double endLat;
 	private double endLong;
+	private String street;
+	private String color;
+	
+	public String getColor() {
+		return color;
+	}
 
+	public void setColor(String color) {
+		this.color = color;
+	}
 
 	public ParkingLocation() {
 	}
 
 	public ParkingLocation(String parkingID, double price, double limit,
-			double startLat, double startLong, double endLat, double endLong) {
+			double startLat, double startLong, double endLat, double endLong, String street, String color) {
 		this.parkingID = parkingID;
 		this.price = price;
 		this.limit = limit;
@@ -25,7 +34,8 @@ public class ParkingLocation implements Serializable {
 		this.startLong = startLong;
 		this.endLat = endLat;
 		this.endLong = endLong;
-		
+		this.street = street;
+		this.color = color;
 	}
 
 	public String getParkingID() {
@@ -83,6 +93,13 @@ public class ParkingLocation implements Serializable {
 	public void setEndLong(double endLong) {
 		this.endLong = endLong;
 	}
+	
+	public String getStreet() {
+		return street;
+	}
 
+	public void setStreet(String street) {
+		this.street = street;
+	}
 }
 
