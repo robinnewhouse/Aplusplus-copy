@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -29,6 +28,7 @@ import com.google.maps.gwt.client.GeocoderRequest;
 import com.google.maps.gwt.client.GeocoderResult;
 import com.google.maps.gwt.client.GeocoderStatus;
 import com.google.maps.gwt.client.GoogleMap;
+import com.google.maps.gwt.client.InfoWindow;
 import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.MapTypeId;
@@ -40,7 +40,8 @@ public class ParkMe implements EntryPoint {
 
 	// GEOCODER
 	private Geocoder geocoder = Geocoder.create();
-
+	private InfoWindow infoWindow = InfoWindow.create();
+	
 	// FILTER UI STUFF
 
 	private Button getAddressesButton = new Button("Load Street Information");
@@ -62,7 +63,7 @@ public class ParkMe implements EntryPoint {
 	private Button filterButton = new Button("Filter Results");
 
 	private ScrollPanel resultsScroll = new ScrollPanel();
-
+	private MapOperater mapOperator;
 	private HorizontalPanel tabPanel = new HorizontalPanel();
 	private GoogleMap theMap;
 	private HorizontalPanel mainHorzPanel = new HorizontalPanel();
@@ -93,7 +94,6 @@ public class ParkMe implements EntryPoint {
 	private final ParkingLocServiceAsync parkService = GWT
 			.create(ParkingLocService.class);
 
-	private PopupPanel infoPopup = new PopupPanel();
 
 	/**
 	 * This is the entry point method.
@@ -131,13 +131,10 @@ public class ParkMe implements EntryPoint {
 		mainPanel.add(mainHorzPanel);
 
 		// Set sizes for elements
-		resultsScroll
-		.setSize(0.3 * Window.getClientWidth() - 20 + "px", "100%");
-		resultsFlexTable.setSize(0.3 * Window.getClientWidth() - 20 + "px",
-				"100%");
+		resultsScroll.setSize(0.3 * Window.getClientWidth() - 20 + "px", "100%");
+		resultsFlexTable.setSize(0.3 * Window.getClientWidth() - 20 + "px", "100%");
 		mainHorzPanel.setSize("100%", Window.getClientHeight() - 160 + "px");
-		rightVertPanel.setSize(0.7 * Window.getClientWidth() - 20 + "px",
-				"100%");
+		rightVertPanel.setSize(0.7 * Window.getClientWidth() - 20 + "px", "100%");
 		mapPanel.setSize("100%", "100%");
 		mainPanel.setSpacing(10);
 		mapPanel.setBorderWidth(1);
@@ -157,7 +154,7 @@ public class ParkMe implements EntryPoint {
 		rightVertPanel.add(mapPanel);
 
 		// testing - Robin//
-		MapOperater mapOperator = new MapOperater(theMap);
+		mapOperator = new MapOperater(theMap);
 		// mapOperator.testStuff();
 
 		ParkingLocation testLocation1 = new ParkingLocation("test1", 1.00,
@@ -320,7 +317,9 @@ public class ParkMe implements EntryPoint {
 			@Override
 			public void onSuccess(ParkingLocation[] result) {
 				Window.alert("Successfully displayed filtered data");
+				mapOperator.drawLocs(result);
 				displayParkings(result);
+				
 			}
 
 		});
@@ -419,28 +418,19 @@ public class ParkMe implements EntryPoint {
 	}
 
 	private void displayPopup(ParkingLocation parkingLoc) {
-		infoPopup.clear();
-		// center map on midpoint of the lat/longs
+	
+		// center map on midpoint of the lat/longs & zoom in
 		LatLng latlong = LatLng.create(
 				(parkingLoc.getStartLat() + parkingLoc.getEndLat()) / 2,
 				(parkingLoc.getStartLong() + parkingLoc.getEndLong()) / 2);
 		theMap.setCenter(latlong);
 		theMap.setZoom(17);
+		
 		// display a pop-up with corresponding information
-		VerticalPanel info = new VerticalPanel();
-		HTML street = new HTML("<b>" + parkingLoc.getStreet() + "</b>");
-		HTML rate = new HTML("<u>Rate:</u> $" + parkingLoc.getPrice() + "/hr");
-		HTML limit = new HTML("<u>Limit:</u> " + parkingLoc.getLimit() + "hr/s");
-		info.add(street);
-		info.add(rate);
-		info.add(limit);
-		infoPopup.add(info);
+		infoWindow.setContent("<b>" + parkingLoc.getStreet() + "</b><br><u>Rate:</u> $" 
+		+ parkingLoc.getPrice() + "/hr<br><u>Limit:</u> " + parkingLoc.getLimit() + "hr/s");
+		infoWindow.setPosition(latlong);
+		infoWindow.open(theMap);
 
-		int left = (int) (Window.getClientWidth() * 0.65);
-		int top = 160 + (Window.getClientHeight()-160)/2;
-		infoPopup.setPopupPosition(left, top);
-
-
-		infoPopup.show();
 	}
 }

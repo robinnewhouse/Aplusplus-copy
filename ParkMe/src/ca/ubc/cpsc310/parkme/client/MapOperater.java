@@ -61,6 +61,12 @@ public class MapOperater {
 			drawOnMap(parkingLocation);
 		}
 	}
+	
+	public void drawLocs(ParkingLocation[] lopl) {
+		for (ParkingLocation parkingLocation : lopl) {
+			drawOnMap(parkingLocation);
+		}
+	}
 
 	private void drawOnMap(ParkingLocation parkingLocation) {
 		Polyline currentPolyLine = Polyline.create();
