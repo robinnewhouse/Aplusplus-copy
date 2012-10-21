@@ -8,6 +8,7 @@ import ca.ubc.cpsc310.parkme.client.ParkingLocation;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Timer;
@@ -41,7 +42,7 @@ public class ParkMe implements EntryPoint {
 	// GEOCODER
 	private Geocoder geocoder = Geocoder.create();
 	private InfoWindow infoWindow = InfoWindow.create();
-	
+
 	// FILTER UI STUFF
 
 	private Button getAddressesButton = new Button("Load Street Information");
@@ -114,6 +115,8 @@ public class ParkMe implements EntryPoint {
 		mainPanel.add(pricePanel);
 		mainPanel.add(timePanel);
 
+		// Once data has been loaded, we should not make it viewable to everyone 
+
 		tabPanel.add(historyButton);
 		tabPanel.add(favoritesButton);
 		tabPanel.add(loadDataButton);
@@ -156,7 +159,7 @@ public class ParkMe implements EntryPoint {
 		// testing - Robin//
 		mapOperator = new MapOperater(theMap);
 		// mapOperator.testStuff();
-/**
+		/**
 		ParkingLocation testLocation1 = new ParkingLocation("test1", 1.00,
 				2.00, 49.251, -123.119, 49.261, -123.129, "street1");
 		ParkingLocation testLocation2 = new ParkingLocation("test2", 2.00,
@@ -170,7 +173,7 @@ public class ParkMe implements EntryPoint {
 		testList.add(testLocation3);
 
 		mapOperator.testStuff(testList);
-**/
+		 **/
 		// Listen for mouse events on the Load Data button.
 		// In the end, this should only be accessible by an admin
 		loadDataButton.addClickHandler(new ClickHandler() {
@@ -244,7 +247,7 @@ public class ParkMe implements EntryPoint {
 
 			@Override
 			public void onSuccess(Void result) {
-				Window.alert("DATA LOADED SUCCESSFULLY. \n Click on Load Street Information next.");
+				Window.alert("DATA LOADED SUCCESSFULLY. \nClick on Load Street Information next.");
 			}
 
 		});
@@ -319,7 +322,7 @@ public class ParkMe implements EntryPoint {
 				Window.alert("Successfully displayed filtered data");
 				mapOperator.drawLocs(result);
 				displayParkings(result);
-				
+
 			}
 
 		});
@@ -352,8 +355,12 @@ public class ParkMe implements EntryPoint {
 	private void getLocation(final ParkingLocation parkingLoc) {
 
 		if (parkingLoc.getStreet().equals("Vancouver")) {
-			LatLng latlong = LatLng.create(parkingLoc.getStartLat(),
-					parkingLoc.getStartLong());
+
+			LatLng latlong = LatLng.create(
+					(parkingLoc.getStartLat() + parkingLoc.getEndLat()) / 2,
+					(parkingLoc.getStartLong() + parkingLoc.getEndLong()) / 2);
+			//LatLng latlong = LatLng.create(parkingLoc.getStartLat(),
+			//		parkingLoc.getStartLong());
 			GeocoderRequest request = GeocoderRequest.create();
 			request.setLocation(latlong);
 			geocoder.geocode(request, new Geocoder.Callback() {
@@ -363,10 +370,42 @@ public class ParkMe implements EntryPoint {
 					// TODO Auto-generated method stub
 					if (status == GeocoderStatus.OK) {
 						GeocoderResult location = results.get(0);
-						GeocoderAddressComponent addressComp = location
-								.getAddressComponents().get(1);
-						String street = addressComp.getLongName();
-						parkingLoc.setStreet(street);
+
+						JsArray<GeocoderAddressComponent> addr = location.getAddressComponents();
+
+
+						for (int i=0; i< addr.length(); i++) {
+							String type = addr.get(i).getTypes().toString();
+							System.out.println(type);
+							if (type.equals("route")) {
+								String street = addr.get(i).getLongName();
+								System.out.println(street);
+								parkingLoc.setStreet(street);
+								
+								loadDataService.setStreet(street,
+										parkingLoc.getParkingID(),
+										new AsyncCallback<Void>() {
+
+									@Override
+									public void onFailure(Throwable caught) {
+										// TODO Auto-generated method stub
+									}
+
+									@Override
+									public void onSuccess(Void result) {
+										// TODO Auto-generated method stub
+									}
+								});
+								return;
+							}
+						}
+
+
+						//GeocoderAddressComponent addressComp = location
+						//		.getAddressComponents().get(1);
+						//String street = addressComp.getLongName();
+
+						/*parkingLoc.setStreet(street);
 						loadDataService.setStreet(street,
 								parkingLoc.getParkingID(),
 								new AsyncCallback<Void>() {
@@ -380,7 +419,7 @@ public class ParkMe implements EntryPoint {
 							public void onSuccess(Void result) {
 								// TODO Auto-generated method stub
 							}
-						});
+						});*/
 					} else {
 						Window.alert("ERROR " + status.getValue()
 								+ "\n please wait");
@@ -418,17 +457,17 @@ public class ParkMe implements EntryPoint {
 	}
 
 	private void displayPopup(ParkingLocation parkingLoc) {
-	
+
 		// center map on midpoint of the lat/longs & zoom in
 		LatLng latlong = LatLng.create(
 				(parkingLoc.getStartLat() + parkingLoc.getEndLat()) / 2,
 				(parkingLoc.getStartLong() + parkingLoc.getEndLong()) / 2);
 		theMap.setCenter(latlong);
 		theMap.setZoom(17);
-		
+
 		// display a pop-up with corresponding information
 		infoWindow.setContent("<b>" + parkingLoc.getStreet() + "</b><br><u>Rate:</u> $" 
-		+ parkingLoc.getPrice() + "/hr<br><u>Limit:</u> " + parkingLoc.getLimit() + "hr/s");
+				+ parkingLoc.getPrice() + "/hr<br><u>Limit:</u> " + parkingLoc.getLimit() + "hr/s");
 		infoWindow.setPosition(latlong);
 		infoWindow.open(theMap);
 
