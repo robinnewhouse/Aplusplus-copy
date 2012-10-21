@@ -1,5 +1,7 @@
 package ca.ubc.cpsc310.parkme.client;
 
+import java.util.ArrayList;
+
 import ca.ubc.cpsc310.parkme.client.ParkingLocation;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -432,8 +434,7 @@ private GoogleMap theMap;
 		int left = (int) (Window.getClientWidth() * 0.65);
 		int top = 160 + (Window.getClientHeight()-160)/2;
 		infoPopup.setPopupPosition(left, top);
-		
-		
+				
 		infoPopup.show();
 	}
 }
