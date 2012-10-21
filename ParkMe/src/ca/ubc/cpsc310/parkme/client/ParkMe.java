@@ -156,7 +156,7 @@ public class ParkMe implements EntryPoint {
 		// testing - Robin//
 		mapOperator = new MapOperater(theMap);
 		// mapOperator.testStuff();
-
+/**
 		ParkingLocation testLocation1 = new ParkingLocation("test1", 1.00,
 				2.00, 49.251, -123.119, 49.261, -123.129, "street1");
 		ParkingLocation testLocation2 = new ParkingLocation("test2", 2.00,
@@ -170,7 +170,7 @@ public class ParkMe implements EntryPoint {
 		testList.add(testLocation3);
 
 		mapOperator.testStuff(testList);
-
+**/
 		// Listen for mouse events on the Load Data button.
 		// In the end, this should only be accessible by an admin
 		loadDataButton.addClickHandler(new ClickHandler() {
@@ -260,7 +260,7 @@ public class ParkMe implements EntryPoint {
 
 			@Override
 			public void onSuccess(ParkingLocation[] result) {
-
+				mapOperator.drawLocs(result);
 				displayParkings(result);
 				Window.alert("Successfully displayed data");
 			}

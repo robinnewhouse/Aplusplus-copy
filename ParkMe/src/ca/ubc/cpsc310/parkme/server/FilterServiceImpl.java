@@ -61,8 +61,20 @@ public class FilterServiceImpl extends RemoteServiceServlet implements
 				double endLong = parkingLocs.get(i).getEndLong();
 				String street = parkingLocs.get(i).getStreet();
 
+				
+				String color = "black";
+				if (price < 2) {
+					color = "#66CD00";
+				} else if (price < 3 && price >= 2) {
+					color = "#FFE303";
+				} else if (price >= 3 && price < 4) {
+					color = "#FF7F24";
+				} else if (price >= 4) {
+					color = "#FF0000";
+				}
+				
 				parkingLocArray[i] = new ParkingLocation(parkingID, price,
-						limit, startLat, startLong, endLat, endLong, street);
+						limit, startLat, startLong, endLat, endLong, street, color);
 			}
 		} finally {
 			pm.close();

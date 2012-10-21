@@ -80,6 +80,7 @@ public class MapOperater {
 
 		currentPolyLine.setMap(theMap);
 		polyoptions.setClickable(true);
+		polyoptions.setStrokeColor(parkingLocation.getColor());
 		// polylineoptions set color from an enumeration of color/price
 		// references
 		currentPolyLine.setOptions(polyoptions);
