@@ -77,11 +77,12 @@ public class ParkMe implements EntryPoint {
 	private HorizontalPanel TitleHorzPanel = new HorizontalPanel();
 	private Label titleLabel = new Label("Park Me");
 	private Button loginButton = new Button("Login");
-	private VerticalPanel SearchPanel = new VerticalPanel(); // TODO - Figure
-	// out how to
-	// implement
-	// this
-	// properly!
+	
+	private HorizontalPanel searchPanel = new HorizontalPanel();
+	private TextBox searchBox = new TextBox();
+	private Label searchLabel = new Label("Enter Address: ");
+	private Button searchButton = new Button("Search");
+	
 	private VerticalPanel mapPanel = new VerticalPanel();
 	
 	private final LoadDataServiceAsync loadDataService = GWT
@@ -109,6 +110,12 @@ public class ParkMe implements EntryPoint {
 		timePanel.add(minTimeLabel);
 		timePanel.add(timeFilterTextBox);
 
+		searchBox.setHeight("1em");
+		searchPanel.add(searchLabel);
+		searchPanel.add(searchBox);
+		searchPanel.add(searchButton);
+		
+		mainPanel.add(searchPanel);
 		mainPanel.add(pricePanel);
 		mainPanel.add(timePanel);
 
@@ -116,11 +123,11 @@ public class ParkMe implements EntryPoint {
 
 		tabPanel.add(historyButton);
 		tabPanel.add(favoritesButton);
-		tabPanel.add(loadDataButton);
+	//	tabPanel.add(loadDataButton);
 		tabPanel.add(displayDataButton);
 		tabPanel.add(clearDataButton);
 		tabPanel.add(filterButton);
-		tabPanel.add(getAddressesButton);
+	//	tabPanel.add(getAddressesButton);
 		mainPanel.add(tabPanel);
 		resultsFlexTable.setCellPadding(5);
 
@@ -189,6 +196,7 @@ public class ParkMe implements EntryPoint {
 		// Listen for mouse events on the Clear Data button.
 		clearDataButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
+				mapOperator.clearMap();
 				resultsFlexTable.removeAllRows();
 			}
 		});
@@ -205,6 +213,13 @@ public class ParkMe implements EntryPoint {
 			}
 		});
 
+		searchButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				String address = searchBox.getText();
+				searchLoc(address);
+			}
+		});
+		
 		resultsFlexTable.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				int row = resultsFlexTable.getCellForEvent(event).getRowIndex();
@@ -224,7 +239,7 @@ public class ParkMe implements EntryPoint {
 					@Override
 					public void onSuccess(ParkingLocation result) {
 						// TODO Auto-generated method stub
-						displayPopup(result);
+						result.displayPopup(theMap);
 					}
 
 				});
@@ -456,20 +471,27 @@ public class ParkMe implements EntryPoint {
 		});
 	}
 
-	private void displayPopup(ParkingLocation parkingLoc) {
+	
+	private void  searchLoc(final String address) {
+		GeocoderRequest request = GeocoderRequest.create();
+		request.setAddress(address);
+		request.setRegion("ca");
+		geocoder.geocode(request, new Geocoder.Callback() {
 
-		// center map on midpoint of the lat/longs & zoom in
-		LatLng latlong = LatLng.create(
-				(parkingLoc.getStartLat() + parkingLoc.getEndLat()) / 2,
-				(parkingLoc.getStartLong() + parkingLoc.getEndLong()) / 2);
-		theMap.setCenter(latlong);
-		theMap.setZoom(17);
-
-		// display a pop-up with corresponding information
-		infoWindow.setContent("<b>" + parkingLoc.getStreet() + "</b><br><u>Rate:</u> $" 
-				+ parkingLoc.getPrice() + "/hr<br><u>Limit:</u> " + parkingLoc.getLimit() + "hr/s");
-		infoWindow.setPosition(latlong);
-		infoWindow.open(theMap);
-
+			@Override
+			public void handle(JsArray<GeocoderResult> results, GeocoderStatus status) {
+				if (status == GeocoderStatus.OK) {
+					LatLng latlong = results.get(0).getGeometry().getLocation();
+					theMap.setCenter(latlong);
+					infoWindow.setContent(address);
+					infoWindow.setPosition(latlong);
+					infoWindow.open(theMap);
+				}
+				
+			}
+			
+		});
+		
+		
 	}
 }

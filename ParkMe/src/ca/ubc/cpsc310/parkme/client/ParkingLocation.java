@@ -2,6 +2,10 @@ package ca.ubc.cpsc310.parkme.client;
 
 import java.io.Serializable;
 
+import com.google.maps.gwt.client.GoogleMap;
+import com.google.maps.gwt.client.InfoWindow;
+import com.google.maps.gwt.client.LatLng;
+
 
 public class ParkingLocation implements Serializable {
 	private String parkingID;
@@ -13,6 +17,24 @@ public class ParkingLocation implements Serializable {
 	private double endLong;
 	private String street;
 	private String color;
+	
+	public void displayPopup(GoogleMap theMap) {
+		// center map on midpoint of the lat/longs & zoom in
+				LatLng latlong = LatLng.create(
+						(getStartLat() + getEndLat()) / 2,
+						(getStartLong() + getEndLong()) / 2);
+				theMap.setCenter(latlong);
+				theMap.setZoom(17);
+
+				// display a pop-up with corresponding information
+				InfoWindow infoWindow = InfoWindow.create();
+				
+				infoWindow.setContent("<b>" + getStreet() + "</b><br><u>Rate:</u> $" 
+						+ getPrice() + "/hr<br><u>Limit:</u> " + getLimit() + "hr/s");
+				infoWindow.setPosition(latlong);
+				infoWindow.open(theMap);
+
+	}
 	
 	public String getColor() {
 		return color;

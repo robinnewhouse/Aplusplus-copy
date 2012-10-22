@@ -17,7 +17,7 @@ import com.google.maps.gwt.client.PolylineOptions;
 public class MapOperater {
 
 	private GoogleMap theMap;
-	private HashSet<Polyline> polylines;
+	private HashSet<Polyline> polylines = new HashSet<Polyline>();
 	LatLng location1 = LatLng.create(49.251, -123.119);
 	LatLng location2 = LatLng.create(49.281, -123.119);
 	LatLng location3 = LatLng.create(49.261, -123.129);
@@ -96,7 +96,7 @@ public class MapOperater {
 		
 //		currentPolyLine.addClickHandler(new ClickHandler() {
 //			public void onClick(ClickEvent event) {
-//				displayPopup(parkingLocation);      // How should we access displayPopup?
+//				parkingLocation.displayPopup(theMap);
 //			}
 //		});
 
@@ -106,12 +106,11 @@ public class MapOperater {
 	}
 	
 	// Clear all polylines from the map
-	private void clearMap() {
+	public void clearMap() {
 		Iterator<Polyline> polyit = polylines.iterator();
 		while(polyit.hasNext()) {
-		Polyline polyline = (Polyline) polyit.next();	
-		polyline.setMap(null);
+			Polyline polyline = (Polyline) polyit.next();	
+			polyline.setMap(null);
 		}
 	}
-	
 }
