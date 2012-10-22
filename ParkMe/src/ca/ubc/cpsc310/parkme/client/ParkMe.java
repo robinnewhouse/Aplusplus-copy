@@ -82,11 +82,8 @@ public class ParkMe implements EntryPoint {
 	// implement
 	// this
 	// properly!
-	private VerticalPanel mapPanel = new VerticalPanel(); // TODO - Frances
-	// implement this
-	// properly - just
-	// reserving space
-	// now!
+	private VerticalPanel mapPanel = new VerticalPanel();
+	
 	private final LoadDataServiceAsync loadDataService = GWT
 			.create(LoadDataService.class);
 	private final FilterServiceAsync filterService = GWT

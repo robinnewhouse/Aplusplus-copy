@@ -1,7 +1,6 @@
-ca.ubc.cpsc310.parkme.client.Criteria, false, false, true, true, ca.ubc.cpsc310.parkme.client.Criteria/3454699072, 3454699072
-ca.ubc.cpsc310.parkme.client.FilterService, false, false, false, false, _, 3011619338
-ca.ubc.cpsc310.parkme.client.ParkingLocation, true, true, false, false, ca.ubc.cpsc310.parkme.client.ParkingLocation/2263583563, 2263583563
-[Lca.ubc.cpsc310.parkme.client.ParkingLocation;, true, true, false, false, [Lca.ubc.cpsc310.parkme.client.ParkingLocation;/1822205494, 1822205494
+ca.ubc.cpsc310.parkme.client.LoadDataService, false, false, false, false, _, 1458578616
+ca.ubc.cpsc310.parkme.client.ParkingLocation, true, true, false, false, ca.ubc.cpsc310.parkme.client.ParkingLocation/2090468201, 2090468201
+[Lca.ubc.cpsc310.parkme.client.ParkingLocation;, true, true, false, false, [Lca.ubc.cpsc310.parkme.client.ParkingLocation;/3863573620, 3863573620
 com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException, true, true, true, true, com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException/3936916533, 3936916533
 com.google.gwt.user.client.rpc.RpcTokenException, true, true, false, false, com.google.gwt.user.client.rpc.RpcTokenException/2345075298, 2345075298
 com.google.gwt.user.client.rpc.XsrfToken, false, false, true, true, com.google.gwt.user.client.rpc.XsrfToken/4254043109, 4254043109
