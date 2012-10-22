@@ -87,4 +87,9 @@ public class MapOperater {
 		currentPolyLine.setPath(jsArrayPath);
 
 	}
+	
+	private void clearMap() {
+		
+	}
+	
 }

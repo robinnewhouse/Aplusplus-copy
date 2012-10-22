@@ -263,9 +263,10 @@ public class ParkMe implements EntryPoint {
 
 			@Override
 			public void onSuccess(ParkingLocation[] result) {
+				resultsFlexTable.removeAllRows();
 				mapOperator.drawLocs(result);
 				displayParkings(result);
-				Window.alert("Successfully displayed data");
+				//Window.alert("Successfully displayed data");
 			}
 
 		});
@@ -319,7 +320,9 @@ public class ParkMe implements EntryPoint {
 
 			@Override
 			public void onSuccess(ParkingLocation[] result) {
-				Window.alert("Successfully displayed filtered data");
+			//	Window.alert("Successfully displayed filtered data");
+				
+				resultsFlexTable.removeAllRows();
 				mapOperator.drawLocs(result);
 				displayParkings(result);
 
@@ -401,11 +404,11 @@ public class ParkMe implements EntryPoint {
 						}
 
 
-						//GeocoderAddressComponent addressComp = location
-						//		.getAddressComponents().get(1);
-						//String street = addressComp.getLongName();
+						GeocoderAddressComponent addressComp = location
+								.getAddressComponents().get(1);
+						String street = addressComp.getLongName();
 
-						/*parkingLoc.setStreet(street);
+						parkingLoc.setStreet(street);
 						loadDataService.setStreet(street,
 								parkingLoc.getParkingID(),
 								new AsyncCallback<Void>() {
@@ -419,7 +422,7 @@ public class ParkMe implements EntryPoint {
 							public void onSuccess(Void result) {
 								// TODO Auto-generated method stub
 							}
-						});*/
+						});
 					} else {
 						Window.alert("ERROR " + status.getValue()
 								+ "\n please wait");
