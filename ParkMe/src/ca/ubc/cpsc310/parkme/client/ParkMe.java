@@ -242,7 +242,8 @@ public class ParkMe implements EntryPoint {
 					@Override
 					public void onSuccess(ParkingLocation result) {
 						// TODO Auto-generated method stub
-						displayPopup(result);
+						result.displayPopup(theMap, infoWindow);
+						//displayPopup(result);
 					}
 
 				});
@@ -474,6 +475,7 @@ public class ParkMe implements EntryPoint {
 		});
 	}
 
+	/**
 	private void displayPopup(ParkingLocation parkingLoc) {
 
 		// center map on midpoint of the lat/longs & zoom in
@@ -490,10 +492,10 @@ public class ParkMe implements EntryPoint {
 		infoWindow.open(theMap);
 
 	}
-	
+	**/
 	private void  searchLoc(final String address) {
 		GeocoderRequest request = GeocoderRequest.create();
-		request.setAddress(address);
+		request.setAddress(address + " Vancouver");
 		request.setRegion("ca");
 		geocoder.geocode(request, new Geocoder.Callback() {
 
@@ -501,8 +503,9 @@ public class ParkMe implements EntryPoint {
 			public void handle(JsArray<GeocoderResult> results, GeocoderStatus status) {
 				if (status == GeocoderStatus.OK) {
 					LatLng latlong = results.get(0).getGeometry().getLocation();
+					String addr = results.get(0).getFormattedAddress();
 					theMap.setCenter(latlong);
-					infoWindow.setContent(address);
+					infoWindow.setContent(addr);
 					infoWindow.setPosition(latlong);
 					infoWindow.open(theMap);
 				}
