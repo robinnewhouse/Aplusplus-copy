@@ -1,8 +1,13 @@
 package ca.ubc.cpsc310.parkme.client;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.maps.gwt.client.GoogleMap;
 import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.Marker;
@@ -12,6 +17,7 @@ import com.google.maps.gwt.client.PolylineOptions;
 public class MapOperater {
 
 	private GoogleMap theMap;
+	private HashSet<Polyline> polylines;
 	LatLng location1 = LatLng.create(49.251, -123.119);
 	LatLng location2 = LatLng.create(49.281, -123.119);
 	LatLng location3 = LatLng.create(49.261, -123.129);
@@ -63,6 +69,7 @@ public class MapOperater {
 	}
 	
 	public void drawLocs(ParkingLocation[] lopl) {
+		clearMap();
 		for (ParkingLocation parkingLocation : lopl) {
 			drawOnMap(parkingLocation);
 		}
@@ -86,10 +93,24 @@ public class MapOperater {
 		currentPolyLine.setOptions(polyoptions);
 		currentPolyLine.setPath(jsArrayPath);
 
+//		currentPolyLine.addClickHandler(new ClickHandler() {
+//			public void onClick(ClickEvent event) {
+//				displayPopup(parkingLocation);      // How should we access displayPopup?
+//			}
+//		});
+
+		// Add this polyline to the set
+		polylines.add(currentPolyLine);
+
 	}
 	
+	// Clear all polylines from the map
 	private void clearMap() {
-		
+		Iterator<Polyline> polyit = polylines.iterator();
+		while(polyit.hasNext()) {
+		Polyline polyline = (Polyline) polyit.next();	
+		polyline.setMap(null);
+		}
 	}
 	
 }
