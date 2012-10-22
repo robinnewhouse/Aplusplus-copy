@@ -199,6 +199,7 @@ public class ParkMe implements EntryPoint {
 		// Listen for mouse events on the Clear Data button.
 		clearDataButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
+				mapOperator.clearMap();
 				resultsFlexTable.removeAllRows();
 			}
 		});
