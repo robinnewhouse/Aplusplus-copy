@@ -87,16 +87,15 @@ public class MapOperater {
 
 		currentPolyLine.setMap(theMap);
 		polyoptions.setClickable(true);
-		
 		polyoptions.setStrokeColor(parkingLocation.getColor());
 		// polylineoptions set color from an enumeration of color/price
 		// references
 		currentPolyLine.setOptions(polyoptions);
 		currentPolyLine.setPath(jsArrayPath);
-		
+
 //		currentPolyLine.addClickHandler(new ClickHandler() {
 //			public void onClick(ClickEvent event) {
-//				parkingLocation.displayPopup(theMap);
+//				displayPopup(parkingLocation);      // How should we access displayPopup?
 //			}
 //		});
 
@@ -113,4 +112,5 @@ public class MapOperater {
 			polyline.setMap(null);
 		}
 	}
+	
 }

@@ -83,8 +83,11 @@ public class ParkMe implements EntryPoint {
 	private Label searchLabel = new Label("Enter Address: ");
 	private Button searchButton = new Button("Search");
 	
-	private VerticalPanel mapPanel = new VerticalPanel();
-	
+	private VerticalPanel mapPanel = new VerticalPanel(); // TODO - Frances
+	// implement this
+	// properly - just
+	// reserving space
+	// now!
 	private final LoadDataServiceAsync loadDataService = GWT
 			.create(LoadDataService.class);
 	private final FilterServiceAsync filterService = GWT
@@ -239,7 +242,7 @@ public class ParkMe implements EntryPoint {
 					@Override
 					public void onSuccess(ParkingLocation result) {
 						// TODO Auto-generated method stub
-						result.displayPopup(theMap);
+						displayPopup(result);
 					}
 
 				});
@@ -471,6 +474,22 @@ public class ParkMe implements EntryPoint {
 		});
 	}
 
+	private void displayPopup(ParkingLocation parkingLoc) {
+
+		// center map on midpoint of the lat/longs & zoom in
+		LatLng latlong = LatLng.create(
+				(parkingLoc.getStartLat() + parkingLoc.getEndLat()) / 2,
+				(parkingLoc.getStartLong() + parkingLoc.getEndLong()) / 2);
+		theMap.setCenter(latlong);
+		theMap.setZoom(17);
+
+		// display a pop-up with corresponding information
+		infoWindow.setContent("<b>" + parkingLoc.getStreet() + "</b><br><u>Rate:</u> $" 
+				+ parkingLoc.getPrice() + "/hr<br><u>Limit:</u> " + parkingLoc.getLimit() + "hr/s");
+		infoWindow.setPosition(latlong);
+		infoWindow.open(theMap);
+
+	}
 	
 	private void  searchLoc(final String address) {
 		GeocoderRequest request = GeocoderRequest.create();
