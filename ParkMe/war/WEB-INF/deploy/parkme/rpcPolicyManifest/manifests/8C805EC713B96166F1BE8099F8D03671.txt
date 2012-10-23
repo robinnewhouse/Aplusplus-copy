@@ -1,2 +1,0 @@
-serviceClass: ca.ubc.cpsc310.parkme.client.ParkingLocService
-path: 11161E67135F01FD5D15FE79A9226050.gwt.rpc

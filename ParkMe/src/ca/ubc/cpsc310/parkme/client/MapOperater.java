@@ -9,8 +9,10 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.maps.gwt.client.GoogleMap;
+import com.google.maps.gwt.client.InfoWindow;
 import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.Marker;
+import com.google.maps.gwt.client.MouseEvent;
 import com.google.maps.gwt.client.Polyline;
 import com.google.maps.gwt.client.PolylineOptions;
 
@@ -64,18 +66,18 @@ public class MapOperater {
 
 	public void testStuff(ArrayList<ParkingLocation> lopl) {
 		for (ParkingLocation parkingLocation : lopl) {
-			drawOnMap(parkingLocation);
+			//drawOnMap(parkingLocation,);
 		}
 	}
 	
-	public void drawLocs(ParkingLocation[] lopl) {
+	public void drawLocs(ParkingLocation[] lopl, InfoWindow infoWindow) {
 		clearMap();
 		for (ParkingLocation parkingLocation : lopl) {
-			drawOnMap(parkingLocation);
+			drawOnMap(parkingLocation, infoWindow);
 		}
 	}
 
-	private void drawOnMap(ParkingLocation parkingLocation) {
+	private void drawOnMap(final ParkingLocation parkingLocation, final InfoWindow infoWindow) {
 		Polyline currentPolyLine = Polyline.create();
 		PolylineOptions polyoptions = PolylineOptions.create();
 		JsArray<LatLng> jsArrayPath = JsArray.createArray().cast();
@@ -93,11 +95,15 @@ public class MapOperater {
 		currentPolyLine.setOptions(polyoptions);
 		currentPolyLine.setPath(jsArrayPath);
 
-//		currentPolyLine.addClickHandler(new ClickHandler() {
-//			public void onClick(ClickEvent event) {
-//				displayPopup(parkingLocation);      // How should we access displayPopup?
-//			}
-//		});
+		Polyline.ClickHandler clickHandler = new Polyline.ClickHandler() {
+			@Override
+			public void handle(MouseEvent event) {
+				// TODO Auto-generated method stub
+				parkingLocation.displayPopup(theMap, infoWindow);  
+			}
+		};
+		
+		currentPolyLine.addClickListener(clickHandler);
 
 		// Add this polyline to the set
 		polylines.add(currentPolyLine);
