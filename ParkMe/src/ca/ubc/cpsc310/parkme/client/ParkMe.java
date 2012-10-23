@@ -280,7 +280,7 @@ public class ParkMe implements EntryPoint {
 			@Override
 			public void onSuccess(ParkingLocation[] result) {
 				resultsFlexTable.removeAllRows();
-				mapOperator.drawLocs(result);
+				mapOperator.drawLocs(result, infoWindow);
 				displayParkings(result);
 				//Window.alert("Successfully displayed data");
 			}
@@ -343,7 +343,7 @@ public class ParkMe implements EntryPoint {
 					resultsFlexTable.setText(0, 0, "No results found.");
 				}
 				else {
-					mapOperator.drawLocs(result);
+					mapOperator.drawLocs(result, infoWindow);
 					resultsFlexTable.setText(0, 0, "Found " + length + " results.");
 					displayParkings(result);
 				}
