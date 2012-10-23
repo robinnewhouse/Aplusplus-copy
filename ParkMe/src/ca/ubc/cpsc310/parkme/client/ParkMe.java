@@ -77,12 +77,12 @@ public class ParkMe implements EntryPoint {
 	private HorizontalPanel TitleHorzPanel = new HorizontalPanel();
 	private Label titleLabel = new Label("Park Me");
 	private Button loginButton = new Button("Login");
-	
+
 	private HorizontalPanel searchPanel = new HorizontalPanel();
 	private TextBox searchBox = new TextBox();
 	private Label searchLabel = new Label("Enter Address: ");
 	private Button searchButton = new Button("Search");
-	
+
 	private VerticalPanel mapPanel = new VerticalPanel(); // TODO - Frances
 	// implement this
 	// properly - just
@@ -117,7 +117,7 @@ public class ParkMe implements EntryPoint {
 		searchPanel.add(searchLabel);
 		searchPanel.add(searchBox);
 		searchPanel.add(searchButton);
-		
+
 		mainPanel.add(searchPanel);
 		mainPanel.add(pricePanel);
 		mainPanel.add(timePanel);
@@ -126,11 +126,11 @@ public class ParkMe implements EntryPoint {
 
 		tabPanel.add(historyButton);
 		tabPanel.add(favoritesButton);
-	//	tabPanel.add(loadDataButton);
+		//	tabPanel.add(loadDataButton);
 		tabPanel.add(displayDataButton);
 		tabPanel.add(clearDataButton);
 		tabPanel.add(filterButton);
-	//	tabPanel.add(getAddressesButton);
+		//	tabPanel.add(getAddressesButton);
 		mainPanel.add(tabPanel);
 		resultsFlexTable.setCellPadding(5);
 
@@ -222,7 +222,7 @@ public class ParkMe implements EntryPoint {
 				searchLoc(address);
 			}
 		});
-		
+
 		resultsFlexTable.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				int row = resultsFlexTable.getCellForEvent(event).getRowIndex();
@@ -336,11 +336,17 @@ public class ParkMe implements EntryPoint {
 
 			@Override
 			public void onSuccess(ParkingLocation[] result) {
-			//	Window.alert("Successfully displayed filtered data");
-				
+				//	Window.alert("Successfully displayed filtered data");
+				int length = result.length;
 				resultsFlexTable.removeAllRows();
-				mapOperator.drawLocs(result);
-				displayParkings(result);
+				if (length == 0) {
+					resultsFlexTable.setText(0, 0, "No results found.");
+				}
+				else {
+					mapOperator.drawLocs(result);
+					resultsFlexTable.setText(0, 0, "Found " + length + " results.");
+					displayParkings(result);
+				}
 
 			}
 
@@ -400,7 +406,7 @@ public class ParkMe implements EntryPoint {
 								String street = addr.get(i).getLongName();
 								System.out.println(street);
 								parkingLoc.setStreet(street);
-								
+
 								loadDataService.setStreet(street,
 										parkingLoc.getParkingID(),
 										new AsyncCallback<Void>() {
@@ -492,7 +498,7 @@ public class ParkMe implements EntryPoint {
 		infoWindow.open(theMap);
 
 	}
-	**/
+	 **/
 	private void  searchLoc(final String address) {
 		GeocoderRequest request = GeocoderRequest.create();
 		request.setAddress(address + " Vancouver");
@@ -509,11 +515,11 @@ public class ParkMe implements EntryPoint {
 					infoWindow.setPosition(latlong);
 					infoWindow.open(theMap);
 				}
-				
+
 			}
-			
+
 		});
-		
-		
+
+
 	}
 }
