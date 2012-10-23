@@ -18,7 +18,7 @@ public class ParkingLocation implements Serializable {
 	private String street;
 	private String color;
 	
-	public void displayPopup(GoogleMap theMap) {
+	public void displayPopup(GoogleMap theMap, InfoWindow infoWindow) {
 		// center map on midpoint of the lat/longs & zoom in
 				LatLng latlong = LatLng.create(
 						(getStartLat() + getEndLat()) / 2,
@@ -27,7 +27,7 @@ public class ParkingLocation implements Serializable {
 				theMap.setZoom(17);
 
 				// display a pop-up with corresponding information
-				InfoWindow infoWindow = InfoWindow.create();
+				//InfoWindow infoWindow = InfoWindow.create();
 				
 				infoWindow.setContent("<b>" + getStreet() + "</b><br><u>Rate:</u> $" 
 						+ getPrice() + "/hr<br><u>Limit:</u> " + getLimit() + "hr/s");
