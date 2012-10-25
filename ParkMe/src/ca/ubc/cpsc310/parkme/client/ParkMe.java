@@ -1,14 +1,8 @@
 package ca.ubc.cpsc310.parkme.client;
 
-import java.util.ArrayList;
-
-
-import ca.ubc.cpsc310.parkme.client.ParkingLocation;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Timer;
@@ -43,45 +37,43 @@ public class ParkMe implements EntryPoint {
 	private Geocoder geocoder = Geocoder.create();
 	private InfoWindow infoWindow = InfoWindow.create();
 	private boolean zoom = false;
-	// FILTER UI STUFF
 
-	private Button getAddressesButton = new Button("Load Street Information");
+	// Maps
+	private GoogleMap theMap;
+	private MapOperater mapOperator;
 
-	private TextBox priceFilterTextBox = new TextBox();
-	private TextBox timeFilterTextBox = new TextBox();
-
-	private Label maxPriceLabel = new Label("Maximum Price: ");
-
+	// Layout
+	private VerticalPanel mainPanel = new VerticalPanel();
+	private ScrollPanel resultsScroll = new ScrollPanel();
 	private HorizontalPanel pricePanel = new HorizontalPanel();
 	private HorizontalPanel timePanel = new HorizontalPanel();
-
-	private Label minTimeLabel = new Label("Minimum Time Limit: ");
+	private HorizontalPanel tabPanel = new HorizontalPanel();
+	private HorizontalPanel mainHorzPanel = new HorizontalPanel();
+	private VerticalPanel leftVertPanel = new VerticalPanel();
+	private VerticalPanel rightVertPanel = new VerticalPanel();
+	private HorizontalPanel TitleHorzPanel = new HorizontalPanel();
+	private HorizontalPanel searchPanel = new HorizontalPanel();
+	private FlexTable resultsFlexTable = new FlexTable();
+	private FlexTable idTable = new FlexTable();
 
 	private Button loadDataButton = new Button("Load Data");
 	private Button displayDataButton = new Button("Display All Data");
 	private Button clearDataButton = new Button("Clear Data");
-	private VerticalPanel mainPanel = new VerticalPanel();
 	private Button filterButton = new Button("Filter Results");
-
-	private ScrollPanel resultsScroll = new ScrollPanel();
-	private MapOperater mapOperator;
-	private HorizontalPanel tabPanel = new HorizontalPanel();
-	private GoogleMap theMap;
-	private HorizontalPanel mainHorzPanel = new HorizontalPanel();
-	private VerticalPanel leftVertPanel = new VerticalPanel();
 	private Button favoritesButton = new Button("Favorites");
 	private Button historyButton = new Button("History");
-	private FlexTable resultsFlexTable = new FlexTable();
-	private FlexTable idTable = new FlexTable();
-	private VerticalPanel rightVertPanel = new VerticalPanel();
-	private HorizontalPanel TitleHorzPanel = new HorizontalPanel();
-	private Label titleLabel = new Label("Park Me");
 	private Button loginButton = new Button("Login");
-
-	private HorizontalPanel searchPanel = new HorizontalPanel();
-	private TextBox searchBox = new TextBox();
-	private Label searchLabel = new Label("Enter Address: ");
 	private Button searchButton = new Button("Search");
+	private Label titleLabel = new Label("Park Me");
+	private Label maxPriceLabel = new Label("Maximum Price: ");
+	private Label searchLabel = new Label("Enter Address: ");
+	private Label minTimeLabel = new Label("Minimum Time Limit: ");
+	private TextBox searchBox = new TextBox();
+
+	// FILTER UI STUFF
+	private Button getAddressesButton = new Button("Load Street Information");
+	private TextBox priceFilterTextBox = new TextBox();
+	private TextBox timeFilterTextBox = new TextBox();
 
 	private VerticalPanel mapPanel = new VerticalPanel(); // TODO - Frances
 	// implement this
@@ -95,7 +87,6 @@ public class ParkMe implements EntryPoint {
 
 	private final ParkingLocServiceAsync parkService = GWT
 			.create(ParkingLocService.class);
-
 
 	/**
 	 * This is the entry point method.
@@ -122,15 +113,15 @@ public class ParkMe implements EntryPoint {
 		mainPanel.add(pricePanel);
 		mainPanel.add(timePanel);
 
-		// Once data has been loaded, we should not make it viewable to everyone 
+		// Once data has been loaded, we should not make it viewable to everyone
 
 		tabPanel.add(historyButton);
 		tabPanel.add(favoritesButton);
-		//	tabPanel.add(loadDataButton);
+		// tabPanel.add(loadDataButton);
 		tabPanel.add(displayDataButton);
 		tabPanel.add(clearDataButton);
 		tabPanel.add(filterButton);
-		//	tabPanel.add(getAddressesButton);
+		// tabPanel.add(getAddressesButton);
 		mainPanel.add(tabPanel);
 		resultsFlexTable.setCellPadding(5);
 
@@ -141,10 +132,13 @@ public class ParkMe implements EntryPoint {
 		mainPanel.add(mainHorzPanel);
 
 		// Set sizes for elements
-		resultsScroll.setSize(0.3 * Window.getClientWidth() - 20 + "px", "100%");
-		resultsFlexTable.setSize(0.3 * Window.getClientWidth() - 20 + "px", "100%");
+		resultsScroll
+				.setSize(0.3 * Window.getClientWidth() - 20 + "px", "100%");
+		resultsFlexTable.setSize(0.3 * Window.getClientWidth() - 20 + "px",
+				"100%");
 		mainHorzPanel.setSize("100%", Window.getClientHeight() - 190 + "px");
-		rightVertPanel.setSize(0.7 * Window.getClientWidth() - 20 + "px", "100%");
+		rightVertPanel.setSize(0.7 * Window.getClientWidth() - 20 + "px",
+				"100%");
 		mapPanel.setSize("100%", "100%");
 		mainPanel.setSpacing(10);
 		mapPanel.setBorderWidth(1);
@@ -167,19 +161,18 @@ public class ParkMe implements EntryPoint {
 		mapOperator = new MapOperater(theMap);
 		// mapOperator.testStuff();
 		/**
-		ParkingLocation testLocation1 = new ParkingLocation("test1", 1.00,
-				2.00, 49.251, -123.119, 49.261, -123.129, "street1");
-		ParkingLocation testLocation2 = new ParkingLocation("test2", 2.00,
-				2.00, 49.271, -123.139, 49.281, -123.149, "street2");
-		ParkingLocation testLocation3 = new ParkingLocation("test3", 3.00,
-				2.00, 49.291, -123.159, 49.301, -123.169, "street3");
-
-		ArrayList<ParkingLocation> testList = new ArrayList<ParkingLocation>();
-		testList.add(testLocation1);
-		testList.add(testLocation2);
-		testList.add(testLocation3);
-
-		mapOperator.testStuff(testList);
+		 * ParkingLocation testLocation1 = new ParkingLocation("test1", 1.00,
+		 * 2.00, 49.251, -123.119, 49.261, -123.129, "street1"); ParkingLocation
+		 * testLocation2 = new ParkingLocation("test2", 2.00, 2.00, 49.271,
+		 * -123.139, 49.281, -123.149, "street2"); ParkingLocation testLocation3
+		 * = new ParkingLocation("test3", 3.00, 2.00, 49.291, -123.159, 49.301,
+		 * -123.169, "street3");
+		 * 
+		 * ArrayList<ParkingLocation> testList = new
+		 * ArrayList<ParkingLocation>(); testList.add(testLocation1);
+		 * testList.add(testLocation2); testList.add(testLocation3);
+		 * 
+		 * mapOperator.testStuff(testList);
 		 **/
 		// Listen for mouse events on the Load Data button.
 		// In the end, this should only be accessible by an admin
@@ -233,25 +226,25 @@ public class ParkMe implements EntryPoint {
 				parkService.getParking(parkingID,
 						new AsyncCallback<ParkingLocation>() {
 
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
+							@Override
+							public void onFailure(Throwable caught) {
+								// TODO Auto-generated method stub
 
-					}
+							}
 
-					@Override
-					public void onSuccess(ParkingLocation result) {
-						// TODO Auto-generated method stub
-						if (zoom == false) {
-							zoom = true;
-							theMap.setZoom(17);
-						}
-						result.displayPopup(theMap, infoWindow);
-						
-						//displayPopup(result);
-					}
+							@Override
+							public void onSuccess(ParkingLocation result) {
+								// TODO Auto-generated method stub
+								if (zoom == false) {
+									zoom = true;
+									theMap.setZoom(17);
+								}
+								result.displayPopup(theMap, infoWindow);
 
-				});
+								// displayPopup(result);
+							}
+
+						});
 
 			}
 		});
@@ -287,7 +280,7 @@ public class ParkMe implements EntryPoint {
 				resultsFlexTable.removeAllRows();
 				mapOperator.drawLocs(result, infoWindow);
 				displayParkings(result);
-				//Window.alert("Successfully displayed data");
+				// Window.alert("Successfully displayed data");
 			}
 
 		});
@@ -341,15 +334,15 @@ public class ParkMe implements EntryPoint {
 
 			@Override
 			public void onSuccess(ParkingLocation[] result) {
-				//	Window.alert("Successfully displayed filtered data");
+				// Window.alert("Successfully displayed filtered data");
 				int length = result.length;
 				resultsFlexTable.removeAllRows();
 				if (length == 0) {
 					resultsFlexTable.setText(0, 0, "No results found.");
-				}
-				else {
+				} else {
 					mapOperator.drawLocs(result, infoWindow);
-					resultsFlexTable.setText(0, 0, "Found " + length + " results.");
+					resultsFlexTable.setText(0, 0, "Found " + length
+							+ " results.");
 					displayParkings(result);
 				}
 
@@ -357,7 +350,6 @@ public class ParkMe implements EntryPoint {
 
 		});
 	}
-
 
 	private void getLocations(final ParkingLocation[] parkingLocs) {
 
@@ -389,8 +381,8 @@ public class ParkMe implements EntryPoint {
 			LatLng latlong = LatLng.create(
 					(parkingLoc.getStartLat() + parkingLoc.getEndLat()) / 2,
 					(parkingLoc.getStartLong() + parkingLoc.getEndLong()) / 2);
-			//LatLng latlong = LatLng.create(parkingLoc.getStartLat(),
-			//		parkingLoc.getStartLong());
+			// LatLng latlong = LatLng.create(parkingLoc.getStartLat(),
+			// parkingLoc.getStartLong());
 			GeocoderRequest request = GeocoderRequest.create();
 			request.setLocation(latlong);
 			geocoder.geocode(request, new Geocoder.Callback() {
@@ -401,10 +393,10 @@ public class ParkMe implements EntryPoint {
 					if (status == GeocoderStatus.OK) {
 						GeocoderResult location = results.get(0);
 
-						JsArray<GeocoderAddressComponent> addr = location.getAddressComponents();
+						JsArray<GeocoderAddressComponent> addr = location
+								.getAddressComponents();
 
-
-						for (int i=0; i< addr.length(); i++) {
+						for (int i = 0; i < addr.length(); i++) {
 							String type = addr.get(i).getTypes().toString();
 							System.out.println(type);
 							if (type.equals("route")) {
@@ -416,20 +408,22 @@ public class ParkMe implements EntryPoint {
 										parkingLoc.getParkingID(),
 										new AsyncCallback<Void>() {
 
-									@Override
-									public void onFailure(Throwable caught) {
-										// TODO Auto-generated method stub
-									}
+											@Override
+											public void onFailure(
+													Throwable caught) {
+												// TODO Auto-generated method
+												// stub
+											}
 
-									@Override
-									public void onSuccess(Void result) {
-										// TODO Auto-generated method stub
-									}
-								});
+											@Override
+											public void onSuccess(Void result) {
+												// TODO Auto-generated method
+												// stub
+											}
+										});
 								return;
 							}
 						}
-
 
 						GeocoderAddressComponent addressComp = location
 								.getAddressComponents().get(1);
@@ -440,16 +434,16 @@ public class ParkMe implements EntryPoint {
 								parkingLoc.getParkingID(),
 								new AsyncCallback<Void>() {
 
-							@Override
-							public void onFailure(Throwable caught) {
-								// TODO Auto-generated method stub
-							}
+									@Override
+									public void onFailure(Throwable caught) {
+										// TODO Auto-generated method stub
+									}
 
-							@Override
-							public void onSuccess(Void result) {
-								// TODO Auto-generated method stub
-							}
-						});
+									@Override
+									public void onSuccess(Void result) {
+										// TODO Auto-generated method stub
+									}
+								});
 					} else {
 						Window.alert("ERROR " + status.getValue()
 								+ "\n please wait");
@@ -470,48 +464,47 @@ public class ParkMe implements EntryPoint {
 
 	private void getAllLocations() {
 		loadDataService
-		.getUnknownStreets(new AsyncCallback<ParkingLocation[]>() {
+				.getUnknownStreets(new AsyncCallback<ParkingLocation[]>() {
 
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("Error getting parking");
-			}
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Error getting parking");
+					}
 
-			@Override
-			public void onSuccess(ParkingLocation[] result) {
-				Window.alert("Loading Parking Streets. Please Wait.");
-				getLocations(result);
-			}
+					@Override
+					public void onSuccess(ParkingLocation[] result) {
+						Window.alert("Loading Parking Streets. Please Wait.");
+						getLocations(result);
+					}
 
-		});
+				});
 	}
 
 	/**
-	private void displayPopup(ParkingLocation parkingLoc) {
-
-		// center map on midpoint of the lat/longs & zoom in
-		LatLng latlong = LatLng.create(
-				(parkingLoc.getStartLat() + parkingLoc.getEndLat()) / 2,
-				(parkingLoc.getStartLong() + parkingLoc.getEndLong()) / 2);
-		theMap.setCenter(latlong);
-		theMap.setZoom(17);
-
-		// display a pop-up with corresponding information
-		infoWindow.setContent("<b>" + parkingLoc.getStreet() + "</b><br><u>Rate:</u> $" 
-				+ parkingLoc.getPrice() + "/hr<br><u>Limit:</u> " + parkingLoc.getLimit() + "hr/s");
-		infoWindow.setPosition(latlong);
-		infoWindow.open(theMap);
-
-	}
+	 * private void displayPopup(ParkingLocation parkingLoc) {
+	 * 
+	 * // center map on midpoint of the lat/longs & zoom in LatLng latlong =
+	 * LatLng.create( (parkingLoc.getStartLat() + parkingLoc.getEndLat()) / 2,
+	 * (parkingLoc.getStartLong() + parkingLoc.getEndLong()) / 2);
+	 * theMap.setCenter(latlong); theMap.setZoom(17);
+	 * 
+	 * // display a pop-up with corresponding information
+	 * infoWindow.setContent("<b>" + parkingLoc.getStreet() + "</b><br>
+	 * <u>Rate:</u> $" + parkingLoc.getPrice() + "/hr<br>
+	 * <u>Limit:</u> " + parkingLoc.getLimit() + "hr/s");
+	 * infoWindow.setPosition(latlong); infoWindow.open(theMap);
+	 * 
+	 * }
 	 **/
-	private void  searchLoc(final String address) {
+	private void searchLoc(final String address) {
 		GeocoderRequest request = GeocoderRequest.create();
 		request.setAddress(address + " Vancouver");
 		request.setRegion("ca");
 		geocoder.geocode(request, new Geocoder.Callback() {
 
 			@Override
-			public void handle(JsArray<GeocoderResult> results, GeocoderStatus status) {
+			public void handle(JsArray<GeocoderResult> results,
+					GeocoderStatus status) {
 				if (status == GeocoderStatus.OK) {
 					LatLng latlong = results.get(0).getGeometry().getLocation();
 					String addr = results.get(0).getFormattedAddress();
@@ -524,7 +517,6 @@ public class ParkMe implements EntryPoint {
 			}
 
 		});
-
 
 	}
 }
