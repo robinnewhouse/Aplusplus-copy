@@ -100,6 +100,7 @@ public class MapOperater {
 			public void handle(MouseEvent event) {
 				// TODO Auto-generated method stub
 				parkingLocation.displayPopup(theMap, infoWindow);  
+				
 			}
 		};
 		

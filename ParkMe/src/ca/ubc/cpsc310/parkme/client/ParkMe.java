@@ -42,7 +42,7 @@ public class ParkMe implements EntryPoint {
 	// GEOCODER
 	private Geocoder geocoder = Geocoder.create();
 	private InfoWindow infoWindow = InfoWindow.create();
-
+	private boolean zoom = false;
 	// FILTER UI STUFF
 
 	private Button getAddressesButton = new Button("Load Street Information");
@@ -242,7 +242,12 @@ public class ParkMe implements EntryPoint {
 					@Override
 					public void onSuccess(ParkingLocation result) {
 						// TODO Auto-generated method stub
+						if (zoom == false) {
+							zoom = true;
+							theMap.setZoom(17);
+						}
 						result.displayPopup(theMap, infoWindow);
+						
 						//displayPopup(result);
 					}
 
