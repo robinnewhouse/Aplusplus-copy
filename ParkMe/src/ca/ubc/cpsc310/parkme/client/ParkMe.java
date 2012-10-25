@@ -143,7 +143,7 @@ public class ParkMe implements EntryPoint {
 		// Set sizes for elements
 		resultsScroll.setSize(0.3 * Window.getClientWidth() - 20 + "px", "100%");
 		resultsFlexTable.setSize(0.3 * Window.getClientWidth() - 20 + "px", "100%");
-		mainHorzPanel.setSize("100%", Window.getClientHeight() - 160 + "px");
+		mainHorzPanel.setSize("100%", Window.getClientHeight() - 190 + "px");
 		rightVertPanel.setSize(0.7 * Window.getClientWidth() - 20 + "px", "100%");
 		mapPanel.setSize("100%", "100%");
 		mainPanel.setSpacing(10);
