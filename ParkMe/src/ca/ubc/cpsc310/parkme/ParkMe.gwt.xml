@@ -16,9 +16,7 @@
 <!--   <inherits name="com.google.gwt.ajaxloader.AjaxLoader" /> -->
 
   <!-- Specify the app entry point class.                         -->
-  <entry-point class='ca.ubc.cpsc310.parkme.client.ParkMe'/>
-
-  <!-- Specify the paths for translatable code                    -->
+      -->
   <source path='client'/>
   <source path='shared'/>
 

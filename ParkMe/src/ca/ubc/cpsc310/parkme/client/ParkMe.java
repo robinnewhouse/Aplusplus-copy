@@ -39,6 +39,21 @@ import com.google.maps.gwt.client.MapTypeId;
  */
 public class ParkMe implements EntryPoint {
 
+	//Constants for the slider implementation
+	//BRUCE ADDED
+	final double MINIMUM_MAX_PRICE_DOLLARS=0;
+	final double MAXIMUM_MAX_PRICE_DOLLARS=10;
+	final double PRICE_INCREMENTS_DOLLARS=.25;
+	final int NumPriceIncrements=(int)((MAXIMUM_MAX_PRICE_DOLLARS - 
+			MINIMUM_MAX_PRICE_DOLLARS)/PRICE_INCREMENTS_DOLLARS);
+	final double DEFAULT_MAX_PRICE = 2;
+	final double MINIMUM_MIN_TIME_LIMIT_HOURS=1;
+	final double MAXIMUM_MIN_TIME_LIMIT_HOURS=24;
+	final double TIME_INCREMENTS_HOURS=1;
+	final int NumTimeIncrements = (int)((MAXIMUM_MIN_TIME_LIMIT_HOURS-
+			MINIMUM_MIN_TIME_LIMIT_HOURS)/TIME_INCREMENTS_HOURS);
+	final double DEFAULT_MIN_TIME = 2;
+	
 	// GEOCODER
 	private Geocoder geocoder = Geocoder.create();
 	private InfoWindow infoWindow = InfoWindow.create();
@@ -51,11 +66,19 @@ public class ParkMe implements EntryPoint {
 	private TextBox timeFilterTextBox = new TextBox();
 
 	private Label maxPriceLabel = new Label("Maximum Price: ");
+	private Label minTimeLabel = new Label("Minimum Time Limit: ");
+	
+
+	//BRUCE ADDED
+	MinMaxIncrementControl priceCtrl = new MinMaxIncrementControl(MINIMUM_MAX_PRICE_DOLLARS,
+			MAXIMUM_MAX_PRICE_DOLLARS, NumPriceIncrements,priceFilterTextBox,DEFAULT_MAX_PRICE);
+	private SliderUI maxPriceSlider = new SliderUI(priceCtrl);
+	MinMaxIncrementControl timeCtrl = new MinMaxIncrementControl(MINIMUM_MIN_TIME_LIMIT_HOURS,
+			MAXIMUM_MIN_TIME_LIMIT_HOURS, NumTimeIncrements,timeFilterTextBox,DEFAULT_MIN_TIME);
+	private SliderUI minTimeSlider = new SliderUI(timeCtrl);
 
 	private HorizontalPanel pricePanel = new HorizontalPanel();
 	private HorizontalPanel timePanel = new HorizontalPanel();
-
-	private Label minTimeLabel = new Label("Minimum Time Limit: ");
 
 	private Button loadDataButton = new Button("Load Data");
 	private Button displayDataButton = new Button("Display All Data");
@@ -106,12 +129,18 @@ public class ParkMe implements EntryPoint {
 
 		pricePanel.add(maxPriceLabel);
 		pricePanel.add(priceFilterTextBox);
+		//BRUCE ADDED
+		pricePanel.add(maxPriceSlider);
 
 		priceFilterTextBox.setHeight("1em");
 		timeFilterTextBox.setHeight("1em");
+		//BRUCE ADDED
+		maxPriceSlider.setHeight("1em");
 
 		timePanel.add(minTimeLabel);
 		timePanel.add(timeFilterTextBox);
+		//BRUCE ADDED
+		timePanel.add(minTimeSlider);		
 
 		searchBox.setHeight("1em");
 		searchPanel.add(searchLabel);
