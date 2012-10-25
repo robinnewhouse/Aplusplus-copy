@@ -28,6 +28,16 @@ public class ParkingLoc {
 	private Double endLat;
 	@Persistent
 	private Double endLong;
+	@Persistent
+	private String street;
+
+	public String getStreet() {
+		return street;
+	}
+
+	public void setStreet(String street) {
+		this.street = street;
+	}
 
 	public ParkingLoc() {
 

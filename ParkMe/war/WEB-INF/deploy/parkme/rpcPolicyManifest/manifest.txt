@@ -1,2 +1,5 @@
 # Module parkme
 # RPC service class, partial path of RPC policy file
+ca.ubc.cpsc310.parkme.client.LoadDataService, 975054A01F56F754810F5222605712B7.gwt.rpc
+ca.ubc.cpsc310.parkme.client.FilterService, 0F41971CABF2E55E80675938919DAFD5.gwt.rpc
+ca.ubc.cpsc310.parkme.client.ParkingLocService, 11161E67135F01FD5D15FE79A9226050.gwt.rpc
