@@ -23,8 +23,8 @@ public class ParkingLocation implements Serializable {
 				LatLng latlong = LatLng.create(
 						(getStartLat() + getEndLat()) / 2,
 						(getStartLong() + getEndLong()) / 2);
-				theMap.setCenter(latlong);
-				theMap.setZoom(17);
+				//theMap.setCenter(latlong);
+				//theMap.setZoom(17);
 
 				// display a pop-up with corresponding information
 				//InfoWindow infoWindow = InfoWindow.create();
