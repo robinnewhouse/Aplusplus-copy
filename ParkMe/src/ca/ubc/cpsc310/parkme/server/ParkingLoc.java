@@ -5,6 +5,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import ca.ubc.cpsc310.parkme.client.ParkingLocation;
+
 /**
  * 
  * @author Alyanna Uy
@@ -30,6 +32,16 @@ public class ParkingLoc {
 	private Double endLong;
 	@Persistent
 	private String street;
+	@Persistent
+	private String color;
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
 
 	public String getStreet() {
 		return street;
@@ -99,4 +111,9 @@ public class ParkingLoc {
 		this.endLong = endLong;
 	}
 
+	public ParkingLocation convertToPL() {
+		return new ParkingLocation(parkingID, price,
+				limit, startLat, startLong, endLat, endLong, street, color);
+	}
+	
 }

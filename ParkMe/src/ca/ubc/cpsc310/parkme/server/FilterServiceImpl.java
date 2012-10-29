@@ -52,6 +52,8 @@ public class FilterServiceImpl extends RemoteServiceServlet implements
 			parkingLocArray = new ParkingLocation[size];
 
 			for (int i = 0; i < size; i++) {
+				
+				/**
 				String parkingID = parkingLocs.get(i).getParkingID();
 				double price = parkingLocs.get(i).getPrice();
 				double limit = parkingLocs.get(i).getLimit();
@@ -75,6 +77,8 @@ public class FilterServiceImpl extends RemoteServiceServlet implements
 				
 				parkingLocArray[i] = new ParkingLocation(parkingID, price,
 						limit, startLat, startLong, endLat, endLong, street, color);
+				**/
+				parkingLocArray[i] = parkingLocs.get(i).convertToPL();
 			}
 		} finally {
 			pm.close();

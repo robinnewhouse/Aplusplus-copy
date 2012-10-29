@@ -90,7 +90,7 @@ LoadDataService {
 			int size = parkingLocs.size();
 			parkingLocArray = new ParkingLocation[size];
 			for (int i = 0; i < size; i++) {
-
+				/**
 				String parkingID = parkingLocs.get(i).getParkingID();
 				double price = parkingLocs.get(i).getPrice();
 				double limit = parkingLocs.get(i).getLimit();
@@ -99,21 +99,12 @@ LoadDataService {
 				double endLat = parkingLocs.get(i).getEndLat();
 				double endLong = parkingLocs.get(i).getEndLong();
 				String street = parkingLocs.get(i).getStreet();
-
-				String color = "black";
-				if (price < 2) {
-					color = "#66CD00";
-				} else if (price < 3 && price >= 2) {
-					color = "#FFE303";
-				} else if (price >= 3 && price < 4) {
-					color = "#FF7F24";
-				} else if (price >= 4) {
-					color = "#FF0000";
-				}
+				String color = parkingLocs.get(i).getColor();
 				
 				parkingLocArray[i] = new ParkingLocation(parkingID, price,
 						limit, startLat, startLong, endLat, endLong, street, color);
-
+				**/
+				parkingLocArray[i] = parkingLocs.get(i).convertToPL();
 			}
 
 		} finally {
@@ -135,6 +126,7 @@ LoadDataService {
 			parkingLocArray = new ParkingLocation[size];
 			for (int i = 0; i < size; i++) {
 
+				/**
 				String parkingID = parkingLocs.get(i).getParkingID();
 				double price = parkingLocs.get(i).getPrice();
 				double limit = parkingLocs.get(i).getLimit();
@@ -143,20 +135,13 @@ LoadDataService {
 				double endLat = parkingLocs.get(i).getEndLat();
 				double endLong = parkingLocs.get(i).getEndLong();
 				String street = parkingLocs.get(i).getStreet();
-
-				String color = "black";
-				if (price < 2) {
-					color = "#66CD00";
-				} else if (price < 3 && price >= 2) {
-					color = "#FFE303";
-				} else if (price >= 3 && price < 4) {
-					color = "#FF7F24";
-				} else if (price >= 4) {
-					color = "#FF0000";
-				}
+				String color = parkingLocs.get(i).getColor();
+			
+				
 				parkingLocArray[i] = new ParkingLocation(parkingID, price,
 						limit, startLat, startLong, endLat, endLong, street, color);
-
+	**/
+				parkingLocArray[i] = parkingLocs.get(i).convertToPL();
 			}
 
 		} finally {

@@ -1,5 +1,8 @@
 package ca.ubc.cpsc310.parkme.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
@@ -8,6 +11,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
@@ -33,60 +37,72 @@ import com.google.maps.gwt.client.MapTypeId;
  */
 public class ParkMe implements EntryPoint {
 
+	// LOGIN
+	private Anchor signInLink = new Anchor("Sign In");
+	private Anchor signOutLink = new Anchor("Sign Out");
+	private VerticalPanel loginPanel = new VerticalPanel();
+	private Label loginLabel = new Label("Please sign in to your Google Account to access the ParkMe application.");
+
+	// FAVORITES
+	private Button addToFave = new Button("Add to Favorites");
+
 	// GEOCODER
 	private Geocoder geocoder = Geocoder.create();
 	private InfoWindow infoWindow = InfoWindow.create();
+	private NXInfoWindow infoWindow2 = NXInfoWindow.create(0L);
 	private boolean zoom = false;
+	
+	// FILTER UI STUFF
+	private Button setColor = new Button("Set Colors");
+	private Button getAddressesButton = new Button("Load Street Information");
+	private LoginInfo loginInfo = null;
 
-	// Maps
-	private GoogleMap theMap;
-	private MapOperater mapOperator;
+	private TextBox priceFilterTextBox = new TextBox();
+	private TextBox timeFilterTextBox = new TextBox();
 
-	// Layout
-	private VerticalPanel mainPanel = new VerticalPanel();
-	private ScrollPanel resultsScroll = new ScrollPanel();
+	private Label maxPriceLabel = new Label("Maximum Price: ");
+
 	private HorizontalPanel pricePanel = new HorizontalPanel();
 	private HorizontalPanel timePanel = new HorizontalPanel();
-	private HorizontalPanel tabPanel = new HorizontalPanel();
-	private HorizontalPanel mainHorzPanel = new HorizontalPanel();
-	private VerticalPanel leftVertPanel = new VerticalPanel();
-	private VerticalPanel rightVertPanel = new VerticalPanel();
-	private HorizontalPanel TitleHorzPanel = new HorizontalPanel();
-	private HorizontalPanel searchPanel = new HorizontalPanel();
-	private FlexTable resultsFlexTable = new FlexTable();
-	private FlexTable idTable = new FlexTable();
+
+	private Label minTimeLabel = new Label("Minimum Time Limit: ");
 
 	private Button loadDataButton = new Button("Load Data");
 	private Button displayDataButton = new Button("Display All Data");
 	private Button clearDataButton = new Button("Clear Data");
+	private VerticalPanel mainPanel = new VerticalPanel();
 	private Button filterButton = new Button("Filter Results");
+
+	private ScrollPanel resultsScroll = new ScrollPanel();
+	private MapOperater mapOperator;
+	private HorizontalPanel tabPanel = new HorizontalPanel();
+	private GoogleMap theMap;
+	private HorizontalPanel mainHorzPanel = new HorizontalPanel();
 	private Button favoritesButton = new Button("Favorites");
 	private Button historyButton = new Button("History");
-	private Button loginButton = new Button("Login");
-	private Button searchButton = new Button("Search");
+	private FlexTable resultsFlexTable = new FlexTable();
+	private FlexTable idTable = new FlexTable();
+	private VerticalPanel rightVertPanel = new VerticalPanel();
 	private Label titleLabel = new Label("Park Me");
-	private Label maxPriceLabel = new Label("Maximum Price: ");
-	private Label searchLabel = new Label("Enter Address: ");
-	private Label minTimeLabel = new Label("Minimum Time Limit: ");
+	private Button loginButton = new Button("Login");
+	private Button getFavesButton = new Button("My Favorites");
+
+	private HorizontalPanel searchPanel = new HorizontalPanel();
 	private TextBox searchBox = new TextBox();
+	private Label searchLabel = new Label("Enter Address: ");
+	private Button searchButton = new Button("Search");
 
-	// FILTER UI STUFF
-	private Button getAddressesButton = new Button("Load Street Information");
-	private TextBox priceFilterTextBox = new TextBox();
-	private TextBox timeFilterTextBox = new TextBox();
+	private List<ParkingLocation> allParkings = new ArrayList<ParkingLocation>();
+	private int totalNum = 0;
 
-	private VerticalPanel mapPanel = new VerticalPanel(); // TODO - Frances
-	// implement this
-	// properly - just
-	// reserving space
-	// now!
-	private final LoadDataServiceAsync loadDataService = GWT
-			.create(LoadDataService.class);
-	private final FilterServiceAsync filterService = GWT
-			.create(FilterService.class);
+	private VerticalPanel mapPanel = new VerticalPanel();
+	
+	
+	private final LoadDataServiceAsync loadDataService = GWT.create(LoadDataService.class);
+	private final FilterServiceAsync filterService = GWT.create(FilterService.class);
+	private final ParkingLocServiceAsync parkService = GWT.create(ParkingLocService.class);
+	private final FaveAsync fave = GWT.create(Fave.class);
 
-	private final ParkingLocServiceAsync parkService = GWT
-			.create(ParkingLocService.class);
 
 	/**
 	 * This is the entry point method.
@@ -100,6 +116,8 @@ public class ParkMe implements EntryPoint {
 		addListenersToButtons();
 
 		addListenerToResults();
+		
+		downloadData();
 
 	}
 
@@ -114,25 +132,25 @@ public class ParkMe implements EntryPoint {
 				parkService.getParking(parkingID,
 						new AsyncCallback<ParkingLocation>() {
 
-							@Override
-							public void onFailure(Throwable caught) {
-								// TODO Auto-generated method stub
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
 
-							}
+					}
 
-							@Override
-							public void onSuccess(ParkingLocation result) {
-								// TODO Auto-generated method stub
-								if (zoom == false) {
-									zoom = true;
-									theMap.setZoom(17);
-								}
-								result.displayPopup(theMap, infoWindow);
+					@Override
+					public void onSuccess(ParkingLocation result) {
+						// TODO Auto-generated method stub
+						if (zoom == false) {
+							zoom = true;
+							theMap.setZoom(17);
+						}
+						result.displayPopup(theMap, infoWindow);
 
-								// displayPopup(result);
-							}
+						// displayPopup(result);
+					}
 
-						});
+				});
 
 			}
 		});
@@ -245,7 +263,7 @@ public class ParkMe implements EntryPoint {
 
 		// Set sizes for elements
 		resultsScroll
-				.setSize(0.3 * Window.getClientWidth() - 20 + "px", "100%");
+		.setSize(0.3 * Window.getClientWidth() - 20 + "px", "100%");
 		resultsFlexTable.setSize(0.3 * Window.getClientWidth() - 20 + "px",
 				"100%");
 		mainHorzPanel.setSize("100%", Window.getClientHeight() - 190 + "px");
@@ -273,6 +291,14 @@ public class ParkMe implements EntryPoint {
 	}
 
 	private void displayData() {
+		resultsFlexTable.removeAllRows();
+		
+		ParkingLocation[] parkingLoc = allParkings.toArray(new ParkingLocation[totalNum]);
+		
+		mapOperator.drawLocs(parkingLoc, infoWindow);
+		displayParkings(parkingLoc);
+		
+		/**
 		loadDataService.getParking(new AsyncCallback<ParkingLocation[]>() {
 
 			@Override
@@ -288,9 +314,20 @@ public class ParkMe implements EntryPoint {
 				// Window.alert("Successfully displayed data");
 			}
 
-		});
+		});**/
+		
+		
 	}
+/**
+	private void displayParkings(List<ParkingLocation> parking) {
+		int size = parking.size();
+		for (int i = 0; i < size; i++) {
+			displayParking(parking.get(i));
+		}
 
+	}
+**/
+	
 	private void displayParkings(ParkingLocation[] parkingLocs) {
 		for (ParkingLocation p : parkingLocs) {
 			displayParking(p);
@@ -322,6 +359,7 @@ public class ParkMe implements EntryPoint {
 		// displayed
 		// this is for retrieving information about each row
 		idTable.setText(row, 0, parkingLoc.getParkingID());
+		System.out.println("Currently printing parking " + parkingLoc.getParkingID());
 	}
 
 	private void displayFilter() {
@@ -413,19 +451,19 @@ public class ParkMe implements EntryPoint {
 										parkingLoc.getParkingID(),
 										new AsyncCallback<Void>() {
 
-											@Override
-											public void onFailure(
-													Throwable caught) {
-												// TODO Auto-generated method
-												// stub
-											}
+									@Override
+									public void onFailure(
+											Throwable caught) {
+										// TODO Auto-generated method
+										// stub
+									}
 
-											@Override
-											public void onSuccess(Void result) {
-												// TODO Auto-generated method
-												// stub
-											}
-										});
+									@Override
+									public void onSuccess(Void result) {
+										// TODO Auto-generated method
+										// stub
+									}
+								});
 								return;
 							}
 						}
@@ -439,16 +477,16 @@ public class ParkMe implements EntryPoint {
 								parkingLoc.getParkingID(),
 								new AsyncCallback<Void>() {
 
-									@Override
-									public void onFailure(Throwable caught) {
-										// TODO Auto-generated method stub
-									}
+							@Override
+							public void onFailure(Throwable caught) {
+								// TODO Auto-generated method stub
+							}
 
-									@Override
-									public void onSuccess(Void result) {
-										// TODO Auto-generated method stub
-									}
-								});
+							@Override
+							public void onSuccess(Void result) {
+								// TODO Auto-generated method stub
+							}
+						});
 					} else {
 						Window.alert("ERROR " + status.getValue()
 								+ "\n please wait");
@@ -469,20 +507,20 @@ public class ParkMe implements EntryPoint {
 
 	private void getAllLocations() {
 		loadDataService
-				.getUnknownStreets(new AsyncCallback<ParkingLocation[]>() {
+		.getUnknownStreets(new AsyncCallback<ParkingLocation[]>() {
 
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert("Error getting parking");
-					}
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Error getting parking");
+			}
 
-					@Override
-					public void onSuccess(ParkingLocation[] result) {
-						Window.alert("Loading Parking Streets. Please Wait.");
-						getLocations(result);
-					}
+			@Override
+			public void onSuccess(ParkingLocation[] result) {
+				Window.alert("Loading Parking Streets. Please Wait.");
+				getLocations(result);
+			}
 
-				});
+		});
 	}
 
 	/**
@@ -523,5 +561,27 @@ public class ParkMe implements EntryPoint {
 
 		});
 
+	}
+	
+	private void downloadData() {
+		Window.alert("Please wait while data is loading");
+		loadDataService.getParking(new AsyncCallback<ParkingLocation[]>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Error getting parking");
+			}
+
+			@Override
+			public void onSuccess(ParkingLocation[] result) {
+
+				for (ParkingLocation p : result) {
+					allParkings.add(p);
+				}
+				totalNum = allParkings.size();
+				Window.alert("Data has been downloaded to client successfully.");
+			}
+
+		});
 	}
 }
