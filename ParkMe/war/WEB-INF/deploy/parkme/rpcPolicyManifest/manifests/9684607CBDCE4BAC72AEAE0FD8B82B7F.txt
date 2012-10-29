@@ -1,2 +1,0 @@
-serviceClass: ca.ubc.cpsc310.parkme.client.LoadDataService
-path: B446536070C90C4EBC9E8DFDE6E209E7.gwt.rpc
