@@ -9,7 +9,7 @@ import com.google.maps.gwt.client.GoogleMap;
 import com.google.maps.gwt.client.InfoWindow;
 import com.google.maps.gwt.client.LatLng;
 
-public class NXInfoWindow {
+public class MyInfoWindow {
 
 	static class FakePanel extends ComplexPanel {
 		public FakePanel(Widget w) {
@@ -36,8 +36,8 @@ public class NXInfoWindow {
 
 	FakePanel widgetAttacher;
 
-	public static NXInfoWindow create(Long id){
-		NXInfoWindow myInfo = new NXInfoWindow();
+	public static MyInfoWindow create(Long id){
+		MyInfoWindow myInfo = new MyInfoWindow();
 		myInfo.info = InfoWindow.create(); 
 		myInfo.id = id;
 		return myInfo;
@@ -52,8 +52,7 @@ public class NXInfoWindow {
 
 	public void close() {
 		info.close();
-		detachWidget();
-
+		//detachWidget();
 	}
 
 	public void setPosition(LatLng posicao) {
@@ -71,15 +70,17 @@ public class NXInfoWindow {
 		info.setContent(value.getElement());
 
 		if (this.widgetAttacher == null) {
+			
 			addListener(info, "closeclick", new Runnable() {
 				@Override
 				public void run() {
 					detachWidget();
 				}
 			});
+			
 			this.widgetAttacher = new FakePanel(value);
 		} else if (this.widgetAttacher.getWidget(0) != value) {
-			this.widgetAttacher.detachWidget();
+			//this.widgetAttacher.detachWidget();
 			this.widgetAttacher = new FakePanel(value);
 		}
 	}

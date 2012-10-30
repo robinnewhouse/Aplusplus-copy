@@ -10,6 +10,10 @@ public interface FaveAsync {
 
 	void getFaves(AsyncCallback<String[]> callback);
 
+	void checkFave(String parkingID, AsyncCallback<Boolean> callback);
+
+	void removeFave(String parkingID, AsyncCallback<Void> callback);
+
 
 
 }

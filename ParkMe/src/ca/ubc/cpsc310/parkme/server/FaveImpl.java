@@ -2,6 +2,7 @@ package ca.ubc.cpsc310.parkme.server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -42,7 +43,7 @@ public class FaveImpl extends RemoteServiceServlet implements Fave {
 			q.declareParameters("com.google.appengine.api.users.User u");
 			q.setOrdering("createDate");
 			List<ParkingFave> pFave = (List<ParkingFave>) q.execute(getUser());
-		
+
 			int size = pFave.size();
 			parkingIDs = new String[size];
 			for (int i = 0; i < size; i++) {	
@@ -52,6 +53,28 @@ public class FaveImpl extends RemoteServiceServlet implements Fave {
 			pm.close();
 		}
 		return parkingIDs;
+	}
+
+	public boolean checkFave(String parkingID) throws NotLoggedInException {
+		checkLoggedIn();
+		PersistenceManager pm = getPersistenceManager();
+		boolean faved;
+		try {
+			Query q = pm.newQuery(ParkingFave.class, "user == u && parkingID == pid");
+			q.declareParameters("com.google.appengine.api.users.User u, String pid");
+
+			List<ParkingFave> pFave = (List<ParkingFave>) q.execute(getUser(), parkingID);
+			int size = pFave.size();
+			if (size == 0) {
+				faved = false;
+			}
+			else  {
+				faved = true;
+			}
+		}	finally {
+			pm.close();
+		}
+		return faved;
 	}
 
 	private void checkLoggedIn() throws NotLoggedInException {
@@ -67,5 +90,29 @@ public class FaveImpl extends RemoteServiceServlet implements Fave {
 
 	private PersistenceManager getPersistenceManager() {
 		return PMF.getPersistenceManager();
+	}
+
+	public void removeFave(String parkingID) throws  NotLoggedInException {
+
+		checkLoggedIn();
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			Query q = pm.newQuery(ParkingFave.class, "user == u && parkingID == pid");
+			q.declareParameters("com.google.appengine.api.users.User u, String pid");
+
+			List<ParkingFave> pFave = (List<ParkingFave>) q.execute(getUser(), parkingID);
+			int size = pFave.size();
+			if (size == 0) {
+				System.out.println("error deleting fave");
+			} else {
+				for (ParkingFave parking : pFave) {
+					pm.deletePersistent(parking);
+					System.out.println("Deleted " + parkingID + " from favorites.");
+				}
+			}
+
+		} finally {
+			pm.close();
+		}
 	}
 }
