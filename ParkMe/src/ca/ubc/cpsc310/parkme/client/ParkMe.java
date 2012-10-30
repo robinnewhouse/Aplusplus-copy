@@ -45,13 +45,14 @@ public class ParkMe implements EntryPoint {
 
 	// FAVORITES
 	private Button addToFave = new Button("Add to Favorites");
+	private Button getFavesButton = new Button("My Favorites");
 
 	// GEOCODER
 	private Geocoder geocoder = Geocoder.create();
 	private InfoWindow infoWindow = InfoWindow.create();
 	private NXInfoWindow infoWindow2 = NXInfoWindow.create(0L);
 	private boolean zoom = false;
-	
+
 	// FILTER UI STUFF
 	private Button setColor = new Button("Set Colors");
 	private Button getAddressesButton = new Button("Load Street Information");
@@ -78,14 +79,12 @@ public class ParkMe implements EntryPoint {
 	private HorizontalPanel tabPanel = new HorizontalPanel();
 	private GoogleMap theMap;
 	private HorizontalPanel mainHorzPanel = new HorizontalPanel();
-	private Button favoritesButton = new Button("Favorites");
 	private Button historyButton = new Button("History");
 	private FlexTable resultsFlexTable = new FlexTable();
 	private FlexTable idTable = new FlexTable();
 	private VerticalPanel rightVertPanel = new VerticalPanel();
 	private Label titleLabel = new Label("Park Me");
 	private Button loginButton = new Button("Login");
-	private Button getFavesButton = new Button("My Favorites");
 
 	private HorizontalPanel searchPanel = new HorizontalPanel();
 	private TextBox searchBox = new TextBox();
@@ -96,8 +95,8 @@ public class ParkMe implements EntryPoint {
 	private int totalNum = 0;
 
 	private VerticalPanel mapPanel = new VerticalPanel();
-	
-	
+
+
 	private final LoadDataServiceAsync loadDataService = GWT.create(LoadDataService.class);
 	private final FilterServiceAsync filterService = GWT.create(FilterService.class);
 	private final ParkingLocServiceAsync parkService = GWT.create(ParkingLocService.class);
@@ -109,16 +108,32 @@ public class ParkMe implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 
+		LoginServiceAsync loginService = GWT.create(LoginService.class);
+		loginService.login(GWT.getHostPageBaseURL(), new AsyncCallback<LoginInfo>() {
+			public void onFailure(Throwable error) {
+				handleError(error);
+			}
+
+			public void onSuccess(LoginInfo result) {
+				loginInfo = result;
+				if(loginInfo.isLoggedIn()) {
+					loadParkMe(); } 
+				else {
+					loadLogin();
+				}
+			}
+		});
+
+
+
+	}
+
+	private void loadParkMe() {
 		initializeLayout();
-
 		createMap();
-
 		addListenersToButtons();
-
 		addListenerToResults();
-		
 		downloadData();
-
 	}
 
 	private void addListenerToResults() {
@@ -145,7 +160,7 @@ public class ParkMe implements EntryPoint {
 							zoom = true;
 							theMap.setZoom(17);
 						}
-						result.displayPopup(theMap, infoWindow);
+						result.displayPopup(theMap, infoWindow2);
 
 						// displayPopup(result);
 					}
@@ -201,6 +216,39 @@ public class ParkMe implements EntryPoint {
 				searchLoc(address);
 			}
 		});
+		
+		getFavesButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				fave.getFaves(new AsyncCallback<String[]>() {
+
+					@Override
+					public void onFailure(Throwable caught) {}
+
+					@Override
+					public void onSuccess(String[] result) {
+						resultsFlexTable.removeAllRows();
+						if (result.length == 0) {
+							resultsFlexTable.setText(0, 0, "You haven't added anything to favorites yet.");
+
+						}
+								
+						else {
+						parkService.getParkings(result, new AsyncCallback<ParkingLocation[]>() {
+
+							@Override
+							public void onFailure(Throwable caught) {}
+
+							@Override
+							public void onSuccess(ParkingLocation[] result) {
+								displayParkings(result);
+							}
+						});}
+					}
+				});
+			}
+		});
 	}
 
 	private void createMap() {
@@ -223,6 +271,7 @@ public class ParkMe implements EntryPoint {
 	}
 
 	private void initializeLayout() {
+		signOutLink.setHref(loginInfo.getLogoutUrl());
 		RootPanel.get("parkMe").add(mainPanel);
 
 		pricePanel.add(maxPriceLabel);
@@ -243,15 +292,17 @@ public class ParkMe implements EntryPoint {
 		mainPanel.add(pricePanel);
 		mainPanel.add(timePanel);
 
-		// Once data has been loaded, we should not make it viewable to everyone
-
+		// ADMIN CONTROLS:
+		//	tabPanel.add(loadDataButton);
+		//	tabPanel.add(getAddressesButton);
+		//	tabPanel.add(setColor);
 		tabPanel.add(historyButton);
-		tabPanel.add(favoritesButton);
-		tabPanel.add(loadDataButton);
+		tabPanel.add(getFavesButton);
 		tabPanel.add(displayDataButton);
 		tabPanel.add(clearDataButton);
 		tabPanel.add(filterButton);
-		tabPanel.add(getAddressesButton);
+		tabPanel.add(signOutLink);
+
 		mainPanel.add(tabPanel);
 		resultsFlexTable.setCellPadding(5);
 
@@ -291,13 +342,19 @@ public class ParkMe implements EntryPoint {
 	}
 
 	private void displayData() {
+
+		/** 
+		 * 
+		 * Display the data that is downloaded on the client
+		 * 
+		 **/
 		resultsFlexTable.removeAllRows();
-		
 		ParkingLocation[] parkingLoc = allParkings.toArray(new ParkingLocation[totalNum]);
-		
-		mapOperator.drawLocs(parkingLoc, infoWindow);
+		mapOperator.clearMap();
+		//mapOperator.drawLocs(parkingLoc, infoWindow);
 		displayParkings(parkingLoc);
-		
+
+
 		/**
 		loadDataService.getParking(new AsyncCallback<ParkingLocation[]>() {
 
@@ -315,10 +372,11 @@ public class ParkMe implements EntryPoint {
 			}
 
 		});**/
-		
-		
+
+
 	}
-/**
+
+	/**
 	private void displayParkings(List<ParkingLocation> parking) {
 		int size = parking.size();
 		for (int i = 0; i < size; i++) {
@@ -326,8 +384,8 @@ public class ParkMe implements EntryPoint {
 		}
 
 	}
-**/
-	
+	 **/
+
 	private void displayParkings(ParkingLocation[] parkingLocs) {
 		for (ParkingLocation p : parkingLocs) {
 			displayParking(p);
@@ -354,7 +412,7 @@ public class ParkMe implements EntryPoint {
 			resultsFlexTable.getRowFormatter().addStyleName(row, "parking4");
 		}
 		resultsFlexTable.setWidget(row, 0, info);
-
+		mapOperator.drawOnMap(parkingLoc, infoWindow2);
 		// we will store the parkingIDs in a different table but will never be
 		// displayed
 		// this is for retrieving information about each row
@@ -364,9 +422,35 @@ public class ParkMe implements EntryPoint {
 
 	private void displayFilter() {
 
+		if (priceFilterTextBox.getText().equals("") || timeFilterTextBox.getText().equals("")) {
+			resultsFlexTable.removeAllRows();
+			resultsFlexTable.setText(0, 0, "Please enter values above.");
+		}
+
 		double maxPrice = Double.parseDouble(priceFilterTextBox.getText());
 		double minTime = Double.parseDouble(timeFilterTextBox.getText());
 
+		List<ParkingLocation> filtered = new ArrayList<ParkingLocation>();
+		for (int i = 0; i < totalNum; i++) {
+			ParkingLocation p = allParkings.get(i);
+			if ((p.getPrice() <= maxPrice) && (p.getLimit() >= minTime)) {
+				filtered.add(p);
+			}
+		}
+
+		int length = filtered.size();
+		resultsFlexTable.removeAllRows();
+		mapOperator.clearMap();
+		if (length == 0) {
+			resultsFlexTable.setText(0, 0, "No results found.");
+		}
+		else {
+			ParkingLocation[] parkingLoc = filtered.toArray(new ParkingLocation[length]);
+			resultsFlexTable.setText(0, 0, length + " results found.");
+			displayParkings(parkingLoc);
+		}
+
+		/**
 		Criteria crit = new Criteria(0, maxPrice, minTime);
 		filterService.getParking(crit, new AsyncCallback<ParkingLocation[]>() {
 
@@ -383,7 +467,8 @@ public class ParkMe implements EntryPoint {
 				if (length == 0) {
 					resultsFlexTable.setText(0, 0, "No results found.");
 				} else {
-					mapOperator.drawLocs(result, infoWindow);
+					//mapOperator.drawLocs(result, infoWindow);
+
 					resultsFlexTable.setText(0, 0, "Found " + length
 							+ " results.");
 					displayParkings(result);
@@ -391,7 +476,7 @@ public class ParkMe implements EntryPoint {
 
 			}
 
-		});
+		});**/
 	}
 
 	private void getLocations(final ParkingLocation[] parkingLocs) {
@@ -562,7 +647,7 @@ public class ParkMe implements EntryPoint {
 		});
 
 	}
-	
+
 	private void downloadData() {
 		Window.alert("Please wait while data is loading");
 		loadDataService.getParking(new AsyncCallback<ParkingLocation[]>() {
@@ -583,5 +668,20 @@ public class ParkMe implements EntryPoint {
 			}
 
 		});
+	}
+	
+	private void loadLogin() {
+		// Assemble login panel.
+		signInLink.setHref(loginInfo.getLoginUrl());
+		loginPanel.add(loginLabel);
+		loginPanel.add(signInLink);
+		RootPanel.get("parkMe").add(loginPanel);
+	}
+	
+	private void handleError(Throwable error) {
+		Window.alert(error.getMessage());
+		if (error instanceof NotLoggedInException) {
+			Window.Location.replace(loginInfo.getLogoutUrl());
+		}
 	}
 }

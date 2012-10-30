@@ -62,5 +62,12 @@ public class ParkingLocServiceImpl extends RemoteServiceServlet implements Parki
 		return (ParkingLocation) parkingLoc;
 	}
 
-
+	public ParkingLocation[] getParkings(String[] ids) {
+		int size = ids.length;
+		ParkingLocation[] parkingLoc = new ParkingLocation[size];
+		for (int i = 0; i < size; i++) {
+			parkingLoc[i] = getParking(ids[i]);
+		}
+		return parkingLoc;
+	}
 }

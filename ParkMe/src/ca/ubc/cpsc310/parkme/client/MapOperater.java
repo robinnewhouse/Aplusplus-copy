@@ -21,15 +21,15 @@ public class MapOperater {
 		this.theMap = map;
 	}
 
-	public void drawLocs(ParkingLocation[] lopl, InfoWindow infoWindow) {
+	public void drawLocs(ParkingLocation[] lopl, NXInfoWindow infoWindow) {
 		clearMap();
 		for (ParkingLocation parkingLocation : lopl) {
 			drawOnMap(parkingLocation, infoWindow);
 		}
 	}
 
-	private void drawOnMap(final ParkingLocation parkingLocation,
-			final InfoWindow infoWindow) {
+	public void drawOnMap(final ParkingLocation parkingLocation,
+			final NXInfoWindow infoWindow) {
 		// create a new line, options, and path
 		Polyline currentPolyLine = Polyline.create();
 		PolylineOptions polyoptions = PolylineOptions.create();

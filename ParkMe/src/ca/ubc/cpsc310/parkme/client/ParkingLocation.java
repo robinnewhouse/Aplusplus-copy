@@ -2,6 +2,13 @@ package ca.ubc.cpsc310.parkme.client;
 
 import java.io.Serializable;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.maps.gwt.client.GoogleMap;
 import com.google.maps.gwt.client.InfoWindow;
 import com.google.maps.gwt.client.LatLng;
@@ -17,25 +24,61 @@ public class ParkingLocation implements Serializable {
 	private double endLong;
 	private String street;
 	private String color;
-	
-	public void displayPopup(GoogleMap theMap, InfoWindow infoWindow) {
+
+	public void displayPopup(GoogleMap theMap, NXInfoWindow infoWindow) {
 		// center map on midpoint of the lat/longs & zoom in
-				LatLng latlong = LatLng.create(
-						(getStartLat() + getEndLat()) / 2,
-						(getStartLong() + getEndLong()) / 2);
-				//theMap.setCenter(latlong);
-				//theMap.setZoom(17);
+		LatLng latlong = LatLng.create(
+				(getStartLat() + getEndLat()) / 2,
+				(getStartLong() + getEndLong()) / 2);
+		//theMap.setCenter(latlong);
+		//theMap.setZoom(17);
 
-				// display a pop-up with corresponding information
-				//InfoWindow infoWindow = InfoWindow.create();
-				
-				infoWindow.setContent("<b>" + getStreet() + "</b><br><u>Rate:</u> $" 
-						+ getPrice() + "/hr<br><u>Limit:</u> " + getLimit() + "hr/s");
-				infoWindow.setPosition(latlong);
-				infoWindow.open(theMap);
+		// display a pop-up with corresponding information
+		//InfoWindow infoWindow = InfoWindow.create();
+/**
+		infoWindow.setContent("<b>" + getStreet() + "</b><br><u>Rate:</u> $" 
+				+ getPrice() + "/hr<br><u>Limit:</u> " + getLimit() + "hr/s");
+		infoWindow.setPosition(latlong);
+		infoWindow.open(theMap);
+**/
+		Button addToFave = new Button("Add to Fave");
+		HTML info = new HTML("<b>" + getStreet() + "</b><br><u>Rate:</u> $" 
+				+ getPrice() + "/hr<br><u>Limit:</u> " + getLimit() + "hr/s");
+		VerticalPanel main = new VerticalPanel();
+		main.add(info);
+		main.add(addToFave);
 
+		infoWindow.setContent(main);
+		infoWindow.setPosition(latlong);
+		infoWindow.open(theMap);
+
+		//infoWindow.setContent("<b>" + getStreet() + "</b><br><u>Rate:</u> $" 
+		//		+ getPrice() + "/hr<br><u>Limit:</u> " + getLimit() + "hr/s");
+		//infoWindow.setPosition(latlong);
+
+		//infoWindow.open(theMap);
+
+		addToFave.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+
+				FaveAsync fave = GWT.create(Fave.class);
+				fave.addFave(getParkingID(), new AsyncCallback<Void>() {
+
+					@Override
+					public void onSuccess(Void result) {
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+				});
+			}
+
+		});
 	}
-	
+
 	public String getColor() {
 		return color;
 	}
@@ -115,7 +158,7 @@ public class ParkingLocation implements Serializable {
 	public void setEndLong(double endLong) {
 		this.endLong = endLong;
 	}
-	
+
 	public String getStreet() {
 		return street;
 	}
