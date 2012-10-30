@@ -80,6 +80,8 @@ public class ParkingLocHandler extends DefaultHandler {
 			String price = new String(ch, start + 1, length - 1);
 			Double rate = Double.parseDouble(price);
 			currentParking.setPrice(rate);
+			String color = calculateColor(rate);
+			currentParking.setColor(color);
 			isRate = false;
 		} else if (isLimit) {
 			Double limit = Double
@@ -104,7 +106,7 @@ public class ParkingLocHandler extends DefaultHandler {
 		}
 	}
 
-	public void parseCoord(String location) {
+	private void parseCoord(String location) {
 		Matcher coord = coordPattern.matcher(location);
 		if (coord.matches()) {
 			currentStartLong = Double.parseDouble(coord.group(1));
@@ -118,4 +120,18 @@ public class ParkingLocHandler extends DefaultHandler {
 		return parking;
 	}
 
+	private String calculateColor(Double rate) {
+		String color = "black";
+		if (rate < 2) {
+			color = "#66CD00";
+		} else if (rate < 3 && rate >= 2) {
+			color = "#FFE303";
+		} else if (rate >= 3 && rate < 4) {
+			color = "#FF7F24";
+		} else if (rate >= 4) {
+			color = "#FF0000";
+		}
+		return color;
+	}
+	
 }

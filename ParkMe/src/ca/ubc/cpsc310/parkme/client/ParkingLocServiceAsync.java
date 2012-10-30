@@ -6,4 +6,6 @@ public interface ParkingLocServiceAsync {
 
 	void getParking(String id, AsyncCallback<ParkingLocation> callback);
 
+	void getParkings(String[] ids, AsyncCallback<ParkingLocation[]> callback);
+
 }
