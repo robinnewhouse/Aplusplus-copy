@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.user.client.ui.Button;
 import com.google.maps.gwt.client.GoogleMap;
 import com.google.maps.gwt.client.InfoWindow;
 import com.google.maps.gwt.client.LatLng;
@@ -21,15 +22,15 @@ public class MapOperater {
 		this.theMap = map;
 	}
 
-	public void drawLocs(ParkingLocation[] lopl, MyInfoWindow infoWindow) {
+	public void drawLocs(ParkingLocation[] lopl, MyInfoWindow infoWindow, Button addToFave) {
 		clearMap();
 		for (ParkingLocation parkingLocation : lopl) {
-			drawOnMap(parkingLocation, infoWindow);
+			drawOnMap(parkingLocation, infoWindow, addToFave);
 		}
 	}
 
 	public void drawOnMap(final ParkingLocation parkingLocation,
-			final MyInfoWindow infoWindow) {
+			final MyInfoWindow infoWindow, final Button addToFave) {
 		// create a new line, options, and path
 		Polyline currentPolyLine = Polyline.create();
 		PolylineOptions polyoptions = PolylineOptions.create();
@@ -52,7 +53,7 @@ public class MapOperater {
 		Polyline.ClickHandler clickHandler = new Polyline.ClickHandler() {
 			@Override
 			public void handle(MouseEvent event) {
-				parkingLocation.displayPopup(theMap, infoWindow);
+				parkingLocation.displayPopup(theMap, infoWindow, addToFave);
 
 			}
 		};
