@@ -42,10 +42,13 @@ public class ParkMe implements EntryPoint {
 	private Anchor signOutLink = new Anchor("Sign Out");
 	private VerticalPanel loginPanel = new VerticalPanel();
 	private Label loginLabel = new Label("Please sign in to your Google Account to access the ParkMe application.");
-
+	
+	
 	// FAVORITES
 	private Button addToFave = new Button("Add to Favorites");
 	private Button getFavesButton = new Button("My Favorites");
+	private String view = "default";
+	
 
 	// GEOCODER
 	private Geocoder geocoder = Geocoder.create();
@@ -159,13 +162,21 @@ public class ParkMe implements EntryPoint {
 					}
 
 					@Override
-					public void onSuccess(ParkingLocation result) {
+					public void onSuccess(final ParkingLocation parking) {
 						if (zoom == false) {
 							zoom = true;
 							theMap.setZoom(17);
 						}
 
-						result.displayPopup(theMap, infoWindow2);
+
+						Button addFaveButton = new Button("Add to Faves");
+						
+						addHandler(addFaveButton, parking);
+
+					
+						
+						parking.displayPopup(theMap, infoWindow2, addFaveButton);
+
 						// displayPopup(result);
 					}
 
@@ -187,6 +198,7 @@ public class ParkMe implements EntryPoint {
 		// Listen for mouse events on the Display Data button.
 		displayDataButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
+				view = "data";
 				displayData();
 			}
 		});
@@ -194,6 +206,7 @@ public class ParkMe implements EntryPoint {
 		// Listen for mouse events on the Clear Data button.
 		clearDataButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
+				view = "default";
 				mapOperator.clearMap();
 				resultsFlexTable.removeAllRows();
 				idList.clear();
@@ -203,6 +216,7 @@ public class ParkMe implements EntryPoint {
 		// Listen for mouse events on the filter Data button.
 		filterButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
+				view = "data";
 				displayFilter();
 			}
 		});
@@ -223,9 +237,9 @@ public class ParkMe implements EntryPoint {
 		});
 
 		getFavesButton.addClickHandler(new ClickHandler() {
-
 			@Override
 			public void onClick(ClickEvent event) {
+				view = "fave";
 				showFaves();
 			}
 		});
@@ -274,7 +288,7 @@ public class ParkMe implements EntryPoint {
 
 		// ADMIN CONTROLS:
 		//	tabPanel.add(loadDataButton);
-			tabPanel.add(getAddressesButton);
+		//  tabPanel.add(getAddressesButton);
 		//	tabPanel.add(setColor);
 		tabPanel.add(historyButton);
 		tabPanel.add(getFavesButton);
@@ -335,7 +349,7 @@ public class ParkMe implements EntryPoint {
 		displayParkings(parkingLoc);
 		 **/
 
-
+		//view = "data";
 		loadDataService.getParking(new AsyncCallback<ParkingLocation[]>() {
 
 			@Override
@@ -368,6 +382,7 @@ public class ParkMe implements EntryPoint {
 	 **/
 
 	private void displayParkings(ParkingLocation[] parkingLocs) {
+		//view = "data";
 		for (ParkingLocation p : parkingLocs) {
 			displayParking(p);
 		}
@@ -393,7 +408,14 @@ public class ParkMe implements EntryPoint {
 			resultsFlexTable.getRowFormatter().addStyleName(row, "parking4");
 		}
 		resultsFlexTable.setWidget(row, 0, info);
-		mapOperator.drawOnMap(parkingLoc, infoWindow2);
+		
+		Button addFaveButton = new Button("Add to Faves");
+
+		addHandler(addFaveButton, parkingLoc);
+		
+		
+		
+		mapOperator.drawOnMap(parkingLoc, infoWindow2, addFaveButton);
 		// we will store the parkingIDs in a different table but will never be
 		// displayed
 		// this is for retrieving information about each row
@@ -404,6 +426,7 @@ public class ParkMe implements EntryPoint {
 
 	private void displayFilter() {
 
+		//view = "data";
 		if (priceFilterTextBox.getText().equals("") || timeFilterTextBox.getText().equals("")) {
 			resultsFlexTable.removeAllRows();
 			idList.clear();
@@ -665,6 +688,7 @@ public class ParkMe implements EntryPoint {
 
 
 	private void displayFavorites(ParkingLocation[] parkingLocs) {
+		//view = "fave";
 		for (ParkingLocation p : parkingLocs) {
 			displayFavorite(p);
 		}
@@ -672,7 +696,7 @@ public class ParkMe implements EntryPoint {
 
 	private void displayFavorite(final ParkingLocation parkingLoc) {
 
-		VerticalPanel info = new VerticalPanel();
+		final VerticalPanel info = new VerticalPanel();
 		HTML street = new HTML("<b>" + parkingLoc.getStreet() + "</b>");
 		HTML rate = new HTML("<u>Rate:</u> $" + parkingLoc.getPrice() + "/hr");
 		HTML limit = new HTML("<u>Limit:</u> " + parkingLoc.getLimit() + "hr/s"); 
@@ -690,7 +714,7 @@ public class ParkMe implements EntryPoint {
 			resultsFlexTable.getRowFormatter().addStyleName(row, "parking4");
 		}
 		resultsFlexTable.setWidget(row, 0, info);
-		Button removeFaveButton = new Button("x");
+		Button removeFaveButton = new Button("Remove");
 
 		removeFaveButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
@@ -700,9 +724,13 @@ public class ParkMe implements EntryPoint {
 			}
 		});
 		resultsFlexTable.setWidget(row, 1, removeFaveButton);
+		final Button addFaveButton = new Button("Add to Faves");
+		
+		addHandler(addFaveButton,parkingLoc);
+		
+		
 
-
-		mapOperator.drawOnMap(parkingLoc, infoWindow2);
+		mapOperator.drawOnMap(parkingLoc, infoWindow2, addFaveButton);
 		// we will store the parkingIDs in a different table but will never be
 		// displayed
 		// this is for retrieving information about each row
@@ -712,6 +740,33 @@ public class ParkMe implements EntryPoint {
 	}
 
 
+	private void addHandler(Button addFaveButton, final ParkingLocation parkingLoc) {
+		addFaveButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				
+				FaveAsync fave = GWT.create(Fave.class);
+				fave.addFave(parkingLoc.getParkingID(), new AsyncCallback<Void>() {
+
+					@Override
+					public void onSuccess(Void result) {
+						// refresh favorites BUT only if in favorites view.
+						System.out.println(view);
+						addFaveToDisplay(parkingLoc);
+						System.out.println("Have to refresh fave.");
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						
+						
+					}
+				});
+				
+			}
+		});
+		
+	}
+
 	private void removeFave(final String parkingID) {
 		fave.removeFave(parkingID, new AsyncCallback<Void>() {
 
@@ -719,10 +774,10 @@ public class ParkMe implements EntryPoint {
 				handleError(error);
 			}
 			public void onSuccess(Void ignore) {
-				//showFaves();
+				
 				undisplayFave(parkingID);
 			}
-		
+
 		});
 	}
 
@@ -732,7 +787,7 @@ public class ParkMe implements EntryPoint {
 		resultsFlexTable.removeRow(removedIndex);
 		idTable.removeRow(removedIndex);
 	}
-	
+
 	private void loadLogin() {
 		// Assemble login panel.
 		signInLink.setHref(loginInfo.getLoginUrl());
@@ -749,6 +804,7 @@ public class ParkMe implements EntryPoint {
 	}
 
 	public void showFaves() {
+		//view = "fave";
 		fave.getFaves(new AsyncCallback<String[]>() {
 
 			@Override
@@ -778,5 +834,13 @@ public class ParkMe implements EntryPoint {
 		});
 	}
 
-
+	private void addFaveToDisplay(ParkingLocation parkingLoc) {
+		if (view.equals("fave")) {
+			if (idList.size() == 0) {
+				resultsFlexTable.removeAllRows();
+			}
+			System.out.println("printing fave");
+			displayFavorite(parkingLoc);
+		}
+	}
 }

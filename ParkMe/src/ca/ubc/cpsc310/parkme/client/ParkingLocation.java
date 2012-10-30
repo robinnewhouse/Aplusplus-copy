@@ -26,11 +26,11 @@ public class ParkingLocation implements Serializable {
 	private String street;
 	private String color;
 
-	public void displayPopup(final GoogleMap theMap, final MyInfoWindow infoWindow) {
+	public void displayPopup(final GoogleMap theMap, final MyInfoWindow infoWindow, final Button addToFave) {
 		FaveAsync fave = GWT.create(Fave.class);
 		boolean faved;
 		fave.checkFave(getParkingID(), new AsyncCallback<Boolean>() {
-
+			
 			@Override
 			public void onFailure(Throwable caught) {
 
@@ -39,10 +39,10 @@ public class ParkingLocation implements Serializable {
 			@Override
 			public void onSuccess(Boolean result) {
 				if (result) {
-					displayPopup2(theMap, infoWindow, false);
+					displayPopup2(theMap, infoWindow, false, addToFave);
 				}
 				else {
-					displayPopup2(theMap, infoWindow, true);
+					displayPopup2(theMap, infoWindow, true, addToFave);
 				}
 			}
 		});
@@ -50,7 +50,7 @@ public class ParkingLocation implements Serializable {
 	}
 
 
-	public void displayPopup2(GoogleMap theMap, MyInfoWindow infoWindow, boolean enabled) {
+	public void displayPopup2(GoogleMap theMap, MyInfoWindow infoWindow, boolean enabled, final Button addToFave) {
 
 		// center map on midpoint of the lat/longs & zoom in
 		LatLng latlong = LatLng.create(
@@ -60,11 +60,13 @@ public class ParkingLocation implements Serializable {
 		//theMap.setZoom(17);
 
 		
-		final Button addToFave;
+		//final Button addToFave;
 		if (enabled) {
-			addToFave = new Button("Add to Fave");}
-		else {
-			addToFave = new Button("Already Faved");
+			//addToFave = new Button("Add to Fave");
+			addToFave.setText("Add to Fave");
+		} else {
+			//addToFave = new Button("Already Faved");
+			addToFave.setText("Already Faved");
 		}
 
 		addToFave.setEnabled(enabled);
@@ -77,8 +79,16 @@ public class ParkingLocation implements Serializable {
 		infoWindow.setContent(main);
 		infoWindow.setPosition(latlong);
 		infoWindow.open(theMap);
+		
+		addToFave.addClickHandler(new ClickHandler() {
 
+			@Override
+			public void onClick(ClickEvent event) {
+				addToFave.setEnabled(false);
+				addToFave.setText("FAVED!");
+			}});
 
+/**
 		addToFave.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -101,7 +111,7 @@ public class ParkingLocation implements Serializable {
 				addToFave.setText("FAVED!");
 			}
 
-		});
+		});**/
 	}
 	
 	
