@@ -366,6 +366,9 @@ public class ParkMe implements EntryPoint {
 
 		timePanel.add(minTimeLabel);
 		timePanel.add(timeFilterTextBox);
+		
+		radiusPanel.add(walkingDistanceLabel);
+		radiusPanel.add(radiusFilterTextBox);
 
 		radiusPanel.add(walkingDistanceLabel);
 		radiusPanel.add(radiusFilterTextBox);
@@ -506,6 +509,7 @@ public class ParkMe implements EntryPoint {
 		info.add(rate);
 		info.add(limit);
 		int row = resultsFlexTable.getRowCount();
+
 		if (parkingLoc.getColor().equals("#66CD00")) {
 			resultsFlexTable.getRowFormatter().addStyleName(row, "parking1");
 		} else if (parkingLoc.getColor().equals("#9BD500")) {
@@ -523,6 +527,7 @@ public class ParkMe implements EntryPoint {
 		} else if (parkingLoc.getColor().equals("#FB1D00")) {
 			resultsFlexTable.getRowFormatter().addStyleName(row, "parking8");
 		} else if (parkingLoc.getColor().equals("#FF0000")) {
+
 			resultsFlexTable.getRowFormatter().addStyleName(row, "parking9");
 		}
 		resultsFlexTable.setWidget(row, 0, info);
@@ -548,6 +553,7 @@ public class ParkMe implements EntryPoint {
 
 		double maxPrice = Double.parseDouble(priceFilterTextBox.getText());
 		double minTime = Double.parseDouble(timeFilterTextBox.getText());
+
 		double maxRadius;
 		if (radiusFilterTextBox.getText().equals("") || searchBox.getText().equals("")) {
 			maxRadius = 1000;
