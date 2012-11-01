@@ -150,5 +150,13 @@ LoadDataService {
 
 		return (ParkingLocation[]) parkingLocArray;
 	}
-
+	public void setColor(String color, String ID) {
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			ParkingLoc parkingLoc = pm.getObjectById(ParkingLoc.class, ID);
+			parkingLoc.setColor(color);
+		} finally {
+			pm.close();
+		}
+	}
 }
