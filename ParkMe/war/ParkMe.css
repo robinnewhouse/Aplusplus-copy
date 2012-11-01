@@ -42,14 +42,34 @@ h1 {
 }
 
 .parking2 {
-	background-color: #FFE303;
+	background-color: #9BD500;
 }
 
 .parking3 {
-	background-color: #FF7F24;
+	background-color: #B7D900;
 }
 
 .parking4 {
+	background-color: #E0CF00;
+}
+
+.parking5 {
+	background-color: #E8A100;
+}
+
+.parking6 {
+	background-color: #EC8800;
+}
+
+.parking7 {
+	background-color: #F35400;
+}
+
+.parking8 {
+	background-color: #FB1D00;
+}
+
+.parking9 {
 	background-color: #FF0000;
 }
 

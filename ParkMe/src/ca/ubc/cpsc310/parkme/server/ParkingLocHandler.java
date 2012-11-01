@@ -122,13 +122,23 @@ public class ParkingLocHandler extends DefaultHandler {
 
 	private String calculateColor(Double rate) {
 		String color = "black";
-		if (rate < 2) {
+		if (rate <= 1) {
 			color = "#66CD00";
-		} else if (rate < 3 && rate >= 2) {
-			color = "#FFE303";
-		} else if (rate >= 3 && rate < 4) {
-			color = "#FF7F24";
-		} else if (rate >= 4) {
+		} else if (rate <= 1.5 && rate > 1) {
+			color = "#9BD500";
+		} else if (rate <= 2 && rate > 1.5) {
+			color = "#B7D900";
+		} else if (rate <= 2.5 && rate > 2) {
+			color = "#E0CF00";
+		} else if (rate <= 3 && rate > 2.5) {
+			color = "#E8A100";
+		} else if (rate <= 3.5 && rate > 3) {
+			color = "#EC8800";
+		} else if (rate <= 4 && rate > 3.5) {
+			color = "#F35400";
+		} else if (rate <= 4.5 && rate > 4) {
+			color = "#FB1D00";
+		} else if (rate > 4.5) {
 			color = "#FF0000";
 		}
 		return color;

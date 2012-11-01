@@ -63,11 +63,14 @@ public class ParkMe implements EntryPoint {
 
 	private TextBox priceFilterTextBox = new TextBox();
 	private TextBox timeFilterTextBox = new TextBox();
+	private TextBox radiusFilterTextBox = new TextBox();
 
 	private Label maxPriceLabel = new Label("Maximum Price: ");
+	private Label walkingDistanceLabel = new Label("Walking Distance:");
 
 	private HorizontalPanel pricePanel = new HorizontalPanel();
 	private HorizontalPanel timePanel = new HorizontalPanel();
+	private HorizontalPanel radiusPanel = new HorizontalPanel();
 
 	private Label minTimeLabel = new Label("Minimum Time Limit: ");
 
@@ -273,9 +276,13 @@ public class ParkMe implements EntryPoint {
 
 		priceFilterTextBox.setHeight("1em");
 		timeFilterTextBox.setHeight("1em");
+		radiusFilterTextBox.setHeight("1em");
 
 		timePanel.add(minTimeLabel);
 		timePanel.add(timeFilterTextBox);
+		
+		radiusPanel.add(walkingDistanceLabel);
+		radiusPanel.add(radiusFilterTextBox);
 
 		searchBox.setHeight("1em");
 		searchPanel.add(searchLabel);
@@ -285,9 +292,10 @@ public class ParkMe implements EntryPoint {
 		mainPanel.add(searchPanel);
 		mainPanel.add(pricePanel);
 		mainPanel.add(timePanel);
+		mainPanel.add(radiusPanel);
 
 		// ADMIN CONTROLS:
-		//	tabPanel.add(loadDataButton);
+		//  tabPanel.add(loadDataButton);
 		//  tabPanel.add(getAddressesButton);
 		//	tabPanel.add(setColor);
 		tabPanel.add(historyButton);
@@ -398,14 +406,24 @@ public class ParkMe implements EntryPoint {
 		info.add(rate);
 		info.add(limit);
 		int row = resultsFlexTable.getRowCount();
-		if (parkingLoc.getPrice() < 2) {
+		if (parkingLoc.getColor() == "#66CD00") {
 			resultsFlexTable.getRowFormatter().addStyleName(row, "parking1");
-		} else if (parkingLoc.getPrice() < 3 && parkingLoc.getPrice() >= 2) {
+		} else if (parkingLoc.getColor() == "#9BD500") {
 			resultsFlexTable.getRowFormatter().addStyleName(row, "parking2");
-		} else if (parkingLoc.getPrice() >= 3 && parkingLoc.getPrice() < 4) {
+		} else if (parkingLoc.getColor() == "#B7D900") {
 			resultsFlexTable.getRowFormatter().addStyleName(row, "parking3");
-		} else if (parkingLoc.getPrice() >= 4) {
+		} else if (parkingLoc.getColor() == "#E0CF00") {
 			resultsFlexTable.getRowFormatter().addStyleName(row, "parking4");
+		} else if (parkingLoc.getColor() == "#E8A100") {
+			resultsFlexTable.getRowFormatter().addStyleName(row, "parking5");
+		} else if (parkingLoc.getColor() == "#EC8800") {
+			resultsFlexTable.getRowFormatter().addStyleName(row, "parking6");
+		} else if (parkingLoc.getColor() == "#F35400") {
+			resultsFlexTable.getRowFormatter().addStyleName(row, "parking7");
+		} else if (parkingLoc.getColor() == "#FB1D00") {
+			resultsFlexTable.getRowFormatter().addStyleName(row, "parking8");
+		} else if (parkingLoc.getColor() == "#FF0000") {
+			resultsFlexTable.getRowFormatter().addStyleName(row, "parking9");
 		}
 		resultsFlexTable.setWidget(row, 0, info);
 		
@@ -435,6 +453,7 @@ public class ParkMe implements EntryPoint {
 
 		double maxPrice = Double.parseDouble(priceFilterTextBox.getText());
 		double minTime = Double.parseDouble(timeFilterTextBox.getText());
+		double maxRadius = Double.parseDouble(radiusFilterTextBox.getText());
 
 
 		/**
@@ -464,7 +483,7 @@ public class ParkMe implements EntryPoint {
 
 		 */
 
-		Criteria crit = new Criteria(0, maxPrice, minTime);
+		Criteria crit = new Criteria(maxRadius, maxPrice, minTime);
 		filterService.getParking(crit, new AsyncCallback<ParkingLocation[]>() {
 
 			@Override
