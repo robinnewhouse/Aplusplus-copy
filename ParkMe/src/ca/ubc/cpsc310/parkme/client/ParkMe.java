@@ -100,6 +100,9 @@ public class ParkMe implements EntryPoint {
 	private List<String> idList = new ArrayList<String>();
 	private List<ParkingLocation> allParkings = new ArrayList<ParkingLocation>();
 	private int totalNum = 0;
+	
+	// The most recent location searched for
+	private JsArray<GeocoderResult> searchResult;
 
 	private VerticalPanel mapPanel = new VerticalPanel();
 
@@ -295,8 +298,8 @@ public class ParkMe implements EntryPoint {
 		mainPanel.add(radiusPanel);
 
 		// ADMIN CONTROLS:
-		//  tabPanel.add(loadDataButton);
-		//  tabPanel.add(getAddressesButton);
+		  tabPanel.add(loadDataButton);
+		  tabPanel.add(getAddressesButton);
 		//	tabPanel.add(setColor);
 		tabPanel.add(historyButton);
 		tabPanel.add(getFavesButton);
@@ -399,6 +402,8 @@ public class ParkMe implements EntryPoint {
 	private void displayParking(final ParkingLocation parkingLoc) {
 
 		VerticalPanel info = new VerticalPanel();
+		
+		// Exception in this line when I try to display all data:
 		HTML street = new HTML("<b>" + parkingLoc.getStreet() + "</b>");
 		HTML rate = new HTML("<u>Rate:</u> $" + parkingLoc.getPrice() + "/hr");
 		HTML limit = new HTML("<u>Limit:</u> " + parkingLoc.getLimit() + "hr/s");
@@ -445,7 +450,7 @@ public class ParkMe implements EntryPoint {
 	private void displayFilter() {
 
 		//view = "data";
-		if (priceFilterTextBox.getText().equals("") || timeFilterTextBox.getText().equals("")) {
+		if (priceFilterTextBox.getText().equals("") || timeFilterTextBox.getText().equals("") || radiusFilterTextBox.getText().equals("")) {
 			resultsFlexTable.removeAllRows();
 			idList.clear();
 			resultsFlexTable.setText(0, 0, "Please enter values above.");
@@ -482,8 +487,9 @@ public class ParkMe implements EntryPoint {
 
 
 		 */
-
-		Criteria crit = new Criteria(maxRadius, maxPrice, minTime);
+		LatLng searchPoint = searchResult.get(0).getGeometry().getLocation();
+		System.out.println("Filtering for results around " + searchResult.get(0).getFormattedAddress());
+		Criteria crit = new Criteria(maxRadius, maxPrice, minTime, searchPoint.lat(), searchPoint.lng());
 		filterService.getParking(crit, new AsyncCallback<ParkingLocation[]>() {
 
 			@Override
@@ -667,12 +673,15 @@ public class ParkMe implements EntryPoint {
 			public void handle(JsArray<GeocoderResult> results,
 					GeocoderStatus status) {
 				if (status == GeocoderStatus.OK) {
-					LatLng latlong = results.get(0).getGeometry().getLocation();
-					String addr = results.get(0).getFormattedAddress();
+					searchResult = results;
+					LatLng latlong = searchResult.get(0).getGeometry().getLocation();
+					String addr = searchResult.get(0).getFormattedAddress();
 					theMap.setCenter(latlong);
 					infoWindow.setContent(addr);
 					infoWindow.setPosition(latlong);
 					infoWindow.open(theMap);
+					
+					displayFilter();
 				}
 
 			}
