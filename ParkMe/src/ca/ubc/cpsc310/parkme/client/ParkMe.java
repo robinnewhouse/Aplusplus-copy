@@ -185,6 +185,7 @@ public class ParkMe implements EntryPoint {
 
 						Button addFaveButton = new Button("Add to Faves");
 						addHandler(addFaveButton, parking);
+						
 						parking.displayPopup(theMap, infoWindow2, addFaveButton);
 
 					}
@@ -391,9 +392,9 @@ public class ParkMe implements EntryPoint {
 		mainPanel.add(radiusPanel);
 
 		// ADMIN CONTROLS:
-	    tabPanel.add(loadDataButton);
+	    //  tabPanel.add(loadDataButton);
 		//  tabPanel.add(getAddressesButton);
-		tabPanel.add(setColor);
+		//  tabPanel.add(setColor);
 		tabPanel.add(displayDataButton);
 		tabPanel.add(clearDataButton);
 		tabPanel.add(filterButton);
@@ -769,9 +770,10 @@ public class ParkMe implements EntryPoint {
 					LatLng latlong = searchResult.get(0).getGeometry().getLocation();
 					String addr = searchResult.get(0).getFormattedAddress();
 					theMap.setCenter(latlong);
-					infoWindow.setContent(addr);
-					infoWindow.setPosition(latlong);
-					infoWindow.open(theMap);
+					//infoWindow2.setContent(addr);
+					infoWindow2.setContent(new Label(addr));
+					infoWindow2.setPosition(latlong);
+					infoWindow2.open(theMap);
 
 					displayFilter();
 				}

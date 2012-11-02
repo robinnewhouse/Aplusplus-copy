@@ -83,7 +83,7 @@ public class MapOperater {
 		circle.setMap(theMap);
 		CircleOptions options = CircleOptions.create();
 		options.setStrokeOpacity(.5);
-		options.setStrokeWeight(2);
+		options.setStrokeWeight(1);
 		options.setFillOpacity(.1);
 		circle.setOptions(options);
 	}
