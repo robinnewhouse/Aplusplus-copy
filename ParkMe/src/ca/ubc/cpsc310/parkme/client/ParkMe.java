@@ -29,7 +29,6 @@ import com.google.maps.gwt.client.GeocoderRequest;
 import com.google.maps.gwt.client.GeocoderResult;
 import com.google.maps.gwt.client.GeocoderStatus;
 import com.google.maps.gwt.client.GoogleMap;
-import com.google.maps.gwt.client.InfoWindow;
 import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.MapTypeId;
@@ -63,8 +62,7 @@ public class ParkMe implements EntryPoint {
 
 	// GEOCODER
 	private Geocoder geocoder = Geocoder.create();
-	private InfoWindow infoWindow = InfoWindow.create();
-	private MyInfoWindow infoWindow2 = MyInfoWindow.create(0L);
+	private MyInfoWindow infoWindow = MyInfoWindow.create(0L);
 	private boolean zoom = false;
 
 	// FILTER UI STUFF
@@ -99,7 +97,6 @@ public class ParkMe implements EntryPoint {
 	private HorizontalPanel mainHorzPanel = new HorizontalPanel();
 	private VerticalPanel rightVertPanel = new VerticalPanel();
 	private Label titleLabel = new Label("Park Me");
-	private Button loginButton = new Button("Login");
 
 	private HorizontalPanel searchPanel = new HorizontalPanel();
 	private TextBox searchBox = new TextBox();
@@ -186,7 +183,7 @@ public class ParkMe implements EntryPoint {
 						Button addFaveButton = new Button("Add to Faves");
 						addHandler(addFaveButton, parking);
 						
-						parking.displayPopup(theMap, infoWindow2, addFaveButton);
+						parking.displayPopup(theMap, infoWindow, addFaveButton);
 
 					}
 
@@ -224,7 +221,7 @@ public class ParkMe implements EntryPoint {
 
 						Button addFaveButton = new Button("Add to Faves");
 						addHandler(addFaveButton, parking);
-						parking.displayPopup(theMap, infoWindow2, addFaveButton);
+						parking.displayPopup(theMap, infoWindow, addFaveButton);
 
 					}
 
@@ -254,7 +251,8 @@ public class ParkMe implements EntryPoint {
 		// Listen for mouse events on the Clear Data button.
 		clearDataButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-
+				infoWindow.close();
+				mapOperator.clearCircle();
 				mapOperator.clearMap();
 				resultsFlexTable.removeAllRows();
 				idList.clear();
@@ -548,7 +546,7 @@ public class ParkMe implements EntryPoint {
 
 
 
-		mapOperator.drawOnMap(parkingLoc, infoWindow2, addFaveButton);
+		mapOperator.drawOnMap(parkingLoc, infoWindow, addFaveButton);
 		idList.add(parkingLoc.getParkingID());
 		System.out.println("Currently printing parking " + parkingLoc.getParkingID());
 	}
@@ -770,11 +768,9 @@ public class ParkMe implements EntryPoint {
 					LatLng latlong = searchResult.get(0).getGeometry().getLocation();
 					String addr = searchResult.get(0).getFormattedAddress();
 					theMap.setCenter(latlong);
-					//infoWindow2.setContent(addr);
-					infoWindow2.setContent(new Label(addr));
-					infoWindow2.setPosition(latlong);
-					infoWindow2.open(theMap);
-
+					infoWindow.setContent(new Label(addr));
+					infoWindow.setPosition(latlong);
+					infoWindow.open(theMap);
 					displayFilter();
 				}
 			}
@@ -860,7 +856,7 @@ public class ParkMe implements EntryPoint {
 
 		addHandler(addFaveButton,parkingLoc);
 
-		mapOperator.drawOnMap(parkingLoc, infoWindow2, addFaveButton);
+		mapOperator.drawOnMap(parkingLoc, infoWindow, addFaveButton);
 		faveList.add(parkingLoc.getParkingID());
 		System.out.println("Currently printing parking " + parkingLoc.getParkingID());
 
