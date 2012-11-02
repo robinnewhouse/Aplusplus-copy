@@ -23,28 +23,62 @@ public class FilterServiceImpl extends RemoteServiceServlet implements
 	private PersistenceManager getPersistenceManager() {
 		return PMF.getPersistenceManager();
 	}
+	
+	// Returns true if the endpoints or midpoint of the parking location are within radius metres of point
+	private boolean isInRadius(ParkingLoc p, Double radius, double ctrLat, double ctrLng) {
+		double startlat = p.getStartLat();
+		double startlong = p.getStartLong();
+		double endlat = p.getEndLat();
+		double endlong = p.getEndLong();
+		return (distance(startlat, startlong, ctrLat, ctrLng) <= radius
+				|| distance(endlat, endlong, ctrLat, ctrLng) <= radius
+				|| distance((startlat + endlat)/2, (startlong + endlong)/2, ctrLat, ctrLng) <= radius);
+	}
+	
+	// Returns the distance between two points in metres, given their lats and longs
+	private double distance(double lat1, double lon1, double lat2, double lon2) {
+		double theta = lon1 - lon2;
+		double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) + 
+				Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
+		dist = Math.acos(dist);
+		dist = Math.toDegrees(dist);
+		dist = dist * 60 * 1151.5;
+		dist = dist * 1.609344;
+		//System.out.println(dist);
+		return dist;
+	}
 
 	public ParkingLocation[] getParking(Criteria crit) {
 
 		PersistenceManager pm = getPersistenceManager();
 		ParkingLocation[] parkingLocArray;
-		try {
+		
+		try {		
+			System.out.println("About to filter results");
 			Query q = pm.newQuery(ParkingLoc.class);
 
 			// First find all parkings that are <= maxPrice
 			q.setFilter("price <= maxPrice");
 			q.declareParameters("double maxPrice");
 
-			List<ParkingLoc> parkingLocsPrice = (List<ParkingLoc>) q
-					.execute(crit.getMaxPrice());
+			List<ParkingLoc> parkingLocsPrice = (List<ParkingLoc>) q.execute(crit.getMaxPrice());
+			
+			System.out.println("Have results filtered by price");
+			System.out.println(parkingLocsPrice.size() + " results with matching price");
 
-			// Now filter through results to get those with >= minTime
+			// Now filter through results to get those with >= minTime and <= radius
 			double minTime = crit.getMinTime();
+			double radius = crit.getRadius();
+			double ctrLat = crit.getCtrLat();
+			double ctrLng = crit.getCtrLng();
+			
 			List<ParkingLoc> parkingLocs = new ArrayList<ParkingLoc>();
 			for (ParkingLoc p : parkingLocsPrice) {
-				if (p.getLimit() >= minTime) {
+				if (p.getLimit() >= minTime && isInRadius(p, radius, ctrLat, ctrLng)) {
 					parkingLocs.add(p);
+					//System.out.println(p.getStreet() + " matches criteria");
 				}
+				//System.out.println(p.getStreet() + " does not match criteria");
 			}
 
 			int size = parkingLocs.size();
@@ -52,32 +86,7 @@ public class FilterServiceImpl extends RemoteServiceServlet implements
 			parkingLocArray = new ParkingLocation[size];
 
 			for (int i = 0; i < size; i++) {
-				
-				/**
-				String parkingID = parkingLocs.get(i).getParkingID();
-				double price = parkingLocs.get(i).getPrice();
-				double limit = parkingLocs.get(i).getLimit();
-				double startLat = parkingLocs.get(i).getStartLat();
-				double startLong = parkingLocs.get(i).getStartLong();
-				double endLat = parkingLocs.get(i).getEndLat();
-				double endLong = parkingLocs.get(i).getEndLong();
-				String street = parkingLocs.get(i).getStreet();
 
-				
-				String color = "black";
-				if (price < 2) {
-					color = "#66CD00";
-				} else if (price < 3 && price >= 2) {
-					color = "#FFE303";
-				} else if (price >= 3 && price < 4) {
-					color = "#FF7F24";
-				} else if (price >= 4) {
-					color = "#FF0000";
-				}
-				
-				parkingLocArray[i] = new ParkingLocation(parkingID, price,
-						limit, startLat, startLong, endLat, endLong, street, color);
-				**/
 				parkingLocArray[i] = parkingLocs.get(i).convertToPL();
 			}
 		} finally {

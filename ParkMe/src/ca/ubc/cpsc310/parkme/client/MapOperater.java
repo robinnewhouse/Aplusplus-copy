@@ -5,6 +5,8 @@ import java.util.Iterator;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.ui.Button;
+import com.google.maps.gwt.client.Circle;
+import com.google.maps.gwt.client.CircleOptions;
 import com.google.maps.gwt.client.GoogleMap;
 import com.google.maps.gwt.client.InfoWindow;
 import com.google.maps.gwt.client.LatLng;
@@ -16,6 +18,7 @@ public class MapOperater {
 
 	private GoogleMap theMap;
 	private HashSet<Polyline> polylines = new HashSet<Polyline>();
+	private Circle circle = Circle.create();
 	LatLng DEFAULT_CENTER = LatLng.create(49.251, -123.119);
 
 	public MapOperater(GoogleMap map) {
@@ -72,6 +75,21 @@ public class MapOperater {
 			Polyline polyline = (Polyline) polyit.next();
 			polyline.setMap(null);
 		}
+	}
+
+	public void drawCircle(LatLng searchPoint, double maxRadius) {
+		circle.setCenter(searchPoint);
+		circle.setRadius(maxRadius);
+		circle.setMap(theMap);
+		CircleOptions options = CircleOptions.create();
+		options.setStrokeOpacity(.5);
+		options.setStrokeWeight(2);
+		options.setFillOpacity(.1);
+		circle.setOptions(options);
+	}
+	
+	public void clearCircle() {
+		circle.setMap(null);
 	}
 
 }

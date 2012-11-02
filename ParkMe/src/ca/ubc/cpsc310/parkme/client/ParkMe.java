@@ -109,6 +109,9 @@ public class ParkMe implements EntryPoint {
 	private List<ParkingLocation> allParkings = new ArrayList<ParkingLocation>();
 	private int totalNum = 0;
 
+	// The most recent location searched for
+	private JsArray<GeocoderResult> searchResult;
+
 	private VerticalPanel mapPanel = new VerticalPanel();
 
 
@@ -260,8 +263,12 @@ public class ParkMe implements EntryPoint {
 		// Listen for mouse events on the filter Data button.
 		filterButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-
-				displayFilter();
+				String address = searchBox.getText();
+				if (address.equals("")) {	
+					displayFilter();
+				}
+				else {searchLoc(address);}
+				//displayFilter();
 				tabs.selectTab(0);
 			}
 		});
@@ -280,9 +287,9 @@ public class ParkMe implements EntryPoint {
 				searchLoc(address);
 			}
 		});
-		
+
 		setColor.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				loadDataService.getParking(new AsyncCallback<ParkingLocation[]>() {
@@ -366,7 +373,7 @@ public class ParkMe implements EntryPoint {
 
 		timePanel.add(minTimeLabel);
 		timePanel.add(timeFilterTextBox);
-		
+
 		radiusPanel.add(walkingDistanceLabel);
 		radiusPanel.add(radiusFilterTextBox);
 
@@ -384,10 +391,9 @@ public class ParkMe implements EntryPoint {
 		mainPanel.add(radiusPanel);
 
 		// ADMIN CONTROLS:
-		//  tabPanel.add(loadDataButton);
+	    tabPanel.add(loadDataButton);
 		//  tabPanel.add(getAddressesButton);
-			tabPanel.add(setColor);
-
+		tabPanel.add(setColor);
 		tabPanel.add(displayDataButton);
 		tabPanel.add(clearDataButton);
 		tabPanel.add(filterButton);
@@ -494,6 +500,7 @@ public class ParkMe implements EntryPoint {
 	}
 
 	private void displayParkings(ParkingLocation[] parkingLocs) {
+		mapOperator.clearMap();
 		for (ParkingLocation p : parkingLocs) {
 			displayParking(p);
 		}
@@ -502,6 +509,8 @@ public class ParkMe implements EntryPoint {
 	private void displayParking(final ParkingLocation parkingLoc) {
 
 		VerticalPanel info = new VerticalPanel();
+
+		// Exception in this line when I try to display all data:
 		HTML street = new HTML("<b>" + parkingLoc.getStreet() + "</b>");
 		HTML rate = new HTML("<u>Rate:</u> $" + parkingLoc.getPrice() + "/hr");
 		HTML limit = new HTML("<u>Limit:</u> " + parkingLoc.getLimit() + "hr/s");
@@ -544,26 +553,43 @@ public class ParkMe implements EntryPoint {
 	}
 
 	private void displayFilter() {
+		LatLng searchPoint;
 
 		if (priceFilterTextBox.getText().equals("") || timeFilterTextBox.getText().equals("")) {
 			resultsFlexTable.removeAllRows();
 			idList.clear();
 			resultsFlexTable.setText(0, 0, "Please enter values above.");
+			return;
 		}
 
-		double maxPrice = Double.parseDouble(priceFilterTextBox.getText());
-		double minTime = Double.parseDouble(timeFilterTextBox.getText());
+		else {
 
-		double maxRadius;
-		if (radiusFilterTextBox.getText().equals("") || searchBox.getText().equals("")) {
-			maxRadius = 1000;
-		}
-		else {maxRadius = Double.parseDouble(radiusFilterTextBox.getText());}
+			if (searchBox.getText().equals("") ) { // && (searchResult.length()==0)
+				System.out.println("Centering it to downtown");
+				searchPoint = LatLng.create(49.2814,-123.12);
+			}
 
-		/**
-		 * 
-		 * client side filtering 
-		 *
+			else {
+				searchPoint = searchResult.get(0).getGeometry().getLocation();
+				System.out.println("Filtering for results around " + searchResult.get(0).getFormattedAddress());
+			}
+
+			double maxPrice = Double.parseDouble(priceFilterTextBox.getText());
+			double minTime = Double.parseDouble(timeFilterTextBox.getText());
+
+			double maxRadius;
+			if (radiusFilterTextBox.getText().equals("") || searchBox.getText().equals("")) {
+				maxRadius = 99999999;
+				mapOperator.clearCircle();
+			} else {
+				maxRadius = Double.parseDouble(radiusFilterTextBox.getText());
+				mapOperator.drawCircle(searchPoint, maxRadius);
+			}
+
+			/**
+			 * 
+			 * client side filtering 
+			 *
 		List<ParkingLocation> filtered = new ArrayList<ParkingLocation>();
 		for (int i = 0; i < totalNum; i++) {
 			ParkingLocation p = allParkings.get(i);
@@ -583,32 +609,32 @@ public class ParkMe implements EntryPoint {
 			resultsFlexTable.setText(0, 0, length + " results found.");
 			displayParkings(parkingLoc);
 		}
-		 */
+			 */
 
-		Criteria crit = new Criteria(maxRadius, maxPrice, minTime);
-		filterService.getParking(crit, new AsyncCallback<ParkingLocation[]>() {
+			Criteria crit = new Criteria(maxRadius, maxPrice, minTime, searchPoint.lat(), searchPoint.lng());
+			System.out.println("Filtering with maxPrice = " + maxPrice + " and minTime = " + minTime + " and maxRadius = " + maxRadius);
+			filterService.getParking(crit, new AsyncCallback<ParkingLocation[]>() {
 
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("Error getting parking");
-			}
-
-			@Override
-			public void onSuccess(ParkingLocation[] result) {
-				// Window.alert("Successfully displayed filtered data");
-				int length = result.length;
-				resultsFlexTable.removeAllRows();
-				idList.clear();
-				if (length == 0) {
-					resultsFlexTable.setText(0, 0, "No results found.");
-				} else {
-					//mapOperator.drawLocs(result, infoWindow);
-					//resultsFlexTable.setText(0, 0, "Found " + length
-					//		+ " results.");
-					displayParkings(result);
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("Error getting parking");
 				}
-			}
-		});
+
+				@Override
+				public void onSuccess(ParkingLocation[] result) {
+					// Window.alert("Successfully displayed filtered data");
+					
+					int length = result.length;
+					resultsFlexTable.removeAllRows();
+					idList.clear();
+					if (length == 0) {
+						resultsFlexTable.setText(0, 0, "No results found.");
+					} else {
+						displayParkings(result);
+					}
+				}
+			});
+		}
 	}
 
 	private void getLocations(final ParkingLocation[] parkingLocs) {
@@ -739,12 +765,15 @@ public class ParkMe implements EntryPoint {
 			public void handle(JsArray<GeocoderResult> results,
 					GeocoderStatus status) {
 				if (status == GeocoderStatus.OK) {
-					LatLng latlong = results.get(0).getGeometry().getLocation();
-					String addr = results.get(0).getFormattedAddress();
+					searchResult = results;
+					LatLng latlong = searchResult.get(0).getGeometry().getLocation();
+					String addr = searchResult.get(0).getFormattedAddress();
 					theMap.setCenter(latlong);
 					infoWindow.setContent(addr);
 					infoWindow.setPosition(latlong);
 					infoWindow.open(theMap);
+
+					displayFilter();
 				}
 			}
 		});
@@ -790,31 +819,31 @@ public class ParkMe implements EntryPoint {
 		final int row = faveFlexTable.getRowCount();
 		if (parkingLoc.getColor().equals("#66CD00")) {
 			faveFlexTable.getColumnFormatter().setWidth(1, "30 px");
-			faveFlexTable.getRowFormatter().addStyleName(row, "parking1");
+			faveFlexTable.getCellFormatter().addStyleName(row, 0, "parking1");
 		} else if (parkingLoc.getColor().equals("#9BD500")) {
 			faveFlexTable.getColumnFormatter().setWidth(1, "30 px");
-			faveFlexTable.getRowFormatter().addStyleName(row, "parking2");
+			faveFlexTable.getCellFormatter().addStyleName(row, 0, "parking2");
 		} else if (parkingLoc.getColor().equals("#B7D900")) {
 			faveFlexTable.getColumnFormatter().setWidth(1, "30 px");
-			faveFlexTable.getRowFormatter().addStyleName(row, "parking3");
+			faveFlexTable.getCellFormatter().addStyleName(row, 0, "parking3");
 		} else if (parkingLoc.getColor().equals("#E0CF00")) {
 			faveFlexTable.getColumnFormatter().setWidth(1, "30 px");
-			faveFlexTable.getRowFormatter().addStyleName(row, "parking4");
+			faveFlexTable.getCellFormatter().addStyleName(row, 0, "parking4");
 		} else if (parkingLoc.getColor().equals("#E8A100")) {
 			faveFlexTable.getColumnFormatter().setWidth(1, "30 px");
-			faveFlexTable.getRowFormatter().addStyleName(row, "parking5");
+			faveFlexTable.getCellFormatter().addStyleName(row, 0, "parking5");
 		} else if (parkingLoc.getColor().equals("#EC8800")) {
 			faveFlexTable.getColumnFormatter().setWidth(1, "30 px");
-			faveFlexTable.getRowFormatter().addStyleName(row, "parking6");
+			faveFlexTable.getCellFormatter().addStyleName(row, 0, "parking6");
 		} else if (parkingLoc.getColor().equals("#F35400")) {
 			faveFlexTable.getColumnFormatter().setWidth(1, "30 px");
-			faveFlexTable.getRowFormatter().addStyleName(row, "parking7");
+			faveFlexTable.getCellFormatter().addStyleName(row, 0, "parking7");
 		} else if (parkingLoc.getColor().equals("#FB1D00")) {
 			faveFlexTable.getColumnFormatter().setWidth(1, "30 px");
-			faveFlexTable.getRowFormatter().addStyleName(row, "parking8");
+			faveFlexTable.getCellFormatter().addStyleName(row, 0, "parking8");
 		} else if (parkingLoc.getColor().equals("#FF0000")) {
 			faveFlexTable.getColumnFormatter().setWidth(1, "30 px");
-			faveFlexTable.getRowFormatter().addStyleName(row, "parking9");
+			faveFlexTable.getCellFormatter().addStyleName(row, 0, "parking9");
 		}
 		faveFlexTable.setWidget(row, 0, info);
 		Button removeFaveButton = new Button("Remove");
