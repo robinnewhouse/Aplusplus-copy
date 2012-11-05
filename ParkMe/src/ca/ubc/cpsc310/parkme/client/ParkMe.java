@@ -73,6 +73,10 @@ public class ParkMe implements EntryPoint {
 	private TextBox priceFilterTextBox = new TextBox();
 	private TextBox timeFilterTextBox = new TextBox();
 	private TextBox radiusFilterTextBox = new TextBox();
+	
+	private Slider priceFilterSlider = new Slider(5);
+	private Slider timeFilterSlider = new Slider(5);
+	private Slider radiusFilterSlider = new Slider(1000);
 
 	private Label maxPriceLabel = new Label("Maximum Price: ");
 	private Label walkingDistanceLabel = new Label("Walking Distance:");
