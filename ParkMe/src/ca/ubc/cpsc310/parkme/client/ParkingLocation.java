@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.maps.gwt.client.GoogleMap;
 import com.google.maps.gwt.client.InfoWindow;
 import com.google.maps.gwt.client.LatLng;
-
+import org.spacetimeresearch.gwt.addthis.client.AddThisWidget;
 
 public class ParkingLocation implements Serializable {
 	private String parkingID;
@@ -75,7 +75,8 @@ public class ParkingLocation implements Serializable {
 		VerticalPanel main = new VerticalPanel();
 		main.add(info);
 		main.add(addToFave);
-
+		AddThisWidget addThisWidget = new AddThisWidget("ra-5094b7074b51725f", "There is a nice parking spot at " + getStreet() + " with a rate of $" + getPrice() + "/hr!", 300);
+		main.add(addThisWidget);
 		infoWindow.setContent(main);
 		infoWindow.setPosition(latlong);
 		infoWindow.open(theMap);

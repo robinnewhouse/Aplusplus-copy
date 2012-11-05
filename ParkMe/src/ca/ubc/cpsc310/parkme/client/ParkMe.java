@@ -392,7 +392,7 @@ public class ParkMe implements EntryPoint {
 		// ADMIN CONTROLS:
 	    //  tabPanel.add(loadDataButton);
 		//  tabPanel.add(getAddressesButton);
-		//  tabPanel.add(setColor);
+		  tabPanel.add(setColor);
 		tabPanel.add(displayDataButton);
 		tabPanel.add(clearDataButton);
 		tabPanel.add(filterButton);
