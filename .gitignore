@@ -118,3 +118,5 @@ ParkMe/war/WEB-INF/deploy/parkme/symbolMaps/8D856060685B3E59C4BC80E69876434A.sym
 ParkMe/war/WEB-INF/deploy/parkme/symbolMaps/D4D0D0614D5DED7D4A9C70621DDDEF75.symbolMap
 
 *.symbolMap
+
+ParkMe/.gwt/.gwt-log
