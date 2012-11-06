@@ -13,7 +13,9 @@
 
 	<!-- Inherit Google Maps -->
 	<inherits name="com.google.maps.gwt.GoogleMaps" />
-	<!-- <inherits name="com.google.gwt.ajaxloader.AjaxLoader" /> -->
+	
+	<!-- Inherit slider bar implementation -->
+	<inherits name="com.kiouri.sliderbar.SliderBarMVP" />
 
 	<!-- Inherit AddThis Button -->
 	<inherits name="org.spacetimeresearch.gwt.addthis.AddThisWidget" />
