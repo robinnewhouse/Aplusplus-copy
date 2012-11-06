@@ -1,7 +1,10 @@
 package ca.ubc.cpsc310.parkme.client;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import ca.ubc.cpsc310.parkme.server.ParkingLoc;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -62,6 +65,17 @@ public class ParkMe implements EntryPoint {
 	private FlexTable faveFlexTable = new FlexTable();
 	private FlexTable histFlexTable = new FlexTable();
 
+	// STATISTICS
+	private ScrollPanel statsScroll = new ScrollPanel();
+	// average price
+	private VerticalPanel avgPriceVP = new VerticalPanel();
+	private Label avgPriceLabel = new Label("Enter an address to calculate the average price around that location:");
+	private TextBox avgPriceAddress = new TextBox();
+	private Label avgPriceRadiusLbl = new Label("Radius: ");
+	private TextBox avgPriceRadius = new TextBox();
+	private Button avgPriceButton = new Button("Calculate Average");
+	private Label avgPrice = new Label("");
+
 	// GEOCODER
 	private Geocoder geocoder = Geocoder.create();
 	private MyInfoWindow infoWindow = MyInfoWindow.create(0L);
@@ -71,7 +85,7 @@ public class ParkMe implements EntryPoint {
 	private Button setColor = new Button("Set Colors");
 	private Button getAddressesButton = new Button("Load Street Information");
 	private LoginInfo loginInfo = null;
-	
+
 	private Slider priceFilterSlider = new Slider(10);
 	private Slider timeFilterSlider = new Slider(5);
 	private Slider radiusFilterSlider = new Slider(500);
@@ -79,7 +93,7 @@ public class ParkMe implements EntryPoint {
 	private Label maxPriceLabel = new Label("Maximum Price: ");
 	private Label maxRadiusLabel = new Label("Walking Distance:");
 	private Label minTimeLabel = new Label("Minimum Time Limit: ");
-	
+
 	private Label maxPriceValueLabel = new Label("");
 	private Label minTimeValueLabel = new Label("");
 	private Label maxRadiusValueLabel = new Label("");
@@ -93,6 +107,7 @@ public class ParkMe implements EntryPoint {
 	private Button clearDataButton = new Button("Clear Data");
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private Button filterButton = new Button("Filter Results");
+	private Button downloadData = new Button("Download Data to Client");
 
 	private MapOperater mapOperator;
 	private HorizontalPanel tabPanel = new HorizontalPanel();
@@ -186,7 +201,7 @@ public class ParkMe implements EntryPoint {
 
 						Button addFaveButton = new Button("Add to Faves");
 						addHandler(addFaveButton, parking);
-						
+
 						parking.displayPopup(theMap, infoWindow, addFaveButton);
 
 					}
@@ -290,6 +305,23 @@ public class ParkMe implements EntryPoint {
 				searchLoc(address);
 			}
 		});
+		avgPriceButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				calculateAverage();
+
+			}
+		});
+
+		downloadData.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				downloadData();
+
+			}
+		});
 
 		setColor.addClickHandler(new ClickHandler() {
 
@@ -343,10 +375,94 @@ public class ParkMe implements EntryPoint {
 
 
 	}
-	
 
+
+	protected void calculateAverage() {
+
+		if (totalNum == 0) {
+			avgPrice.setText("Please click on Download Data above first.");
+		}
+		else {
+			String address = avgPriceAddress.getText();
+
+			if (address.equals("") || avgPriceRadius.getText().equals("")) {
+				avgPrice.setText("Please enter the values above.");
+			}
+
+			else {
+				final double radius = Double.parseDouble(avgPriceRadius.getText());
+				
+				GeocoderRequest request = GeocoderRequest.create();
+				request.setAddress(address + " Vancouver");
+				request.setRegion("ca");
+				geocoder.geocode(request, new Geocoder.Callback() {
+
+					@Override
+					public void handle(JsArray<GeocoderResult> results,
+							GeocoderStatus status) {
+						if (status == GeocoderStatus.OK) {
+							searchResult = results;
+							LatLng latlong = searchResult.get(0).getGeometry().getLocation();
+							String addr = searchResult.get(0).getFormattedAddress();
+							double ctrLat = latlong.lat();
+							double ctrLng = latlong.lng();
+							theMap.setCenter(latlong);
+							infoWindow.setContent(new Label(addr));
+							infoWindow.setPosition(latlong);
+							infoWindow.open(theMap);
+							
+							int i = 0;
+							double totalPrice = 0;
+							for (ParkingLocation p : allParkings) {
+								if (isInRadius(p, radius, ctrLat, ctrLng)) {
+									totalPrice = totalPrice + p.getPrice();
+									i++;
+								}
+							}
+							if (i == 0) {
+								avgPrice.setText("No parking locations found.");
+							}
+							else {
+								double avg = totalPrice/i;
+								avgPrice.setText("Average Price within " + Double.toString(radius) + " of " + addr + ": $" + avg + "/hr");
+							}
+							
+						}
+					}
+				});
+			}
+		}
+
+
+	}
+
+	// Returns true if the endpoints or midpoint of the parking location are within radius metres of point
+	private boolean isInRadius(ParkingLocation p, Double radius, double ctrLat, double ctrLng) {
+		double startlat = p.getStartLat();
+		double startlong = p.getStartLong();
+		double endlat = p.getEndLat();
+		double endlong = p.getEndLong();
+		return (distance(startlat, startlong, ctrLat, ctrLng) <= radius
+				|| distance(endlat, endlong, ctrLat, ctrLng) <= radius
+				|| distance((startlat + endlat)/2, (startlong + endlong)/2, ctrLat, ctrLng) <= radius);
+	}
+	
+	// Returns the distance between two points in metres, given their lats and longs
+	private double distance(double lat1, double lon1, double lat2, double lon2) {
+		double theta = lon1 - lon2;
+		double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) + 
+				Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
+		dist = Math.acos(dist);
+		dist = Math.toDegrees(dist);
+		dist = dist * 60 * 1151.5;
+		dist = dist * 1.609344;
+		//System.out.println(dist);
+		return dist;
+	}
+	
+	
 	private void addListenersToSliders() {
-		
+
 		// Update max price value label when slider moves
 		priceFilterSlider.addBarValueChangedHandler(new BarValueChangedHandler() {
 			public void onBarValueChanged(BarValueChangedEvent event) {
@@ -415,12 +531,13 @@ public class ParkMe implements EntryPoint {
 		mainPanel.add(radiusPanel);
 
 		// ADMIN CONTROLS:
-	    //  tabPanel.add(loadDataButton);
+		//  tabPanel.add(loadDataButton);
 		//  tabPanel.add(getAddressesButton);
-		  tabPanel.add(setColor);
+		tabPanel.add(setColor);
 		tabPanel.add(displayDataButton);
 		tabPanel.add(clearDataButton);
 		tabPanel.add(filterButton);
+		tabPanel.add(downloadData);
 		tabPanel.add(signOutLink);
 
 		mainPanel.add(tabPanel);
@@ -446,6 +563,21 @@ public class ParkMe implements EntryPoint {
 		flowpanel.add(histScroll);
 		tabs.add(flowpanel, "History");
 
+		// set up statistics tab
+
+		avgPriceVP.add(avgPriceLabel);
+		avgPriceVP.add(avgPriceAddress);
+		avgPriceVP.add(avgPriceRadiusLbl);
+		avgPriceVP.add(avgPriceRadius);
+		avgPriceVP.add(avgPriceButton);
+		avgPriceVP.add(avgPrice);
+		statsScroll.add(avgPriceVP);
+		flowpanel = new FlowPanel();
+		flowpanel.add(statsScroll);
+		tabs.add(flowpanel, "Statistics");
+
+
+
 		tabs.selectTab(0);
 		mainHorzPanel.add(tabs);
 
@@ -460,6 +592,7 @@ public class ParkMe implements EntryPoint {
 		resultsScroll.setSize(scrollWidth, scrollHeight);
 		faveScroll.setSize(scrollWidth, scrollHeight);
 		histScroll.setSize(scrollWidth, scrollHeight);
+		statsScroll.setSize(scrollWidth, scrollHeight);
 		tabs.setSize(0.3 * Window.getClientWidth() - 20 + "px", "100%");
 
 		resultsFlexTable.setSize(scrollWidth, "100%");
