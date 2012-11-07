@@ -11,6 +11,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -424,7 +425,9 @@ public class ParkMe implements EntryPoint {
 							}
 							else {
 								double avg = totalPrice/i;
-								avgPrice.setText("Average Price within " + Double.toString(radius) + " of " + addr + ": $" + avg + "/hr");
+								NumberFormat fmt = NumberFormat.getFormat("0.00");
+								String avgP = fmt.format(avg);
+								avgPrice.setText("Average Price within " + Double.toString(radius) + " of " + addr + ": $" + avgP + "/hr");
 							}
 							
 						}
@@ -466,6 +469,7 @@ public class ParkMe implements EntryPoint {
 		// Update max price value label when slider moves
 		priceFilterSlider.addBarValueChangedHandler(new BarValueChangedHandler() {
 			public void onBarValueChanged(BarValueChangedEvent event) {
+				// NOTE: this doesn't work! it shows 10, 20 instead of 1.0 and 2.0
 				maxPriceValueLabel.setText("$" + ((double)event.getValue())/2 + "0");  // Divide by two to get non-integer prices
 			}
 		});

@@ -40,17 +40,7 @@ public class ParkingLocServiceImpl extends RemoteServiceServlet implements Parki
 			double endLat = parking.getEndLat();
 			double endLong = parking.getEndLong();
 			String street = parking.getStreet();
-			
-			String color = "black";
-			if (price < 2) {
-				color = "#66CD00";
-			} else if (price < 3 && price >= 2) {
-				color = "#FFE303";
-			} else if (price >= 3 && price < 4) {
-				color = "#FF7F24";
-			} else if (price >= 4) {
-				color = "#FF0000";
-			}
+			String color = parking.getColor();
 			
 			parkingLoc = new ParkingLocation(parkingID, price,
 					limit, startLat, startLong, endLat, endLong, street, color);
