@@ -14,6 +14,7 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -102,7 +103,7 @@ public class ParkMe implements EntryPoint {
 	private HorizontalPanel timePanel = new HorizontalPanel();
 	private HorizontalPanel radiusPanel = new HorizontalPanel();
 	
-	private HorizontalPanel filterPanel = new HorizontalPanel();
+	private AbsolutePanel filterPanel = new AbsolutePanel();
 
 	private Button loadDataButton = new Button("Load Data");
 	private Button displayDataButton = new Button("Display All Data");
@@ -170,7 +171,7 @@ public class ParkMe implements EntryPoint {
 		addListenersToSliders();
 		initializeSliderValues();
 		//downloadData();
-		filterParkings();
+		//filterParkings();
 	}
 	
 	private void initializeSliderValues() {
@@ -530,27 +531,41 @@ public class ParkMe implements EntryPoint {
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		RootPanel.get("parkMe").add(mainPanel);
 
-		pricePanel.add(maxPriceLabel);
-		pricePanel.add(priceFilterSlider);
-		pricePanel.add(maxPriceValueLabel);
-
-		timePanel.add(minTimeLabel);
-		timePanel.add(timeFilterSlider);
-		timePanel.add(minTimeValueLabel);
-
-		radiusPanel.add(maxRadiusLabel);
-		radiusPanel.add(radiusFilterSlider);
-		radiusPanel.add(maxRadiusValueLabel);
-
+//		pricePanel.add(maxPriceLabel);
+//		pricePanel.add(priceFilterSlider);
+//		pricePanel.add(maxPriceValueLabel);
+//
+//		timePanel.add(minTimeLabel);
+//		timePanel.add(timeFilterSlider);
+//		timePanel.add(minTimeValueLabel);
+//
+//		radiusPanel.add(maxRadiusLabel);
+//		radiusPanel.add(radiusFilterSlider);
+//		radiusPanel.add(maxRadiusValueLabel);
+		
+		// Set up filterPanel
+		filterPanel.setSize("450px", "100px");
+		filterPanel.addStyleName("filterPanel");
+		filterPanel.add(maxPriceLabel, 1, 10);
+		filterPanel.add(minTimeLabel, 1, 40);
+		filterPanel.add(maxRadiusLabel, 1, 70);
+		filterPanel.add(priceFilterSlider, 130, 15);
+		filterPanel.add(timeFilterSlider, 130, 45);
+		filterPanel.add(radiusFilterSlider, 130, 75);
+		filterPanel.add(maxPriceValueLabel, 350, 10);
+		filterPanel.add(minTimeValueLabel, 350, 40);
+		filterPanel.add(maxRadiusValueLabel, 350, 70);
+		
 		searchBox.setHeight("1em");
 		searchPanel.add(searchLabel);
 		searchPanel.add(searchBox);
 		searchPanel.add(searchButton);
 
 		mainPanel.add(searchPanel);
-		mainPanel.add(pricePanel);
-		mainPanel.add(timePanel);
-		mainPanel.add(radiusPanel);
+//		mainPanel.add(pricePanel);
+//		mainPanel.add(timePanel);
+//		mainPanel.add(radiusPanel);
+		mainPanel.add(filterPanel);
 
 		// ADMIN CONTROLS:
 		  tabPanel.add(loadDataButton);
