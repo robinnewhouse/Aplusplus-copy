@@ -2,6 +2,9 @@
 <module rename-to='parkme'>
 	<!-- Inherit the core Web Toolkit stuff. -->
 	<inherits name='com.google.gwt.user.User' />
+	
+	<!-- Inherit NumberFormat for displaying prices -->
+	<!-- <inherits name='com.google.gwt.i18n.client.NumberFormat' /> -->
 
 	<!-- Inherit the default GWT style sheet. You can change -->
 	<!-- the theme of your GWT application by uncommenting -->

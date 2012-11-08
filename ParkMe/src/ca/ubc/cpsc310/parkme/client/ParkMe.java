@@ -469,8 +469,10 @@ public class ParkMe implements EntryPoint {
 		// Update max price value label when slider moves
 		priceFilterSlider.addBarValueChangedHandler(new BarValueChangedHandler() {
 			public void onBarValueChanged(BarValueChangedEvent event) {
-				// NOTE: this doesn't work! it shows 10, 20 instead of 1.0 and 2.0
-				maxPriceValueLabel.setText("$" + ((double)event.getValue())/2 + "0");  // Divide by two to get non-integer prices
+				
+				double maxPrice = ((double)event.getValue())/2; // Divide by two to get non-integer prices
+				String formatted = NumberFormat.getFormat("#0.00").format(maxPrice);
+				maxPriceValueLabel.setText("$" + formatted);
 			}
 		});
 
