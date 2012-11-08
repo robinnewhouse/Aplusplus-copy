@@ -69,6 +69,7 @@ public class ParkMe implements EntryPoint {
 
 	// STATISTICS
 	private ScrollPanel statsScroll = new ScrollPanel();
+	
 	// average price
 	private VerticalPanel avgPriceVP = new VerticalPanel();
 	private Label avgPriceLabel = new Label("Enter an address to calculate the average price around that location:");
