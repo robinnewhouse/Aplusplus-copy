@@ -73,14 +73,27 @@ public class FilterServiceImpl extends RemoteServiceServlet implements
 			double ctrLng = crit.getCtrLng();
 			
 			List<ParkingLoc> parkingLocs = new ArrayList<ParkingLoc>();
-			for (ParkingLoc p : parkingLocsPrice) {
-				if (p.getLimit() >= minTime && isInRadius(p, radius, ctrLat, ctrLng)) {
-					parkingLocs.add(p);
-					//System.out.println(p.getStreet() + " matches criteria");
+			
+			// Filter without search location
+			if (radius == 99999999) {
+				for (ParkingLoc p : parkingLocsPrice) {
+					if (p.getLimit() >= minTime) {
+						parkingLocs.add(p);
+						//System.out.println(p.getStreet() + " matches criteria");
+					}
+					//System.out.println(p.getStreet() + " does not match criteria");
 				}
-				//System.out.println(p.getStreet() + " does not match criteria");
+			} 
+			// Filter with search location and radius
+			else {
+				for (ParkingLoc p : parkingLocsPrice) {
+					if (p.getLimit() >= minTime && isInRadius(p, radius, ctrLat, ctrLng)) {
+						parkingLocs.add(p);
+						//System.out.println(p.getStreet() + " matches criteria");
+					}
+					//System.out.println(p.getStreet() + " does not match criteria");
+				}
 			}
-
 			int size = parkingLocs.size();
 
 			parkingLocArray = new ParkingLocation[size];

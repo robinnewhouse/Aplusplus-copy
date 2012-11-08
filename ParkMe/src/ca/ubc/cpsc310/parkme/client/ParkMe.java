@@ -114,6 +114,7 @@ public class ParkMe implements EntryPoint {
 	private MapOperater mapOperator;
 	private HorizontalPanel tabPanel = new HorizontalPanel();
 	private GoogleMap theMap;
+	private double defaultZoom = 11;
 	private HorizontalPanel mainHorzPanel = new HorizontalPanel();
 	private VerticalPanel rightVertPanel = new VerticalPanel();
 	private Label titleLabel = new Label("Park Me");
@@ -510,7 +511,7 @@ public class ParkMe implements EntryPoint {
 		// Set up map options
 		MapOptions options = MapOptions.create();
 		options.setCenter(LatLng.create(49.251, -123.119));
-		options.setZoom(11);
+		options.setZoom(defaultZoom);
 		options.setMapTypeId(MapTypeId.ROADMAP);
 		options.setDraggable(true);
 		options.setMapTypeControl(true);
@@ -552,8 +553,8 @@ public class ParkMe implements EntryPoint {
 		mainPanel.add(radiusPanel);
 
 		// ADMIN CONTROLS:
-		//  tabPanel.add(loadDataButton);
-		//  tabPanel.add(getAddressesButton);
+		  tabPanel.add(loadDataButton);
+		  tabPanel.add(getAddressesButton);
 		tabPanel.add(setColor);
 		tabPanel.add(displayDataButton);
 		tabPanel.add(clearDataButton);
@@ -679,6 +680,7 @@ public class ParkMe implements EntryPoint {
 
 	private void displayParkings(ParkingLocation[] parkingLocs) {
 		mapOperator.clearMap();
+		System.out.println("Map cleared; about to display parkings");
 		for (ParkingLocation p : parkingLocs) {
 			displayParking(p);
 		}
@@ -696,7 +698,7 @@ public class ParkMe implements EntryPoint {
 		info.add(rate);
 		info.add(limit);
 		int row = resultsFlexTable.getRowCount();
-
+		
 		if (parkingLoc.getColor().equals("#66CD00")) {
 			resultsFlexTable.getRowFormatter().addStyleName(row, "parking1");
 		} else if (parkingLoc.getColor().equals("#9BD500")) {
@@ -723,8 +725,6 @@ public class ParkMe implements EntryPoint {
 
 		addHandler(addFaveButton, parkingLoc);
 
-
-
 		mapOperator.drawOnMap(parkingLoc, infoWindow, addFaveButton);
 		idList.add(parkingLoc.getParkingID());
 		System.out.println("Currently printing parking " + parkingLoc.getParkingID());
@@ -733,36 +733,26 @@ public class ParkMe implements EntryPoint {
 	private void filterParkings() {
 		LatLng searchPoint;
 
-		if (searchBox.getText().equals("") ) { // && (searchResult.length()==0)
-			System.out.println("Centering it to downtown");
-			searchPoint = LatLng.create(49.2814,-123.12);
-			
-			// Display all parking locations
-			ParkingLocation[] allParkingsArray = allParkings.toArray(new ParkingLocation[allParkings.size()]);
-			displayParkings(allParkingsArray);
-			System.out.println("All parking locations displayed");
-		}
-
-		else {
-			searchPoint = searchResult.get(0).getGeometry().getLocation();
-			System.out.println("Filtering for results around " + searchResult.get(0).getFormattedAddress());
-		}
-
 		double maxPrice = (double)(priceFilterSlider.getValue()/2); // Divide by two to get non-integer prices
 		double minTime = (double)timeFilterSlider.getValue();
 		double maxRadius;
 
 		if (searchBox.getText().equals("")) {
+			System.out.println("Centering it to downtown");
+			searchPoint = LatLng.create(49.2814,-123.12);
 			maxRadius = 99999999;
 			mapOperator.clearCircle();
+			theMap.setZoom(defaultZoom);
 		} else {
+			searchPoint = searchResult.get(0).getGeometry().getLocation();
+			System.out.println("Filtering for results around " + searchResult.get(0).getFormattedAddress());
 			maxRadius = (double)radiusFilterSlider.getValue();
 			mapOperator.drawCircle(searchPoint, maxRadius);
-
-			/**
-			 * 
-			 * client side filtering 
-			 *
+		}
+		/**
+		 * 
+		 * client side filtering 
+		 *
 		List<ParkingLocation> filtered = new ArrayList<ParkingLocation>();
 		for (int i = 0; i < totalNum; i++) {
 			ParkingLocation p = allParkings.get(i);
@@ -782,32 +772,32 @@ public class ParkMe implements EntryPoint {
 			resultsFlexTable.setText(0, 0, length + " results found.");
 			displayParkings(parkingLoc);
 		}
-			 */
+		 */
 
-			Criteria crit = new Criteria(maxRadius, maxPrice, minTime, searchPoint.lat(), searchPoint.lng());
-			System.out.println("Filtering with maxPrice = " + maxPrice + " and minTime = " + minTime + " and maxRadius = " + maxRadius);
-			filterService.getParking(crit, new AsyncCallback<ParkingLocation[]>() {
+		Criteria crit = new Criteria(maxRadius, maxPrice, minTime, searchPoint.lat(), searchPoint.lng());
+		System.out.println("Filtering with maxPrice = " + maxPrice + " and minTime = " + minTime + " and maxRadius = " + maxRadius);
+		filterService.getParking(crit, new AsyncCallback<ParkingLocation[]>() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					Window.alert("Error getting parking");
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Error getting parking");
+			}
+
+			@Override
+			public void onSuccess(ParkingLocation[] result) {
+				// Window.alert("Successfully displayed filtered data");
+
+				int length = result.length;
+				System.out.println("Found " + length + " results matching criteria");
+				resultsFlexTable.removeAllRows();
+				idList.clear();
+				if (length == 0) {
+					resultsFlexTable.setText(0, 0, "No results found.");
+				} else {
+					displayParkings(result);
 				}
-
-				@Override
-				public void onSuccess(ParkingLocation[] result) {
-					// Window.alert("Successfully displayed filtered data");
-
-					int length = result.length;
-					resultsFlexTable.removeAllRows();
-					idList.clear();
-					if (length == 0) {
-						resultsFlexTable.setText(0, 0, "No results found.");
-					} else {
-						displayParkings(result);
-					}
-				}
-			});
-		}
+			}
+		});
 	}
 
 	private void getLocations(final ParkingLocation[] parkingLocs) {
