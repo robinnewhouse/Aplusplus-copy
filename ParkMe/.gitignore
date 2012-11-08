@@ -17,3 +17,4 @@ Thumbs.db
 /.gwt
 /gwt-unitCache
 war/WEB-INF/appengine-generated/*
+/.classpath
