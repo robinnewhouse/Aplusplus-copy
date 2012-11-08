@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasVerticalAlignment.VerticalAlignmentConstant;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -444,7 +445,7 @@ public class ParkMe implements EntryPoint {
 								double avg = totalPrice/i;
 								NumberFormat fmt = NumberFormat.getFormat("0.00");
 								String avgP = fmt.format(avg);
-								avgPrice.setText("Average Price within " + Double.toString(radius) + " of " + addr + ": $" + avgP + "/hr");
+								avgPrice.setText("Average Price within " + Double.toString(radius) + "m of " + addr + ": $" + avgP + "/hr");
 							}
 							
 						}
@@ -568,9 +569,9 @@ public class ParkMe implements EntryPoint {
 		mainPanel.add(filterPanel);
 
 		// ADMIN CONTROLS:
-		  tabPanel.add(loadDataButton);
-		  tabPanel.add(getAddressesButton);
-		tabPanel.add(setColor);
+		//  tabPanel.add(loadDataButton);
+		//  tabPanel.add(getAddressesButton);
+		//  tabPanel.add(setColor);
 		tabPanel.add(displayDataButton);
 		tabPanel.add(clearDataButton);
 		tabPanel.add(filterButton);
@@ -706,6 +707,7 @@ public class ParkMe implements EntryPoint {
 		VerticalPanel info = new VerticalPanel();
 
 		// Exception in this line when I try to display all data:
+		// this exception only seems to occur on development mode-- and not appengine.
 		HTML street = new HTML("<b>" + parkingLoc.getStreet() + "</b>");
 		HTML rate = new HTML("<u>Rate:</u> $" + parkingLoc.getPrice() + "/hr");
 		HTML limit = new HTML("<u>Limit:</u> " + parkingLoc.getLimit() + "hr/s");
@@ -763,6 +765,7 @@ public class ParkMe implements EntryPoint {
 			System.out.println("Filtering for results around " + searchResult.get(0).getFormattedAddress());
 			maxRadius = (double)radiusFilterSlider.getValue();
 			mapOperator.drawCircle(searchPoint, maxRadius);
+			
 		}
 		/**
 		 * 

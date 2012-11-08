@@ -85,6 +85,7 @@ public class MapOperater {
 		options.setStrokeOpacity(.5);
 		options.setStrokeWeight(1);
 		options.setFillOpacity(.1);
+		options.setZindex(-1);
 		circle.setOptions(options);
 	}
 	
