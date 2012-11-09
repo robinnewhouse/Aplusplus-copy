@@ -120,3 +120,6 @@ ParkMe/war/WEB-INF/deploy/parkme/symbolMaps/D4D0D0614D5DED7D4A9C70621DDDEF75.sym
 *.symbolMap
 
 ParkMe/.gwt/.gwt-log
+
+ParkMe/.classpath
+ParkMe/.settings/*

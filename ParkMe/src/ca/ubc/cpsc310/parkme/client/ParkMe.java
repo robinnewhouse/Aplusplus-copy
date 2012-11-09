@@ -1,6 +1,5 @@
 package ca.ubc.cpsc310.parkme.client;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,14 +10,17 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasVerticalAlignment.VerticalAlignmentConstant;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -88,7 +90,7 @@ public class ParkMe implements EntryPoint {
 
 	private Slider priceFilterSlider = new Slider(10);
 	private Slider timeFilterSlider = new Slider(5);
-	private Slider radiusFilterSlider = new Slider(500);
+	private Slider radiusFilterSlider = new Slider(750);
 
 	private Label maxPriceLabel = new Label("Maximum Price: ");
 	private Label maxRadiusLabel = new Label("Walking Distance:");
@@ -101,6 +103,8 @@ public class ParkMe implements EntryPoint {
 	private HorizontalPanel pricePanel = new HorizontalPanel();
 	private HorizontalPanel timePanel = new HorizontalPanel();
 	private HorizontalPanel radiusPanel = new HorizontalPanel();
+	
+	private AbsolutePanel filterPanel = new AbsolutePanel();
 
 	private Button loadDataButton = new Button("Load Data");
 	private Button displayDataButton = new Button("Display All Data");
@@ -112,6 +116,7 @@ public class ParkMe implements EntryPoint {
 	private MapOperater mapOperator;
 	private HorizontalPanel tabPanel = new HorizontalPanel();
 	private GoogleMap theMap;
+	private double defaultZoom = 11;
 	private HorizontalPanel mainHorzPanel = new HorizontalPanel();
 	private VerticalPanel rightVertPanel = new VerticalPanel();
 	private Label titleLabel = new Label("Park Me");
@@ -165,7 +170,21 @@ public class ParkMe implements EntryPoint {
 		addListenersToButtons();
 		addListenerToResults();
 		addListenersToSliders();
+		initializeSliderValues();
 		//downloadData();
+		//filterParkings();
+	}
+	
+	private void initializeSliderValues() {
+		// TODO: Get user's last search criteria or defaults
+		int initMaxPrice = priceFilterSlider.getMaxValue();
+		int initMinTime = 0;
+		int initMaxRadius = radiusFilterSlider.getMaxValue();
+		
+		// Set slider values:
+		priceFilterSlider.setValue(initMaxPrice);
+		timeFilterSlider.setValue(initMinTime);
+		radiusFilterSlider.setValue(initMaxRadius);
 	}
 
 	private void initializeFlexTables() {
@@ -283,7 +302,7 @@ public class ParkMe implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				String address = searchBox.getText();
 				if (address.equals("")) {	
-					displayFilter();
+					filterParkings();
 				}
 				else {searchLoc(address);}
 				//displayFilter();
@@ -424,7 +443,9 @@ public class ParkMe implements EntryPoint {
 							}
 							else {
 								double avg = totalPrice/i;
-								avgPrice.setText("Average Price within " + Double.toString(radius) + " of " + addr + ": $" + avg + "/hr");
+								NumberFormat fmt = NumberFormat.getFormat("0.00");
+								String avgP = fmt.format(avg);
+								avgPrice.setText("Average Price within " + Double.toString(radius) + "m of " + addr + ": $" + avgP + "/hr");
 							}
 							
 						}
@@ -466,7 +487,10 @@ public class ParkMe implements EntryPoint {
 		// Update max price value label when slider moves
 		priceFilterSlider.addBarValueChangedHandler(new BarValueChangedHandler() {
 			public void onBarValueChanged(BarValueChangedEvent event) {
-				maxPriceValueLabel.setText("$" + ((double)event.getValue())/2 + "0");  // Divide by two to get non-integer prices
+				
+				double maxPrice = ((double)event.getValue())/2; // Divide by two to get non-integer prices
+				String formatted = NumberFormat.getFormat("#0.00").format(maxPrice);
+				maxPriceValueLabel.setText("$" + formatted + " / hr");
 			}
 		});
 
@@ -489,7 +513,7 @@ public class ParkMe implements EntryPoint {
 		// Set up map options
 		MapOptions options = MapOptions.create();
 		options.setCenter(LatLng.create(49.251, -123.119));
-		options.setZoom(11);
+		options.setZoom(defaultZoom);
 		options.setMapTypeId(MapTypeId.ROADMAP);
 		options.setDraggable(true);
 		options.setMapTypeControl(true);
@@ -508,32 +532,46 @@ public class ParkMe implements EntryPoint {
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		RootPanel.get("parkMe").add(mainPanel);
 
-		pricePanel.add(maxPriceLabel);
-		pricePanel.add(priceFilterSlider);
-		pricePanel.add(maxPriceValueLabel);
-
-		timePanel.add(minTimeLabel);
-		timePanel.add(timeFilterSlider);
-		timePanel.add(minTimeValueLabel);
-
-		radiusPanel.add(maxRadiusLabel);
-		radiusPanel.add(radiusFilterSlider);
-		radiusPanel.add(maxRadiusValueLabel);
-
+//		pricePanel.add(maxPriceLabel);
+//		pricePanel.add(priceFilterSlider);
+//		pricePanel.add(maxPriceValueLabel);
+//
+//		timePanel.add(minTimeLabel);
+//		timePanel.add(timeFilterSlider);
+//		timePanel.add(minTimeValueLabel);
+//
+//		radiusPanel.add(maxRadiusLabel);
+//		radiusPanel.add(radiusFilterSlider);
+//		radiusPanel.add(maxRadiusValueLabel);
+		
+		// Set up filterPanel
+		filterPanel.setSize("450px", "100px");
+		filterPanel.addStyleName("filterPanel");
+		filterPanel.add(maxPriceLabel, 1, 10);
+		filterPanel.add(minTimeLabel, 1, 40);
+		filterPanel.add(maxRadiusLabel, 1, 70);
+		filterPanel.add(priceFilterSlider, 130, 15);
+		filterPanel.add(timeFilterSlider, 130, 45);
+		filterPanel.add(radiusFilterSlider, 130, 75);
+		filterPanel.add(maxPriceValueLabel, 350, 10);
+		filterPanel.add(minTimeValueLabel, 350, 40);
+		filterPanel.add(maxRadiusValueLabel, 350, 70);
+		
 		searchBox.setHeight("1em");
 		searchPanel.add(searchLabel);
 		searchPanel.add(searchBox);
 		searchPanel.add(searchButton);
 
 		mainPanel.add(searchPanel);
-		mainPanel.add(pricePanel);
-		mainPanel.add(timePanel);
-		mainPanel.add(radiusPanel);
+//		mainPanel.add(pricePanel);
+//		mainPanel.add(timePanel);
+//		mainPanel.add(radiusPanel);
+		mainPanel.add(filterPanel);
 
 		// ADMIN CONTROLS:
 		//  tabPanel.add(loadDataButton);
 		//  tabPanel.add(getAddressesButton);
-		tabPanel.add(setColor);
+		//  tabPanel.add(setColor);
 		tabPanel.add(displayDataButton);
 		tabPanel.add(clearDataButton);
 		tabPanel.add(filterButton);
@@ -658,6 +696,7 @@ public class ParkMe implements EntryPoint {
 
 	private void displayParkings(ParkingLocation[] parkingLocs) {
 		mapOperator.clearMap();
+		System.out.println("Map cleared; about to display parkings");
 		for (ParkingLocation p : parkingLocs) {
 			displayParking(p);
 		}
@@ -668,6 +707,7 @@ public class ParkMe implements EntryPoint {
 		VerticalPanel info = new VerticalPanel();
 
 		// Exception in this line when I try to display all data:
+		// this exception only seems to occur on development mode-- and not appengine.
 		HTML street = new HTML("<b>" + parkingLoc.getStreet() + "</b>");
 		HTML rate = new HTML("<u>Rate:</u> $" + parkingLoc.getPrice() + "/hr");
 		HTML limit = new HTML("<u>Limit:</u> " + parkingLoc.getLimit() + "hr/s");
@@ -675,7 +715,7 @@ public class ParkMe implements EntryPoint {
 		info.add(rate);
 		info.add(limit);
 		int row = resultsFlexTable.getRowCount();
-
+		
 		if (parkingLoc.getColor().equals("#66CD00")) {
 			resultsFlexTable.getRowFormatter().addStyleName(row, "parking1");
 		} else if (parkingLoc.getColor().equals("#9BD500")) {
@@ -702,45 +742,31 @@ public class ParkMe implements EntryPoint {
 
 		addHandler(addFaveButton, parkingLoc);
 
-
-
 		mapOperator.drawOnMap(parkingLoc, infoWindow, addFaveButton);
 		idList.add(parkingLoc.getParkingID());
 		System.out.println("Currently printing parking " + parkingLoc.getParkingID());
 	}
 
-	private void displayFilter() {
+	private void filterParkings() {
 		LatLng searchPoint;
-
-		//		if (priceFilterSlider.getText().equals("") || timeFilterTextBox.getText().equals("")) {
-		//			resultsFlexTable.removeAllRows();
-		//			idList.clear();
-		//			resultsFlexTable.setText(0, 0, "Please enter values above.");
-		//			return;
-		//		}
-
-		if (searchBox.getText().equals("") ) { // && (searchResult.length()==0)
-			System.out.println("Centering it to downtown");
-			searchPoint = LatLng.create(49.2814,-123.12);
-		}
-
-		else {
-			searchPoint = searchResult.get(0).getGeometry().getLocation();
-			System.out.println("Filtering for results around " + searchResult.get(0).getFormattedAddress());
-		}
 
 		double maxPrice = (double)(priceFilterSlider.getValue()/2); // Divide by two to get non-integer prices
 		double minTime = (double)timeFilterSlider.getValue();
 		double maxRadius;
 
 		if (searchBox.getText().equals("")) {
+			System.out.println("Centering it to downtown");
+			searchPoint = LatLng.create(49.2814,-123.12);
 			maxRadius = 99999999;
 			mapOperator.clearCircle();
+			theMap.setZoom(defaultZoom);
 		} else {
+			searchPoint = searchResult.get(0).getGeometry().getLocation();
+			System.out.println("Filtering for results around " + searchResult.get(0).getFormattedAddress());
 			maxRadius = (double)radiusFilterSlider.getValue();
 			mapOperator.drawCircle(searchPoint, maxRadius);
+			
 		}
-
 		/**
 		 * 
 		 * client side filtering 
@@ -780,6 +806,7 @@ public class ParkMe implements EntryPoint {
 				// Window.alert("Successfully displayed filtered data");
 
 				int length = result.length;
+				System.out.println("Found " + length + " results matching criteria");
 				resultsFlexTable.removeAllRows();
 				idList.clear();
 				if (length == 0) {
@@ -926,7 +953,7 @@ public class ParkMe implements EntryPoint {
 					infoWindow.setContent(new Label(addr));
 					infoWindow.setPosition(latlong);
 					infoWindow.open(theMap);
-					displayFilter();
+					filterParkings();
 				}
 			}
 		});
