@@ -623,6 +623,8 @@ public class ParkMe implements EntryPoint {
 
 
 		// Set sizes for elements
+		
+		
 
 		String scrollHeight = Window.getClientHeight() - 265 + "px";
 		String scrollWidth = 0.3 * Window.getClientWidth() - 30 + "px";
@@ -637,9 +639,13 @@ public class ParkMe implements EntryPoint {
 		histFlexTable.setSize(scrollWidth, "100%");
 		mainHorzPanel.setSize("100%", Window.getClientHeight() - 225 + "px");
 		rightVertPanel.setSize(0.7 * Window.getClientWidth() - 20 + "px", "100%");
+		 
+		
 		mapPanel.setSize("100%", "100%");
 		mainPanel.setSpacing(10);
 		mapPanel.setBorderWidth(1);
+		
+		
 	}
 
 	private void loadData() {
@@ -784,6 +790,7 @@ public class ParkMe implements EntryPoint {
 		}
 
 		int length = filtered.size();
+	
 		System.out.println("Found " + length + " results matching criteria");
 		resultsFlexTable.removeAllRows();
 		idList.clear();
