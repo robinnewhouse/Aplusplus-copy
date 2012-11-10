@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment.VerticalAlignmentConstant;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -83,6 +84,10 @@ public class ParkMe implements EntryPoint {
 	private Geocoder geocoder = Geocoder.create();
 	private MyInfoWindow infoWindow = MyInfoWindow.create(0L);
 	private boolean zoom = false;
+	
+	// SORTING
+	private Label sortLabel = new Label("Sort by:");
+	private ListBox sortBox = new ListBox();
 
 	// FILTER UI STUFF
 	private Button setColor = new Button("Set Colors");
@@ -101,27 +106,27 @@ public class ParkMe implements EntryPoint {
 	private Label minTimeValueLabel = new Label("");
 	private Label maxRadiusValueLabel = new Label("");
 
-	private HorizontalPanel pricePanel = new HorizontalPanel();
-	private HorizontalPanel timePanel = new HorizontalPanel();
-	private HorizontalPanel radiusPanel = new HorizontalPanel();
-
 	private AbsolutePanel filterPanel = new AbsolutePanel();
 
 	private Button loadDataButton = new Button("Load Data");
 	private Button displayDataButton = new Button("Display All Data");
 	private Button clearDataButton = new Button("Clear Data");
-	private VerticalPanel mainPanel = new VerticalPanel();
+	private HorizontalPanel mainPanel = new HorizontalPanel();
 	private Button filterButton = new Button("Filter Results");
 	private Button downloadData = new Button("Download Data to Client");
 
+	// MAP
 	private MapOperater mapOperator;
-	private HorizontalPanel tabPanel = new HorizontalPanel();
 	private GoogleMap theMap;
 	private double defaultZoom = 11;
-	private HorizontalPanel mainHorzPanel = new HorizontalPanel();
-	private VerticalPanel rightVertPanel = new VerticalPanel();
+	
+	// MAIN PANELS
+	private VerticalPanel leftVertPanel = new VerticalPanel();
+	private AbsolutePanel mapPanel = new AbsolutePanel();
+	private VerticalPanel rightVertPanel = new VerticalPanel();  // delete this
 	private Label titleLabel = new Label("Park Me");
 
+	// SEARCHING
 	private HorizontalPanel searchPanel = new HorizontalPanel();
 	private TextBox searchBox = new TextBox();
 	private Label searchLabel = new Label("Enter Address: ");
@@ -132,9 +137,6 @@ public class ParkMe implements EntryPoint {
 
 	// The most recent location searched for
 	private JsArray<GeocoderResult> searchResult;
-
-	private VerticalPanel mapPanel = new VerticalPanel();
-
 
 	private final LoadDataServiceAsync loadDataService = GWT.create(LoadDataService.class);
 	private final FilterServiceAsync filterService = GWT.create(FilterService.class);
@@ -172,8 +174,8 @@ public class ParkMe implements EntryPoint {
 		addListenerToResults();
 		addListenersToSliders();
 		initializeSliderValues();
-		downloadData();
-		displayData();
+//		downloadData();
+//		displayData();
 	}
 
 	private void initializeSliderValues() {
@@ -527,18 +529,6 @@ public class ParkMe implements EntryPoint {
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		RootPanel.get("parkMe").add(mainPanel);
 
-		//		pricePanel.add(maxPriceLabel);
-		//		pricePanel.add(priceFilterSlider);
-		//		pricePanel.add(maxPriceValueLabel);
-		//
-		//		timePanel.add(minTimeLabel);
-		//		timePanel.add(timeFilterSlider);
-		//		timePanel.add(minTimeValueLabel);
-		//
-		//		radiusPanel.add(maxRadiusLabel);
-		//		radiusPanel.add(radiusFilterSlider);
-		//		radiusPanel.add(maxRadiusValueLabel);
-
 		// Set up filterPanel
 		filterPanel.setSize("450px", "100px");
 		filterPanel.addStyleName("filterPanel");
@@ -551,7 +541,14 @@ public class ParkMe implements EntryPoint {
 		filterPanel.add(maxPriceValueLabel, 350, 10);
 		filterPanel.add(minTimeValueLabel, 350, 40);
 		filterPanel.add(maxRadiusValueLabel, 350, 70);
+		
+		// Set up sortBox
+		sortBox.addItem("Price");
+		sortBox.addItem("Time Limit");
+		sortBox.addItem("Distance");
+		sortBox.setVisibleItemCount(1);
 
+		// Set up searchPanel
 		searchBox.setHeight("1em");
 		//searchPanel.add(searchLabel);
 		searchPanel.add(searchBox);
@@ -560,12 +557,6 @@ public class ParkMe implements EntryPoint {
 		searchPanel.add(signOutLink);
 
 		searchLabel.setText("Enter Address (or leave blank to search whole Vancouver):");
-		mainPanel.add(searchLabel);
-		mainPanel.add(searchPanel);
-		//		mainPanel.add(pricePanel);
-		//		mainPanel.add(timePanel);
-		//		mainPanel.add(radiusPanel);
-		mainPanel.add(filterPanel);
 
 		// ADMIN CONTROLS:
 		//  tabPanel.add(loadDataButton);
@@ -577,7 +568,6 @@ public class ParkMe implements EntryPoint {
 		//  tabPanel.add(downloadData);
 		// tabPanel.add(signOutLink);
 
-		mainPanel.add(tabPanel);
 		resultsFlexTable.setCellPadding(5);
 		faveFlexTable.setCellPadding(5);
 		histFlexTable.setCellPadding(5);
@@ -613,18 +603,17 @@ public class ParkMe implements EntryPoint {
 		flowpanel.add(statsScroll);
 		tabs.add(flowpanel, "Statistics");
 
-
-
 		tabs.selectTab(0);
-		mainHorzPanel.add(tabs);
-
-		mainHorzPanel.add(rightVertPanel);
-		mainPanel.add(mainHorzPanel);
-
+		
+		// Put together main panels
+		leftVertPanel.add(searchLabel);
+		leftVertPanel.add(searchPanel);
+		leftVertPanel.add(filterPanel);
+		leftVertPanel.add(tabs);
+		mainPanel.add(leftVertPanel);
+		mainPanel.add(rightVertPanel);
 
 		// Set sizes for elements
-		
-		
 
 		String scrollHeight = Window.getClientHeight() - 265 + "px";
 		String scrollWidth = 0.3 * Window.getClientWidth() - 30 + "px";
@@ -637,15 +626,13 @@ public class ParkMe implements EntryPoint {
 		resultsFlexTable.setSize(scrollWidth, "100%");
 		faveFlexTable.setSize(scrollWidth, "100%");
 		histFlexTable.setSize(scrollWidth, "100%");
-		mainHorzPanel.setSize("100%", Window.getClientHeight() - 225 + "px");
-		rightVertPanel.setSize(0.7 * Window.getClientWidth() - 20 + "px", "100%");
-		 
+		leftVertPanel.setSize(0.3 * Window.getClientWidth() + "px", "100%");
+		rightVertPanel.setSize(0.7 * Window.getClientWidth() + "px", Window.getClientHeight() - 20 + "px");
 		
 		mapPanel.setSize("100%", "100%");
-		mainPanel.setSpacing(10);
-		mapPanel.setBorderWidth(1);
-		
-		
+		mainPanel.setSpacing(0);
+		mainPanel.setSize("100%", "100%");
+
 	}
 
 	private void loadData() {
@@ -703,7 +690,7 @@ public class ParkMe implements EntryPoint {
 
 	private void displayParkings(ParkingLocation[] parkingLocs) {
 		mapOperator.clearMap();
-		System.out.println("Map cleared; about to display parkings");
+		
 		for (ParkingLocation p : parkingLocs) {
 			displayParking(p);
 		}
