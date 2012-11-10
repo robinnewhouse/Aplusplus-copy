@@ -1,6 +1,8 @@
 package ca.ubc.cpsc310.parkme.client;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import ca.ubc.cpsc310.parkme.server.ParkingLoc;
@@ -8,6 +10,8 @@ import ca.ubc.cpsc310.parkme.server.ParkingLoc;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -88,6 +92,7 @@ public class ParkMe implements EntryPoint {
 	// SORTING
 	private Label sortLabel = new Label("Sort by:");
 	private ListBox sortBox = new ListBox();
+	private HorizontalPanel sortPanel = new HorizontalPanel();
 
 	// FILTER UI STUFF
 	private Button setColor = new Button("Set Colors");
@@ -273,6 +278,16 @@ public class ParkMe implements EntryPoint {
 	}
 
 	private void addListenersToButtons() {
+		
+		// Listen for events on the sortBox
+		sortBox.addChangeHandler(new ChangeHandler() {
+			public void onChange(ChangeEvent event) {
+				int index = sortBox.getSelectedIndex();
+				List<ParkingLocation> parkingLocations = allParkings;   // This should get the current list of results
+				sortBy(sortBox.getValue(index), parkingLocations);
+			}
+		});
+		
 		// Listen for mouse events on the Load Data button.
 		// In the end, this should only be accessible by an admin
 		loadDataButton.addClickHandler(new ClickHandler() {
@@ -547,6 +562,8 @@ public class ParkMe implements EntryPoint {
 		sortBox.addItem("Time Limit");
 		sortBox.addItem("Distance");
 		sortBox.setVisibleItemCount(1);
+		sortPanel.add(sortLabel);
+		sortPanel.add(sortBox);
 
 		// Set up searchPanel
 		searchBox.setHeight("1em");
@@ -609,6 +626,7 @@ public class ParkMe implements EntryPoint {
 		leftVertPanel.add(searchLabel);
 		leftVertPanel.add(searchPanel);
 		leftVertPanel.add(filterPanel);
+		leftVertPanel.add(sortPanel);
 		leftVertPanel.add(tabs);
 		mainPanel.add(leftVertPanel);
 		mainPanel.add(rightVertPanel);
@@ -658,10 +676,7 @@ public class ParkMe implements EntryPoint {
 		 * Display the data that is downloaded on the client
 		 * 
 		**/
-		resultsFlexTable.removeAllRows();
-		idList.clear();
 		ParkingLocation[] parkingLoc = allParkings.toArray(new ParkingLocation[totalNum]);
-		mapOperator.clearMap();
 		displayParkings(parkingLoc);
 		
 /**
@@ -690,6 +705,8 @@ public class ParkMe implements EntryPoint {
 
 	private void displayParkings(ParkingLocation[] parkingLocs) {
 		mapOperator.clearMap();
+		resultsFlexTable.removeAllRows();
+		idList.clear();
 		
 		for (ParkingLocation p : parkingLocs) {
 			displayParking(p);
@@ -1141,4 +1158,41 @@ public class ParkMe implements EntryPoint {
 		displayFavorite(parkingLoc);
 
 	}
+	
+	// Sort the list of parking locations by price, time limit, or distance
+	private List<ParkingLocation> sortBy(String sortMode, List<ParkingLocation> parkingLocations) {
+		Comparator<ParkingLocation> c = getComparator(sortMode);
+		Collections.sort(parkingLocations, c);
+		return parkingLocations;
+	}
+	
+	private Comparator<ParkingLocation> getComparator(String sortParam) {
+		if ("Price".equals(sortParam)) {
+			return new Comparator<ParkingLocation>() {
+				@Override
+				public int compare(ParkingLocation o1, ParkingLocation o2) {
+					return new Double(o1.getPrice()).compareTo(new Double(o2.getPrice()));
+				}
+			};
+		} else if ("Time Limit".equals(sortParam)) {
+			return new Comparator<ParkingLocation>() {
+				@Override
+				public int compare(ParkingLocation o1, ParkingLocation o2) {
+					return new Double(o1.getLimit()).compareTo(new Double(o2.getLimit()));
+				}
+			};
+		} else if ("Distance".equals(sortParam)) {
+			return new Comparator<ParkingLocation>() {
+				@Override
+				public int compare(ParkingLocation o1, ParkingLocation o2) {
+					// TODO Auto-generated method stub
+					return 0;
+				}
+			};
+		} else {
+			throw new IllegalArgumentException("invalid sort field '" + sortParam + "'");
+		}
+}
+
+
 }
