@@ -100,8 +100,8 @@ public class ParkMe implements EntryPoint {
 	private LoginInfo loginInfo = null;
 
 	private Slider priceFilterSlider = new Slider(10);
-	private Slider timeFilterSlider = new Slider(5);
-	private Slider radiusFilterSlider = new Slider(750);
+	private Slider timeFilterSlider = new Slider(3);
+	private Slider radiusFilterSlider = new Slider(1000);
 
 	private Label maxPriceLabel = new Label("Maximum Price: ");
 	private Label maxRadiusLabel = new Label("Walking Distance:");
@@ -179,8 +179,8 @@ public class ParkMe implements EntryPoint {
 		addListenerToResults();
 		addListenersToSliders();
 		initializeSliderValues();
-//		downloadData();
-//		displayData();
+		downloadData();
+		displayData();
 	}
 
 	private void initializeSliderValues() {
@@ -282,9 +282,8 @@ public class ParkMe implements EntryPoint {
 		// Listen for events on the sortBox
 		sortBox.addChangeHandler(new ChangeHandler() {
 			public void onChange(ChangeEvent event) {
-				int index = sortBox.getSelectedIndex();
-				List<ParkingLocation> parkingLocations = allParkings;   // This should get the current list of results
-				sortBy(sortBox.getValue(index), parkingLocations);
+//				tabs.selectTab(0);
+//				displayParkings();
 			}
 		});
 		
@@ -676,8 +675,8 @@ public class ParkMe implements EntryPoint {
 		 * Display the data that is downloaded on the client
 		 * 
 		**/
-		ParkingLocation[] parkingLoc = allParkings.toArray(new ParkingLocation[totalNum]);
-		displayParkings(parkingLoc);
+//		ParkingLocation[] parkingLoc = allParkings.toArray(new ParkingLocation[totalNum]);
+		displayParkings(allParkings);
 		
 /**
  * server side 
@@ -702,13 +701,15 @@ public class ParkMe implements EntryPoint {
 **/
 
 	}
-
-	private void displayParkings(ParkingLocation[] parkingLocs) {
+	
+	private void displayParkings(List<ParkingLocation> parkingLocations) {
 		mapOperator.clearMap();
 		resultsFlexTable.removeAllRows();
 		idList.clear();
+		int index = sortBox.getSelectedIndex();
+		parkingLocations = sortBy(sortBox.getItemText(index), parkingLocations);
 		
-		for (ParkingLocation p : parkingLocs) {
+		for (ParkingLocation p : parkingLocations) {
 			displayParking(p);
 		}
 	}
@@ -802,8 +803,8 @@ public class ParkMe implements EntryPoint {
 		if (length == 0) {
 			resultsFlexTable.setText(0, 0, "No results found.");
 		} else {
-			ParkingLocation[] parkingLoc = filtered.toArray(new ParkingLocation[length]);
-			displayParkings(parkingLoc);
+//			ParkingLocation[] parkingLoc = filtered.toArray(new ParkingLocation[length]);
+			displayParkings(filtered);
 		}
 
 		/**
@@ -867,8 +868,7 @@ public class ParkMe implements EntryPoint {
 			LatLng latlong = LatLng.create(
 					(parkingLoc.getStartLat() + parkingLoc.getEndLat()) / 2,
 					(parkingLoc.getStartLong() + parkingLoc.getEndLong()) / 2);
-			// LatLng latlong = LatLng.create(parkingLoc.getStartLat(),
-			// parkingLoc.getStartLong());
+
 			GeocoderRequest request = GeocoderRequest.create();
 			request.setLocation(latlong);
 			geocoder.geocode(request, new Geocoder.Callback() {
