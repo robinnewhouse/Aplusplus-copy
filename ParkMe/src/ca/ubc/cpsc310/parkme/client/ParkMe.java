@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import ca.ubc.cpsc310.parkme.server.ParkingLoc;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
@@ -14,6 +12,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -24,7 +24,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasVerticalAlignment.VerticalAlignmentConstant;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -177,10 +176,11 @@ public class ParkMe implements EntryPoint {
 		createMap();
 		addListenersToButtons();
 		addListenerToResults();
-		addListenersToSliders();
+//		addListenerToTabs();
 		initializeSliderValues();
 		downloadData();
 		displayData();
+		addListenersToSliders();
 	}
 
 	private void initializeSliderValues() {
@@ -198,6 +198,24 @@ public class ParkMe implements EntryPoint {
 	private void initializeFlexTables() {
 		showFaves();
 	}
+	
+//	private void addListenerToTabs() {
+//		tabs.addSelectionHandler(new SelectionHandler<Integer>() {
+//			public void onSelection(SelectionEvent<Integer> event) {
+//				switch (event.getSelectedItem()) {
+//				case 0: case 3:
+//					// display search results on map
+//					break;
+//				case 1:
+//					// display favourites on map
+//					break;
+//				case 2:
+//					// display parking history on map
+//					break;
+//				}
+//			}
+//		});
+//	}
 
 	private void addListenerToResults() {
 		resultsFlexTable.addClickHandler(new ClickHandler() {
@@ -502,6 +520,7 @@ public class ParkMe implements EntryPoint {
 				double maxPrice = ((double)event.getValue())/2; // Divide by two to get non-integer prices
 				String formatted = NumberFormat.getFormat("#0.00").format(maxPrice);
 				maxPriceValueLabel.setText("$" + formatted + " / hr");
+				filterParkings();
 			}
 		});
 
@@ -509,6 +528,7 @@ public class ParkMe implements EntryPoint {
 		timeFilterSlider.addBarValueChangedHandler(new BarValueChangedHandler() {
 			public void onBarValueChanged(BarValueChangedEvent event) {
 				minTimeValueLabel.setText(event.getValue() + " hrs");
+				filterParkings();
 			}
 		});
 
@@ -516,6 +536,7 @@ public class ParkMe implements EntryPoint {
 		radiusFilterSlider.addBarValueChangedHandler(new BarValueChangedHandler() {
 			public void onBarValueChanged(BarValueChangedEvent event) {
 				maxRadiusValueLabel.setText(event.getValue() + " m");
+				filterParkings();
 			}
 		});
 	}
@@ -706,11 +727,17 @@ public class ParkMe implements EntryPoint {
 		mapOperator.clearMap();
 		resultsFlexTable.removeAllRows();
 		idList.clear();
-		int index = sortBox.getSelectedIndex();
-		parkingLocations = sortBy(sortBox.getItemText(index), parkingLocations);
-		
-		for (ParkingLocation p : parkingLocations) {
-			displayParking(p);
+
+		if (parkingLocations.size() == 0) {
+			resultsFlexTable.setText(0, 0, "No results found.");
+		} else {
+
+			int index = sortBox.getSelectedIndex();
+			parkingLocations = sortBy(sortBox.getItemText(index), parkingLocations);
+
+			for (ParkingLocation p : parkingLocations) {
+				displayParking(p);
+			}
 		}
 	}
 
@@ -792,20 +819,10 @@ public class ParkMe implements EntryPoint {
 			if ((p.getPrice() <= maxPrice) && (p.getLimit() >= minTime) && isInRadius(p, maxRadius, searchPoint.lat(), searchPoint.lng())) {
 				filtered.add(p);
 			}
+			System.out.println("Found " + filtered.size() + " locations");
 		}
-
-		int length = filtered.size();
-	
-		System.out.println("Found " + length + " results matching criteria");
-		resultsFlexTable.removeAllRows();
-		idList.clear();
-		mapOperator.clearMap();
-		if (length == 0) {
-			resultsFlexTable.setText(0, 0, "No results found.");
-		} else {
-//			ParkingLocation[] parkingLoc = filtered.toArray(new ParkingLocation[length]);
-			displayParkings(filtered);
-		}
+		
+		displayParkings(filtered);
 
 		/**
 		 * 
