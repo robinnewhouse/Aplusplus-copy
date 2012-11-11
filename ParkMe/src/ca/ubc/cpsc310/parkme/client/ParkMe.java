@@ -300,8 +300,8 @@ public class ParkMe implements EntryPoint {
 		// Listen for events on the sortBox
 		sortBox.addChangeHandler(new ChangeHandler() {
 			public void onChange(ChangeEvent event) {
-//				tabs.selectTab(0);
-//				displayParkings();
+				tabs.selectTab(0);
+//				displayParkings(idList);
 			}
 		});
 		
@@ -789,7 +789,8 @@ public class ParkMe implements EntryPoint {
 	private void filterParkings() {
 		LatLng searchPoint;
 
-		double maxPrice = (double)(priceFilterSlider.getValue()/2); // Divide by two to get non-integer prices
+		double maxPrice = ((double)priceFilterSlider.getValue()/2); // Divide by two to get non-integer prices
+		System.out.println(maxPrice);
 		double minTime = (double)timeFilterSlider.getValue();
 		double maxRadius;
 
