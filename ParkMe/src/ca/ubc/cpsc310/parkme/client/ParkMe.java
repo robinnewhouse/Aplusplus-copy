@@ -49,7 +49,6 @@ public class ParkMe implements EntryPoint {
 	private TabPanel tabs = new TabPanel();
 	private FlowPanel flowpanel;
 
-
 	// LOGIN
 	private Anchor signInLink = new Anchor("Sign In");
 	private Anchor signOutLink = new Anchor("Sign Out");
@@ -59,7 +58,7 @@ public class ParkMe implements EntryPoint {
 	// FAVORITES, RESULTS & HISTORY
 	private List<String> faveList = new ArrayList<String>();
 	private List<String> idList = new ArrayList<String>();
-	private List<String> histList = new ArrayList<String>();
+	private List<String> searchHistList = new ArrayList<String>();
 	private ScrollPanel resultsScroll = new ScrollPanel();
 	private ScrollPanel faveScroll = new ScrollPanel();
 	private ScrollPanel histScroll = new ScrollPanel();
@@ -140,6 +139,7 @@ public class ParkMe implements EntryPoint {
 	private final FilterServiceAsync filterService = GWT.create(FilterService.class);
 	private final ParkingLocServiceAsync parkService = GWT.create(ParkingLocService.class);
 	private final FaveAsync fave = GWT.create(Fave.class);
+	private final SearchHistoryServiceAsync searchHistoryService = GWT.create(SearchHistoryService.class);
 
 
 	/**
@@ -190,6 +190,48 @@ public class ParkMe implements EntryPoint {
 
 	private void initializeFlexTables() {
 		showFaves();
+		showSearchHistory();
+	}
+
+	private void showSearchHistory() {
+		searchHistoryService.getHist(new AsyncCallback<ArrayList<String>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Error occurred trying to get search history from server:"+caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(ArrayList<String> result) {
+				searchHistList=result;
+				for(String search: searchHistList)
+					displaySearch(search);
+			}
+		});
+		
+	}
+
+	protected void addSearch(String search) {
+		searchHistList.add(search);
+		displaySearch(search);
+		searchHistoryService.addSearchString(search, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// No Need to do anything - if it fails this is no big deal
+				Window.alert("Failed to add search string to history: "+caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				// No Need to do anything				
+			}
+		});
+	}
+	
+	protected void displaySearch(String search) {
+		int rows = histFlexTable.getRowCount();
+		histFlexTable.setText(rows, 0, search);		
 	}
 
 	private void addListenerToResults() {
@@ -387,7 +429,6 @@ public class ParkMe implements EntryPoint {
 			}
 		});
 
-
 	}
 
 
@@ -475,7 +516,6 @@ public class ParkMe implements EntryPoint {
 		//System.out.println(dist);
 		return dist;
 	}
-
 
 	private void addListenersToSliders() {
 
@@ -971,6 +1011,7 @@ public class ParkMe implements EntryPoint {
 					infoWindow.open(theMap);
 					theMap.setZoom(17);
 					filterParkings();
+					addSearch(address);
 				}
 			}
 		});

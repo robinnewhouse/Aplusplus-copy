@@ -71,6 +71,15 @@
 		<url-pattern>/parkme/fave</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>SearchHistoryServiceImpl</servlet-name>
+		<servlet-class>ca.ubc.cpsc310.parkme.server.SearchHistoryServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>SearchHistoryServiceImpl</servlet-name>
+		<url-pattern>/parkme/SearchHistoryService</url-pattern>
+	</servlet-mapping>
 
 
 	<servlet>
