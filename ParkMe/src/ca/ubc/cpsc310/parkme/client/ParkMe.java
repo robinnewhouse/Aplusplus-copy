@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+
+import ca.ubc.cpsc310.parkme.client.sdk.FBCore;
+import ca.ubc.cpsc310.parkme.client.sdk.FBEvent;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
@@ -50,6 +53,16 @@ import com.kiouri.sliderbar.client.event.BarValueChangedHandler;
  */
 public class ParkMe implements EntryPoint {
 
+	// FACEBOOK EVENT STUFF
+	private static final String apiKey = "464072253644385";
+//	private FBCore fbCore = GWT.create(FBCore.class);
+//	private FBEvent fbEvent = GWT.create(FBEvent.class);
+	
+	private boolean status = true;
+	private boolean xfbml = true;
+	private boolean cookie = true;
+	
+	
 	// TABPANEL
 	private TabPanel tabs = new TabPanel();
 	private FlowPanel flowpanel;
@@ -190,6 +203,8 @@ public class ParkMe implements EntryPoint {
 		initializeSliderValues();
 		downloadData();
 		displayData();
+		//fbCore.init(apiKey, status, cookie, xfbml);
+
 		addListenersToSliders();
 	}
 
