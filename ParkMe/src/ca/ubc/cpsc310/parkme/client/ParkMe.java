@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -53,13 +54,20 @@ public class ParkMe implements EntryPoint {
 	private TabPanel tabs = new TabPanel();
 	private FlowPanel flowpanel;
 
-
 	// LOGIN
 	private Anchor signInLink = new Anchor("Sign In");
 	private Anchor signOutLink = new Anchor("Sign Out");
 	private VerticalPanel loginPanel = new VerticalPanel();
 	private Label loginLabel = new Label("Please sign in to your Google Account to access the ParkMe application.");
 
+	// SET USER TYPE
+	private VerticalPanel setUserPanel = new VerticalPanel();
+	private Label setUserLabel = new Label("Please select what type of user you are:");
+	private RadioButton driverButton = new RadioButton("userTypes", "Driver");
+	private RadioButton busOwnButton = new RadioButton("userTypes", "Business Owner");
+	private RadioButton adminButton = new RadioButton("userTypes", "Administrator");
+	private Button setUserButton = new Button("Continue");
+	
 	// FAVORITES, RESULTS & HISTORY
 	private List<String> faveList = new ArrayList<String>();
 	private List<String> idList = new ArrayList<String>();
@@ -106,9 +114,9 @@ public class ParkMe implements EntryPoint {
 	private Label maxRadiusLabel = new Label("Walking Distance:");
 	private Label minTimeLabel = new Label("Minimum Time Limit: ");
 
-	private Label maxPriceValueLabel = new Label("");
+	private Label maxPriceValueLabel = new Label("$5.00 / hr");
 	private Label minTimeValueLabel = new Label("");
-	private Label maxRadiusValueLabel = new Label("");
+	private Label maxRadiusValueLabel = new Label("1000 m");
 
 	private AbsolutePanel filterPanel = new AbsolutePanel();
 
@@ -122,7 +130,7 @@ public class ParkMe implements EntryPoint {
 	// MAP
 	private MapOperater mapOperator;
 	private GoogleMap theMap;
-	private double defaultZoom = 11;
+	private double defaultZoom = 10;
 	
 	// MAIN PANELS
 	private VerticalPanel leftVertPanel = new VerticalPanel();
@@ -161,10 +169,12 @@ public class ParkMe implements EntryPoint {
 
 			public void onSuccess(LoginInfo result) {
 				loginInfo = result;
-				if(loginInfo.isLoggedIn()) {
-					loadParkMe(); } 
-				else {
+				if(!loginInfo.isLoggedIn()) {
 					loadLogin();
+				} else if (true) {
+					loadSetUserType();
+				} else {
+					loadParkMe();
 				}
 			}
 		});
@@ -183,6 +193,31 @@ public class ParkMe implements EntryPoint {
 		addListenersToSliders();
 	}
 
+	private void loadLogin() {
+		// Assemble login panel.
+		signInLink.setHref(loginInfo.getLoginUrl());
+		loginPanel.add(loginLabel);
+		loginPanel.add(signInLink);
+		RootPanel.get("parkMe").add(loginPanel);
+	}
+	
+	private void loadSetUserType() {
+		setUserPanel.add(setUserLabel);
+		setUserPanel.add(driverButton);
+		setUserPanel.add(busOwnButton);
+		setUserPanel.add(adminButton);
+		setUserPanel.add(setUserButton);
+		RootPanel.get("parkMe").add(setUserPanel);
+		
+		// Listen for mouse events on the Set User Type button.
+		setUserButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				setUserPanel.setVisible(false);
+				loadParkMe();
+			}
+		});
+	}
+	
 	private void initializeSliderValues() {
 		// TODO: Get user's last search criteria or defaults
 		int initMaxPrice = priceFilterSlider.getMaxValue();
@@ -1123,14 +1158,6 @@ public class ParkMe implements EntryPoint {
 		if (faveFlexTable.getRowCount() == 0) {
 			faveFlexTable.setText(0, 0, "You haven't added anything to favorites yet.");
 		}
-	}
-
-	private void loadLogin() {
-		// Assemble login panel.
-		signInLink.setHref(loginInfo.getLoginUrl());
-		loginPanel.add(loginLabel);
-		loginPanel.add(signInLink);
-		RootPanel.get("parkMe").add(loginPanel);
 	}
 
 	private void handleError(Throwable error) {
