@@ -5,6 +5,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.users.User;
+
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class UserInfo {
 	
@@ -12,15 +14,24 @@ public class UserInfo {
 	@Persistent
 	private String username;
 	@Persistent
-	private double radius;
+	private String userType;
+	@Persistent
+	private double maxRadius;
 	@Persistent
 	private double maxPrice;
 	@Persistent
 	private double minTime;
-	@Persistent
-	private String userType;
 	
 	
+	
+	public UserInfo(String username, String usertype, double maxPrice,
+			double minTime, double maxRadius) {
+		this.username = username;
+		this.userType = usertype;
+		this.maxPrice = maxPrice;
+		this.minTime = minTime;
+		this.maxRadius = maxRadius;
+	}
 	
 	public String getUsername() {
 		return username;
@@ -29,10 +40,10 @@ public class UserInfo {
 		this.username = username;
 	}
 	public double getRadius() {
-		return radius;
+		return maxRadius;
 	}
 	public void setRadius(double radius) {
-		this.radius = radius;
+		this.maxRadius = radius;
 	}
 	public double getMaxPrice() {
 		return maxPrice;

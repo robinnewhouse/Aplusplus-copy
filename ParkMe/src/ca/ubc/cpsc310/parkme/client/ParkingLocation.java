@@ -1,6 +1,7 @@
 package ca.ubc.cpsc310.parkme.client;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

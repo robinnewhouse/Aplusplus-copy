@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+
 import ca.ubc.cpsc310.parkme.client.sdk.FBCore;
 import ca.ubc.cpsc310.parkme.client.sdk.FBEvent;
 import com.google.gwt.core.client.EntryPoint;
@@ -203,6 +204,7 @@ public class ParkMe implements EntryPoint {
 		downloadData();
 		displayData();
 		//fbCore.init(apiKey, status, cookie, xfbml);
+
 		addListenersToSliders();
 	}
 
