@@ -6,8 +6,6 @@ import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
-
-import ca.ubc.cpsc310.parkme.client.Fave;
 import ca.ubc.cpsc310.parkme.client.NotLoggedInException;
 import ca.ubc.cpsc310.parkme.client.UserInfoService;
 

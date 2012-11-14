@@ -5,7 +5,7 @@ import ca.ubc.cpsc310.parkme.server.UserInfo;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-@RemoteServiceRelativePath("fave")
+@RemoteServiceRelativePath("userinfo")
 public interface UserInfoService extends RemoteService{
 	
 	void setUserInfo(String usertype, double maxprice, 
