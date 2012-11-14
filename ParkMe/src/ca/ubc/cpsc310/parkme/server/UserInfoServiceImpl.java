@@ -1,12 +1,11 @@
 package ca.ubc.cpsc310.parkme.server;
 
-import java.util.List;
-
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 import ca.ubc.cpsc310.parkme.client.NotLoggedInException;
+import ca.ubc.cpsc310.parkme.client.UserInfoClient;
 import ca.ubc.cpsc310.parkme.client.UserInfoService;
 
 import com.google.appengine.api.users.User;
@@ -20,12 +19,16 @@ public class UserInfoServiceImpl extends RemoteServiceServlet implements UserInf
 			JDOHelper.getPersistenceManagerFactory("transactions-optional");
 	
 	@Override
-	public void setUserInfo(String usertype, double maxprice,
-			double mintime, double maxradius) throws NotLoggedInException {
+	public void setUserInfo(UserInfoClient userInfoClient) throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
-			pm.makePersistent(new UserInfo(getUser().getNickname(), usertype, maxprice, mintime, maxradius));
+			String name = userInfoClient.getUsername();
+			String userType = userInfoClient.getUserType();
+			double maxPrice = userInfoClient.getMaxPrice();
+			double minTime = userInfoClient.getMinTime();
+			double maxRadius = userInfoClient.getRadius();
+			pm.makePersistent(new UserInfo(name, userType, maxPrice, minTime, maxRadius));
 		} finally {
 			pm.close();
 		}
@@ -33,20 +36,26 @@ public class UserInfoServiceImpl extends RemoteServiceServlet implements UserInf
 		
 
 	@Override
-	public UserInfo getUserInfo() throws NotLoggedInException {
+	public UserInfoClient getUserInfo() throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
-		UserInfo userInfo;
+		UserInfoClient userInfoClient;
 		try {
-			Query q = pm.newQuery(UserInfo.class, "user == u");
-			q.declareParameters("com.google.appengine.api.users.User u");
+			Query q = pm.newQuery(UserInfo.class, "username == unameParam");
+			q.declareParameters("String unameParam");
 			q.setOrdering("createDate");
-			userInfo = (UserInfo) q.execute(getUser().getNickname());
+			UserInfo userInfo = (UserInfo) q.execute(getUser().getNickname());
+			String name = userInfo.getUsername();
+			String userType = userInfo.getUserType();
+			double maxPrice = userInfo.getMaxPrice();
+			double minTime = userInfo.getMinTime();
+			double maxRadius = userInfo.getRadius();
+			userInfoClient = new UserInfoClient(name, userType, maxPrice, minTime, maxRadius);
 
 		} finally {
 			pm.close();
 		}
-		return userInfo;
+		return userInfoClient;
 	}
 	
 	private void checkLoggedIn() throws NotLoggedInException {

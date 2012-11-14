@@ -8,8 +8,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("userinfo")
 public interface UserInfoService extends RemoteService{
 	
-	void setUserInfo(String usertype, double maxprice, 
-			double mintime, double maxradius) throws NotLoggedInException;
+	void setUserInfo(UserInfoClient userInfoClient) throws NotLoggedInException;
 
-	UserInfo getUserInfo() throws NotLoggedInException;
+	UserInfoClient getUserInfo() throws NotLoggedInException;
 }

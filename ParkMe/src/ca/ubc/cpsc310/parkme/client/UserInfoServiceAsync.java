@@ -8,8 +8,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface UserInfoServiceAsync {
 
-	void setUserInfo(String usertype, double maxprice, double mintime, double maxradius, AsyncCallback<Void> callback);
+	void setUserInfo(UserInfoClient userInfoClient, AsyncCallback<Void> callback);
 
-	void getUserInfo(AsyncCallback<UserInfo> callback);
+	void getUserInfo(AsyncCallback<UserInfoClient> callback);
 
 }

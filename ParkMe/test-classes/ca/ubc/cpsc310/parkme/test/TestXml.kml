@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gx="http://www.google.com/kml/ext/2.2">
+<Document>
+
+<Placemark id="kml_1">
+<name>$1.00 / hr 2hr time limit</name>
+<snippet> </snippet>
+<description><![CDATA[<center><table><tr><th colspan='2' align='center'><em>Attributes</em></th></tr><tr bgcolor="#E3E3F3">
+<th>RATE</th>
+<td>$1.00</td>
+</tr><tr bgcolor="">
+<th>LIMIT</th>
+<td>2hr</td>
+</tr></table></center>]]></description>
+<styleUrl>#ParkingMeterStyler_KMLStyler</styleUrl>
+<ExtendedData>
+<SchemaData schemaUrl="#Meter_Rates_and_Time_Limits">
+<SimpleData name="RATE">$1.00</SimpleData>
+<SimpleData name="LIMIT">2hr</SimpleData>
+</SchemaData>
+</ExtendedData>
+<LineString>
+<coordinates>-123.100739208611,49.2630169018194,0 -123.100348847572,49.2630078055425,0 </coordinates>
+</LineString>
+</Placemark>
+<Placemark id="kml_2">
+<name>$1.00 / hr 2hr time limit</name>
+<snippet> </snippet>
+<description><![CDATA[<center><table><tr><th colspan='2' align='center'><em>Attributes</em></th></tr><tr bgcolor="#E3E3F3">
+<th>RATE</th>
+<td>$1.00</td>
+</tr><tr bgcolor="">
+<th>LIMIT</th>
+<td>2hr</td>
+</tr></table></center>]]></description>
+<styleUrl>#ParkingMeterStyler_KMLStyler</styleUrl>
+<ExtendedData>
+<SchemaData schemaUrl="#Meter_Rates_and_Time_Limits">
+<SimpleData name="RATE">$1.00</SimpleData>
+<SimpleData name="LIMIT">2hr</SimpleData>
+</SchemaData>
+</ExtendedData>
+<LineString>
+<coordinates>-123.100756446135,49.2627730507724,0 -123.100366087016,49.2627639545521,0 </coordinates>
+</LineString>
+</Placemark>
+<Placemark id="1.00 price">
+<SimpleData name="RATE">$1.00</SimpleData>
+</Placemark>
+<Placemark id="1.50 price">
+<SimpleData name="RATE">$1.50</SimpleData>
+</Placemark>
+<Placemark id="2.00 price">
+<SimpleData name="RATE">$2.00</SimpleData>
+</Placemark>
+<Placemark id="2.50 price">
+<SimpleData name="RATE">$2.50</SimpleData>
+</Placemark>
+<Placemark id="3.00 price">
+<SimpleData name="RATE">$3.00</SimpleData>
+</Placemark>
+<Placemark id="3.50 price">
+<SimpleData name="RATE">$3.50</SimpleData>
+</Placemark>
+<Placemark id="4.00 price">
+<SimpleData name="RATE">$4.00</SimpleData>
+</Placemark>
+<Placemark id="4.50 price">
+<SimpleData name="RATE">$4.50</SimpleData>
+</Placemark>
+<Placemark id="5.00 price">
+<SimpleData name="RATE">$5.00</SimpleData>
+</Placemark>
+<Placemark id="100.00 price">
+<SimpleData name="RATE">$100.00</SimpleData>
+</Placemark>
+<Placemark id="-1.00 price">
+<SimpleData name="RATE">$-1.00</SimpleData>
+</Placemark>
+</Document></kml>
