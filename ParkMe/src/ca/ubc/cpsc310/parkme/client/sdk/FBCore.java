@@ -30,14 +30,14 @@ public class FBCore {
 	public native void api (String path, AsyncCallback<JavaScriptObject> callback) /*-{
 		var app=this;
 		$wnd.FB.api (path, function(response){
-	        app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
+	        app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
 		});
 	}-*/;
 
 	 public native void api (String path, String params, AsyncCallback<JavaScriptObject> callback) /*-{
        var app=this;
        $wnd.FB.api (path, params, function(response){
-           app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
+           app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
        });
    }-*/;
 
@@ -47,7 +47,7 @@ public class FBCore {
 	public native void api (String path, JavaScriptObject params, AsyncCallback<JavaScriptObject> callback) /*-{
 		var app=this;
 		$wnd.FB.api (path, params, function(response){
-		    app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
+		    app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
 		});
 	}-*/;
 	
@@ -57,7 +57,7 @@ public class FBCore {
 	public native void api (String path, String method,JavaScriptObject params, AsyncCallback<JavaScriptObject> callback) /*-{
 		var app=this;
 		$wnd.FB.api (path,method, params, function(response){
-		    app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
+		    app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
 		});
 	}-*/;
 	
@@ -68,7 +68,7 @@ public class FBCore {
 	public native void api (JavaScriptObject params, AsyncCallback<JavaScriptObject> callback) /*-{
     	var app=this;
     	$wnd.FB.api(params,function(response){
-        	app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
+        	app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
     	});
 	}-*/; 
 	
@@ -78,7 +78,7 @@ public class FBCore {
 	public native void getLoginStatus (AsyncCallback<JavaScriptObject> callback) /*-{
         var app=this;
 		$wnd.FB.getLoginStatus(function(response) {
-            app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
+            app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
 		});
 		
 	}-*/;
@@ -96,7 +96,7 @@ public class FBCore {
 	public native void login (AsyncCallback<JavaScriptObject> callback) /*-{
 		var app=this;
         $wnd.FB.login (function(response){
-    	    app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
+    	    app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
 		});
 	}-*/;
 	
@@ -106,7 +106,7 @@ public class FBCore {
 	public native void login (AsyncCallback<JavaScriptObject> callback ,String permissions) /*-{
        	var app=this;
         $wnd.FB.login (function(response){
-    	    app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
+    	    app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
 		},{perms:permissions});
 	}-*/;
 	
@@ -116,7 +116,7 @@ public class FBCore {
 	public native void logout (AsyncCallback<JavaScriptObject> callback) /*-{
 		var app=this;
 		$wnd.FB.logout(function(response){
-    	    app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
+    	    app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
 		});
 	}-*/;
 	
@@ -126,7 +126,7 @@ public class FBCore {
 	public native void ui (JavaScriptObject params, AsyncCallback<JavaScriptObject> callback) /*-{
 		var app=this;
 		$wnd.FB.ui(params,function(response){
-    	    app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
+    	    app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
 		});
 	}-*/;
 	
