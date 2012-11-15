@@ -90,6 +90,8 @@ public class FBCore {
 		return $wnd.FB.getAuthResponse();
 	}-*/;
 
+	
+	
 	/**
 	 * Wrapper method
 	 */
