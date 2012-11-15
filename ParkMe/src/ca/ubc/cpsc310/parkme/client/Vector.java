@@ -1,5 +1,7 @@
 package ca.ubc.cpsc310.parkme.client;
 
+import com.google.maps.gwt.client.LatLng;
+
 public class Vector {
 	final double x;
 	final double y;

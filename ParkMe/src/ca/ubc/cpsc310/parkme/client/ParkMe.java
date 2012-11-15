@@ -213,9 +213,9 @@ public class ParkMe implements EntryPoint {
 		addListenerToResults();
 		
 		//	addListenerToTabs();
-		//  initializeSliderValues();
-		//downloadData();
-		//displayData();
+		initializeSliderValues();
+		downloadData();
+		displayData();
 		fbCore.init(apiKey, status, cookie, xfbml);
 
 		addListenersToSliders();
@@ -1380,8 +1380,16 @@ public class ParkMe implements EntryPoint {
 				return new Comparator<ParkingLocation>() {
 					@Override
 					public int compare(ParkingLocation o1, ParkingLocation o2) {
-						// TODO Auto-generated method stub
-						return 0;
+						LatLng point = searchResult.get(0).getGeometry().getLocation();
+						double pointx = point.lat();
+						double pointy = point.lng();
+						double distance1 = Vector.distanceToLine(pointx, pointy, o1.getStartLat(), o1.getStartLong(), o1.getEndLat(), o1.getEndLat());
+						System.out.println("Distance to " + o1.getStreet() + " is " + distance1);
+						
+						double distance2 = Vector.distanceToLine(pointx, pointy, o2.getStartLat(), o2.getStartLong(), o2.getEndLat(), o2.getEndLat());
+						System.out.println("Distance to " + o2.getStreet() + " is " + distance2);
+						
+						return new Double(distance1).compareTo(new Double(distance2));
 					}
 				};
 			} else {
