@@ -70,6 +70,7 @@ public class UserInfoServiceImpl extends RemoteServiceServlet implements UserInf
 			if (userInfoList.size() == 0) {
 				System.out.println("No UserInfo found yet");
 				userInfoClient = new UserInfoClient(getUser().getNickname(), "driver", 5, 0, 0);
+				setUserInfo(userInfoClient);
 			}
 
 			else {
