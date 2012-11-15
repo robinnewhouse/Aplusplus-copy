@@ -15,6 +15,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -79,7 +81,9 @@ public class ParkMe implements EntryPoint {
 	private Anchor signOutLink = new Anchor("Sign Out");
 	private VerticalPanel loginPanel = new VerticalPanel();
 	private Label loginLabel = new Label("Please sign in to your Google Account to access the ParkMe application.");
-
+	private UserInfoClient userInfo = new UserInfoClient();
+	
+	
 	// SET USER TYPE
 	private VerticalPanel setUserPanel = new VerticalPanel();
 	private Label setUserLabel = new Label("Please select what type of user you are:");
@@ -174,7 +178,7 @@ public class ParkMe implements EntryPoint {
 	private final FilterServiceAsync filterService = GWT.create(FilterService.class);
 	private final ParkingLocServiceAsync parkService = GWT.create(ParkingLocService.class);
 	private final FaveAsync fave = GWT.create(Fave.class);
-
+	private final UserInfoServiceAsync userInfoService = GWT.create(UserInfoService.class);
 
 	/**
 	 * This is the entry point method.
@@ -201,20 +205,76 @@ public class ParkMe implements EntryPoint {
 	}
 
 	private void loadParkMe() {
+		loadUserInfo();
 		initializeFlexTables();
 		initializeLayout();
 		createMap();
 		addListenersToButtons();
 		addListenerToResults();
-		//		addListenerToTabs();
-		initializeSliderValues();
+		
+		//	addListenerToTabs();
+		//  initializeSliderValues();
 		//downloadData();
 		//displayData();
 		fbCore.init(apiKey, status, cookie, xfbml);
 
 		addListenersToSliders();
+		
 	}
 
+	private void loadUserInfo() {
+		
+		userInfoService.getUserInfo(new AsyncCallback<UserInfoClient>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				System.out.println("No User Info found yet");
+				userInfo = new UserInfoClient(loginInfo.getNickname(), "driver", 5.00, 0, 0);
+				userInfoService.setUserInfo(userInfo, new AsyncCallback<Void>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
+			}
+
+			@Override
+			public void onSuccess(UserInfoClient result) {
+				System.out.println("I'm at loadUserInfo");
+				
+				userInfo = result;
+				initializeSliderValues();
+				
+			}
+		});
+	}
+
+	private void saveCriteria() {
+		double maxPrice = ((double)priceFilterSlider.getValue()/2); // Divide by two to get non-integer prices
+		System.out.println(maxPrice);
+		double minTime = (double)timeFilterSlider.getValue();
+		double maxRadius = (double)radiusFilterSlider.getValue();
+		
+		System.out.println("window is closing. price " + maxPrice);
+		userInfoService.setCriteria(maxRadius, maxPrice, minTime, userInfo, new AsyncCallback<Void>() {
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						System.out.println("Saved info");
+					}
+		});
+	}
+	
 	private void loadLogin() {
 		// Assemble login panel.
 		signInLink.setHref(loginInfo.getLoginUrl());
@@ -242,10 +302,24 @@ public class ParkMe implements EntryPoint {
 
 	private void initializeSliderValues() {
 		// TODO: Get user's last search criteria or defaults
+		/**
 		int initMaxPrice = priceFilterSlider.getMaxValue();
 		int initMinTime = 0;
 		int initMaxRadius = radiusFilterSlider.getMaxValue();
-
+**/
+		double maxPrice = userInfo.getMaxPrice();
+		double minTime = userInfo.getMinTime();
+		double radius = userInfo.getRadius();
+		System.out.println(maxPrice);
+		System.out.println(minTime);
+		System.out.println(radius);
+		int initMaxPrice = (int) maxPrice * 2;
+		int initMinTime = (int) minTime;
+		int initMaxRadius = (int) radius;
+		System.out.println(initMaxPrice);
+		System.out.println(initMinTime);
+		System.out.println(initMaxRadius);
+		
 		// Set slider values:
 		priceFilterSlider.setValue(initMaxPrice);
 		timeFilterSlider.setValue(initMinTime);
@@ -578,6 +652,7 @@ public class ParkMe implements EntryPoint {
 				String formatted = NumberFormat.getFormat("#0.00").format(maxPrice);
 				maxPriceValueLabel.setText("$" + formatted + " / hr");
 				filterParkings();
+				saveCriteria();
 			}
 		});
 
@@ -586,6 +661,7 @@ public class ParkMe implements EntryPoint {
 			public void onBarValueChanged(BarValueChangedEvent event) {
 				minTimeValueLabel.setText(event.getValue() + " hrs");
 				filterParkings();
+				saveCriteria();
 			}
 		});
 
@@ -594,6 +670,7 @@ public class ParkMe implements EntryPoint {
 			public void onBarValueChanged(BarValueChangedEvent event) {
 				maxRadiusValueLabel.setText(event.getValue() + " m");
 				filterParkings();
+				saveCriteria();
 			}
 		});
 	}

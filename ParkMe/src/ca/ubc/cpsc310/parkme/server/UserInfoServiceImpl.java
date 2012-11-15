@@ -1,9 +1,12 @@
 package ca.ubc.cpsc310.parkme.server;
 
+import java.util.List;
+
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
+
 import ca.ubc.cpsc310.parkme.client.NotLoggedInException;
 import ca.ubc.cpsc310.parkme.client.UserInfoClient;
 import ca.ubc.cpsc310.parkme.client.UserInfoService;
@@ -17,7 +20,7 @@ public class UserInfoServiceImpl extends RemoteServiceServlet implements UserInf
 
 	private static final PersistenceManagerFactory PMF =
 			JDOHelper.getPersistenceManagerFactory("transactions-optional");
-	
+
 	@Override
 	public void setUserInfo(UserInfoClient userInfoClient) throws NotLoggedInException {
 		checkLoggedIn();
@@ -33,7 +36,26 @@ public class UserInfoServiceImpl extends RemoteServiceServlet implements UserInf
 			pm.close();
 		}
 	}
-		
+
+	public void setCriteria(double radius, double maxPrice, double minTime, UserInfoClient userInfo) throws NotLoggedInException {
+		checkLoggedIn();
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			String name = userInfo.getUsername();
+			UserInfo user = pm.getObjectById(UserInfo.class, name);
+			if (userInfo == null) {
+				setUserInfo(userInfo);
+			}
+			else {
+				user.setMaxPrice(maxPrice);
+				user.setMinTime(minTime);
+				user.setRadius(radius);
+			}
+		} finally {
+			pm.close();
+		}
+	}
+
 
 	@Override
 	public UserInfoClient getUserInfo() throws NotLoggedInException {
@@ -43,21 +65,29 @@ public class UserInfoServiceImpl extends RemoteServiceServlet implements UserInf
 		try {
 			Query q = pm.newQuery(UserInfo.class, "username == unameParam");
 			q.declareParameters("String unameParam");
-			q.setOrdering("createDate");
-			UserInfo userInfo = (UserInfo) q.execute(getUser().getNickname());
-			String name = userInfo.getUsername();
-			String userType = userInfo.getUserType();
-			double maxPrice = userInfo.getMaxPrice();
-			double minTime = userInfo.getMinTime();
-			double maxRadius = userInfo.getRadius();
-			userInfoClient = new UserInfoClient(name, userType, maxPrice, minTime, maxRadius);
+			List<UserInfo> userInfoList = (List<UserInfo>) q.execute(getUser().getNickname());
 
+			if (userInfoList.size() == 0) {
+				System.out.println("No UserInfo found yet");
+				userInfoClient = new UserInfoClient(getUser().getNickname(), "driver", 5, 0, 0);
+			}
+
+			else {
+				UserInfo userInfo = userInfoList.get(0);
+				System.out.println("UserInfo found in database");
+				String name = userInfo.getUsername();
+				String userType = userInfo.getUserType();
+				double maxPrice = userInfo.getMaxPrice();
+				double minTime = userInfo.getMinTime();
+				double maxRadius = userInfo.getRadius();
+				userInfoClient = new UserInfoClient(name, userType, maxPrice, minTime, maxRadius);
+			}
 		} finally {
 			pm.close();
 		}
 		return userInfoClient;
 	}
-	
+
 	private void checkLoggedIn() throws NotLoggedInException {
 		if (getUser() == null) {
 			throw new NotLoggedInException("Not logged in.");

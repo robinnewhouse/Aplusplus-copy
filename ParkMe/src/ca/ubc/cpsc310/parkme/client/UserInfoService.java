@@ -11,4 +11,5 @@ public interface UserInfoService extends RemoteService{
 	void setUserInfo(UserInfoClient userInfoClient) throws NotLoggedInException;
 
 	UserInfoClient getUserInfo() throws NotLoggedInException;
+	void setCriteria(double radius, double maxPrice, double minTime, UserInfoClient userInfo) throws NotLoggedInException;
 }
