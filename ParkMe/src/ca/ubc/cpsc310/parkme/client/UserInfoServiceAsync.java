@@ -12,4 +12,7 @@ public interface UserInfoServiceAsync {
 
 	void getUserInfo(AsyncCallback<UserInfoClient> callback);
 
+	void setCriteria(double radius, double maxPrice, double minTime,
+			UserInfoClient userInfo, AsyncCallback<Void> callback);
+
 }

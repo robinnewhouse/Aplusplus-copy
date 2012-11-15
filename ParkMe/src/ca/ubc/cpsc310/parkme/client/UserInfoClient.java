@@ -12,8 +12,12 @@ public class UserInfoClient implements Serializable {
 	private double maxPrice;
 	private double minTime;
 
+	public UserInfoClient() {
+		
+	}
+	
 	public UserInfoClient(String username, String usertype, double maxPrice,
-			double minTime, double maxRadius) {
+		double minTime, double maxRadius) {
 		this.username = username;
 		this.userType = usertype;
 		this.maxPrice = maxPrice;
