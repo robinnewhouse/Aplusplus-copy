@@ -7,6 +7,11 @@ import java.util.Comparator;
 import java.util.List;
 
 
+import com.google.code.gwt.geolocation.client.Coordinates;
+import com.google.code.gwt.geolocation.client.Geolocation;
+import com.google.code.gwt.geolocation.client.Position;
+import com.google.code.gwt.geolocation.client.PositionCallback;
+import com.google.code.gwt.geolocation.client.PositionError;
 import com.google.gwt.core.client.JavaScriptObject;
 
 import ca.ubc.cpsc310.parkme.client.sdk.FBCore;
@@ -235,7 +240,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		downloadData();
 		displayData();
-		fbCore.init(apiKey, status, cookie, xfbml);
 
 		addListenersToSliders();
 
@@ -1501,13 +1505,15 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			throw new IllegalArgumentException("invalid sort field '" + sortParam + "'");
 		}
 	}
+	
+	
 
 			public void onValueChange(ValueChangeEvent<String> event) {
 				renderApp ( event.getValue() );
 			}
 
 			private void createFBEvent(final String addr) {
-				// TODO: popup
+				// TODO: popup asking for event name & start time
 				JSONObject param = new JSONObject();
 				param.put("name", new JSONString("ParkMe Sample Event"));
 				param.put("start_time", new JSONString("2012-12-12"));
@@ -1530,50 +1536,50 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			}
 
 			private void getDirections(final LatLng latlong) {
-				// TODO get directions
-				System.out.println("I have clicked on get directions");
-
+				
 				displayDir.setMap(null);
 				displayDir.setPanel(null);
-
-
 				dr.setDestination(latlong);
-				// currently, set origin to UBC.
-				LatLng ubc = LatLng.create(49.2661156, -123.2457198);
-				// TODO: get origin, either by asking for a location or using GPS
-				/**
-		PopupPanel popup = new PopupPanel();
-		Label popupOrig = new Label("Enter address of origin:");
-		TextBox popupBox = new TextBox();
-		Button popupButton = new Button("Start Navigation!");
-		Button cancel = new Button("Cancel");
-		VerticalPanel popupButtons = new VerticalPanel();
-		popupButtons.add(popupButton);
-		popupButtons.add(cancel);
-		popup.add(popupOrig);
-		popup.add(popupBox);
-		popup.add(popupButtons);
+				
+				if (Geolocation.isSupported()) {
+					// get Geo Location
+					Geolocation geo = Geolocation.getGeolocation();
+					geo.getCurrentPosition(new PositionCallback() {
+					    public void onFailure(PositionError error) {
+					        // Handle failure
+					    }
+					    public void onSuccess(Position position) {
+					        Coordinates coords = position.getCoords();
+					        double latitude = coords.getLatitude();
+					        double longitude = coords.getLongitude();
+					        displayDirections(LatLng.create(latitude, longitude));
+					    }
+					});
+				}
+				
+				else {
+					Window.alert("Geolocation is not supported. Will set origin to UBC.");
+					displayDirections(LatLng.create(49.2661156, -123.2457198));
+				}
+			
 
-		popup.show();
-				 **/
+			}
+			
+			private void displayDirections(LatLng latlong) {
 
-
-				dr.setOrigin(ubc);
-				//dr.setOrigin(popupBox.getValue());
+				dr.setOrigin(latlong);
 				dr.setTravelMode(TravelMode.DRIVING);
 				ds.route(dr, new DirectionsService.Callback() {
 
 					@Override
 					public void handle(DirectionsResult result, DirectionsStatus status) {
-						System.out.println("Getting directions");
+						
 						if (status.equals(DirectionsStatus.OK)) {
 							displayDir.setMap(theMap);
 							displayDir.setPanel(dirScroll.getElement());
 							tabs.selectTab(4);
 							displayDir.setDirections(result);
-
 						}
-
 					}
 				});
 			}
