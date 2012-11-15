@@ -70,7 +70,7 @@ import com.kiouri.sliderbar.client.event.BarValueChangedHandler;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
-	
+
 	// DIRECTIONS
 	private DirectionsService ds = DirectionsService.create();
 	private DirectionsRequest dr = DirectionsRequest.create();
@@ -232,7 +232,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		addListenerToResults();		
 		addListenerToSortBox();
 		initializeSliderValues();
-		
+
 		downloadData();
 		displayData();
 		fbCore.init(apiKey, status, cookie, xfbml);
@@ -365,7 +365,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		});
 	}
 
-	
+
 	public void renderFB() {
 		System.out.println("renderFB");
 
@@ -503,7 +503,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			}
 		});
 	}
-	
+
 	private void addListenerToSortBox() {
 		// Listen for events on the sortBox
 		sortBox.addChangeHandler(new ChangeHandler() {
@@ -864,8 +864,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		flowpanel = new FlowPanel();
 		flowpanel.add(statsScroll);
 		tabs.add(flowpanel, "Statistics");
-		
-		
+
+
 		flowpanel = new FlowPanel();
 		flowpanel.add(dirScroll);
 		tabs.add(flowpanel, "Directions");
@@ -1046,8 +1046,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		 * 
 		 **/
 		System.out.println("Filtering with maxPrice = " + maxPrice + " and minTime = " + minTime + " and maxRadius = " + maxRadius);
-		
-		
+
+
 		for (int i = 0; i < totalNum; i++) {
 			ParkingLocation p = allParkings.get(i);
 			if ((p.getPrice() <= maxPrice) && (p.getLimit() >= minTime) && isInRadius(p, maxRadius, searchPoint.lat(), searchPoint.lng())) {
@@ -1089,29 +1089,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		 **/
 	}
-
-	private void getLocations(final ParkingLocation[] parkingLocs) {
-
-		final int size = parkingLocs.length;
-		Window.alert("Fetching street information for " + size
-				+ " parking locations.");
-
-		Timer refreshTimer = new Timer() {
-			int i = 0;
-
-			@Override
-			public void run() {
-				if (i < size) {
-					getLocation(parkingLocs[i]);
-					i++;
-				} else {
-					this.cancel();
-				}
-			}
-		};
-		refreshTimer.scheduleRepeating(2000);
-	}
-
+	
 	private void getLocation(final ParkingLocation parkingLoc) {
 
 		if (parkingLoc.getStreet().equals("Vancouver")) {
@@ -1188,6 +1166,30 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		}
 
 	}
+
+	private void getLocations(final ParkingLocation[] parkingLocs) {
+
+		final int size = parkingLocs.length;
+		Window.alert("Fetching street information for " + size
+				+ " parking locations.");
+
+		Timer refreshTimer = new Timer() {
+			int i = 0;
+
+			@Override
+			public void run() {
+				if (i < size) {
+					getLocation(parkingLocs[i]);
+					i++;
+				} else {
+					this.cancel();
+				}
+			}
+		};
+		refreshTimer.scheduleRepeating(2000);
+	}
+
+	
 
 	private void getAllLocations() {
 		loadDataService
@@ -1435,6 +1437,25 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		return parkingLocations;
 	}
 
+	
+	private void renderApp ( String token ) {
+
+		System.out.println(token);
+		token = token.replace("#", "");
+
+		if ( token == null || "".equals ( token ) || "#".equals ( token ) ) 
+		{
+			token = "home";
+		}
+
+		if ( token.endsWith("home") ) {
+			renderFB ();
+
+		} else {
+			Window.alert ( "Unknown  url "  + token );
+		}
+	}
+
 	private Comparator<ParkingLocation> getComparator(String sortParam) {
 		if ("Price".equals(sortParam)) {
 			return new Comparator<ParkingLocation>() {
@@ -1457,12 +1478,22 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					LatLng point = searchResult.get(0).getGeometry().getLocation();
 					double pointx = point.lat();
 					double pointy = point.lng();
-					double distance1 = Vector.distanceToLine(pointx, pointy, o1.getStartLat(), o1.getStartLong(), o1.getEndLat(), o1.getEndLat());
-					System.out.println("Distance to " + o1.getStreet() + " is " + distance1);
+					double distanceStart1 = distance(pointx, pointy, o1.getStartLat(), o1.getStartLong());
+					double distanceEnd1 = distance(pointx, pointy, o1.getEndLat(), o1.getEndLong());
+					double distanceStart2 = distance(pointx, pointy, o2.getStartLat(), o2.getStartLong());
+					double distanceEnd2 = distance(pointx, pointy, o2.getEndLat(), o2.getEndLong());
+					//						System.out.println("Distance to " + o1.getStreet() + " is " + distance1);
+					//						System.out.println("Distance to " + o2.getStreet() + " is " + distance2);
 
-					double distance2 = Vector.distanceToLine(pointx, pointy, o2.getStartLat(), o2.getStartLong(), o2.getEndLat(), o2.getEndLat());
-					System.out.println("Distance to " + o2.getStreet() + " is " + distance2);
+					double distance1 = distanceStart1;
+					double distance2 = distanceStart2;
 
+					if (distanceEnd1 < distanceStart1) {
+						distance1 = distanceEnd1;
+					}
+					if (distanceEnd2 < distanceStart2) {
+						distance2 = distanceEnd2;
+					}
 					return new Double(distance1).compareTo(new Double(distance2));
 				}
 			};
@@ -1471,112 +1502,46 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		}
 	}
 
-
-	private void renderApp ( String token ) {
-
-		System.out.println(token);
-		token = token.replace("#", "");
-
-		if ( token == null || "".equals ( token ) || "#".equals ( token ) ) 
-		{
-			token = "home";
-		}
-
-		if ( token.endsWith("home") ) {
-			renderFB ();
-
-		} else {
-			Window.alert ( "Unknown  url "  + token );
-		}
-	}
-
-<<<<<<< HEAD
-		private Comparator<ParkingLocation> getComparator(String sortParam) {
-			if ("Price".equals(sortParam)) {
-				return new Comparator<ParkingLocation>() {
-					@Override
-					public int compare(ParkingLocation o1, ParkingLocation o2) {
-						return new Double(o1.getPrice()).compareTo(new Double(o2.getPrice()));
-					}
-				};
-			} else if ("Time Limit".equals(sortParam)) {
-				return new Comparator<ParkingLocation>() {
-					@Override
-					public int compare(ParkingLocation o1, ParkingLocation o2) {
-						return new Double(o1.getLimit()).compareTo(new Double(o2.getLimit()));
-					}
-				};
-			} else if ("Distance".equals(sortParam)) {
-				return new Comparator<ParkingLocation>() {
-					@Override
-					public int compare(ParkingLocation o1, ParkingLocation o2) {
-						LatLng point = searchResult.get(0).getGeometry().getLocation();
-						double pointx = point.lat();
-						double pointy = point.lng();
-						double distanceStart1 = distance(pointx, pointy, o1.getStartLat(), o1.getStartLong());
-						double distanceEnd1 = distance(pointx, pointy, o1.getEndLat(), o1.getEndLong());
-						double distanceStart2 = distance(pointx, pointy, o2.getStartLat(), o2.getStartLong());
-						double distanceEnd2 = distance(pointx, pointy, o2.getEndLat(), o2.getEndLong());
-//						System.out.println("Distance to " + o1.getStreet() + " is " + distance1);
-//						System.out.println("Distance to " + o2.getStreet() + " is " + distance2);
-						
-						double distance1 = distanceStart1;
-						double distance2 = distanceStart2;
-						
-						if (distanceEnd1 < distanceStart1) {
-							distance1 = distanceEnd1;
-						}
-						if (distanceEnd2 < distanceStart2) {
-							distance2 = distanceEnd2;
-						}
-						return new Double(distance1).compareTo(new Double(distance2));
-					}
-				};
-			} else {
-				throw new IllegalArgumentException("invalid sort field '" + sortParam + "'");
-=======
-
-	public void onValueChange(ValueChangeEvent<String> event) {
-		renderApp ( event.getValue() );
-	}
-
-	private void createFBEvent(final String addr) {
-		// TODO: popup
-		JSONObject param = new JSONObject();
-		param.put("name", new JSONString("ParkMe Sample Event"));
-		param.put("start_time", new JSONString("2012-12-12"));
-		param.put("location", new JSONString(addr));
-		param.put("description", new JSONString("This event was automatically generated by the ParkMe app."));
-		fbCore.api("/me/events", "post", param.getJavaScriptObject(), new AsyncCallback<JavaScriptObject>() {
-			@Override
-			public void onFailure(Throwable caught) {
->>>>>>> 934487cf47a7ee73779060a13917a05ba58c789e
+			public void onValueChange(ValueChangeEvent<String> event) {
+				renderApp ( event.getValue() );
 			}
 
-			@Override
-			public void onSuccess(JavaScriptObject result) {
+			private void createFBEvent(final String addr) {
+				// TODO: popup
+				JSONObject param = new JSONObject();
+				param.put("name", new JSONString("ParkMe Sample Event"));
+				param.put("start_time", new JSONString("2012-12-12"));
+				param.put("location", new JSONString(addr));
+				param.put("description", new JSONString("This event was automatically generated by the ParkMe app."));
+				fbCore.api("/me/events", "post", param.getJavaScriptObject(), new AsyncCallback<JavaScriptObject>() {
+					@Override
+					public void onFailure(Throwable caught) {
+					}
 
-				JSONObject res = new JSONObject(result);
-				String id = res.get("id").toString();
-				Window.alert("Created new Facebook Event with id " + id);
+					@Override
+					public void onSuccess(JavaScriptObject result) {
 
+						JSONObject res = new JSONObject(result);
+						String id = res.get("id").toString();
+						Window.alert("Created new Facebook Event with id " + id);
+
+					}
+				});
 			}
-		});
-	}
 
-	private void getDirections(final LatLng latlong) {
-		// TODO get directions
-		System.out.println("I have clicked on get directions");
-		
-		displayDir.setMap(null);
-		displayDir.setPanel(null);
-		
+			private void getDirections(final LatLng latlong) {
+				// TODO get directions
+				System.out.println("I have clicked on get directions");
 
-		dr.setDestination(latlong);
-		// currently, set origin to UBC.
-		LatLng ubc = LatLng.create(49.2661156, -123.2457198);
-		// TODO: get origin, either by asking for a location or using GPS
-		/**
+				displayDir.setMap(null);
+				displayDir.setPanel(null);
+
+
+				dr.setDestination(latlong);
+				// currently, set origin to UBC.
+				LatLng ubc = LatLng.create(49.2661156, -123.2457198);
+				// TODO: get origin, either by asking for a location or using GPS
+				/**
 		PopupPanel popup = new PopupPanel();
 		Label popupOrig = new Label("Enter address of origin:");
 		TextBox popupBox = new TextBox();
@@ -1588,29 +1553,29 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		popup.add(popupOrig);
 		popup.add(popupBox);
 		popup.add(popupButtons);
-		
+
 		popup.show();
-		**/
-		
-		
-		dr.setOrigin(ubc);
-		//dr.setOrigin(popupBox.getValue());
-		dr.setTravelMode(TravelMode.DRIVING);
-		ds.route(dr, new DirectionsService.Callback() {
+				 **/
 
-			@Override
-			public void handle(DirectionsResult result, DirectionsStatus status) {
-				System.out.println("Getting directions");
-				if (status.equals(DirectionsStatus.OK)) {
-					displayDir.setMap(theMap);
-					displayDir.setPanel(dirScroll.getElement());
-					tabs.selectTab(4);
-					displayDir.setDirections(result);
-					
-				}
 
+				dr.setOrigin(ubc);
+				//dr.setOrigin(popupBox.getValue());
+				dr.setTravelMode(TravelMode.DRIVING);
+				ds.route(dr, new DirectionsService.Callback() {
+
+					@Override
+					public void handle(DirectionsResult result, DirectionsStatus status) {
+						System.out.println("Getting directions");
+						if (status.equals(DirectionsStatus.OK)) {
+							displayDir.setMap(theMap);
+							displayDir.setPanel(dirScroll.getElement());
+							tabs.selectTab(4);
+							displayDir.setDirections(result);
+
+						}
+
+					}
+				});
 			}
-		});
-	}
 
-}
+		}
