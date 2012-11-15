@@ -73,7 +73,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	// FACEBOOK EVENT STUFF
 	// private static final String apiKey = "464072253644385";
 	//FOR LOCAL:
-	 private static final String apiKey = "219605264787363";
+	private static final String apiKey = "219605264787363";
 	private FBCore fbCore = GWT.create(FBCore.class);
 	private FBEvent fbEvent = GWT.create(FBEvent.class);
 	private VerticalPanel fbPanel = new VerticalPanel ();
@@ -225,6 +225,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		addListenerToResults();
 
 		//	addListenerToTabs();
+
 		//  initializeSliderValues();
 		//downloadData();
 		//displayData();
@@ -237,10 +238,10 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private void loadFacebook() {
 		fbCore.init(apiKey, status, cookie, xfbml);
 		System.out.println("load facebook");
-		
+
 		fbPanel.add ( new HTML ( "This app uses Facebook Connect. Please click to login " ) );
 		fbPanel.add ( new HTML ( "<fb:login-button autologoutlink='true' scope='publish_stream,read_stream,create_event' /> " ) );
-		
+
 		class SessionChangeCallback implements AsyncCallback<JavaScriptObject> {
 			public void onSuccess ( JavaScriptObject response ) {
 				System.out.println("SessionChangeCallback");
@@ -276,7 +277,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		// Get login status
 		fbCore.getLoginStatus( loginStatusCallback );
-		
+
 
 
 	}
@@ -341,7 +342,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void loadSetUserType() {
-		
+
 		setUserPanel.add(setUserLabel);
 		setUserPanel.add(driverButton);
 		setUserPanel.add(busOwnButton);
@@ -361,18 +362,18 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	public void renderFB() {
 		System.out.println("renderFB");
-		
+
 		if ( fbCore.getAuthResponse() != null ) {
 			//fbPanel.setVisible(false);
-		//	RootPanel.get("parkMe").add(fbPanel);
-		//	FBXfbml.parse();
+			//	RootPanel.get("parkMe").add(fbPanel);
+			//	FBXfbml.parse();
 			//loadSetUserType();
 			loadParkMe();
 		} else {
 			//fbPanel.add( new HTML ( "This demo uses Facebook Connect. Please click to login <fb:login-button autologoutlink='true' /> " ) );
-//			fbPanel.add ( new HTML ( "This app uses Facebook Connect. Please click to login " ) );
-//			fbPanel.add ( new HTML ( "<fb:login-button autologoutlink='true' scope='publish_stream,read_stream,create_event' /> " ) );
-//			//fbPanel.add ( new HTML ( "<hr/><fb:comments xid='gwtfb' />" ) );
+			//			fbPanel.add ( new HTML ( "This app uses Facebook Connect. Please click to login " ) );
+			//			fbPanel.add ( new HTML ( "<fb:login-button autologoutlink='true' scope='publish_stream,read_stream,create_event' /> " ) );
+			//			//fbPanel.add ( new HTML ( "<hr/><fb:comments xid='gwtfb' />" ) );
 			RootPanel.get("parkMe").add(fbPanel);
 			FBXfbml.parse();
 			//loadParkMe();
@@ -767,7 +768,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	private void initializeLayout() {
 		signOutLink.setHref(loginInfo.getLogoutUrl());
-		
+
 		RootPanel.get("parkMe").add(mainPanel);
 
 		// Set up filterPanel
@@ -849,7 +850,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		tabs.selectTab(0);
 
 		// Put together main panels
-		
+
 		leftVertPanel.add(searchLabel);
 		leftVertPanel.add(searchPanel);
 		leftVertPanel.add(filterPanel);
@@ -1205,11 +1206,11 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					main.add(buttons);
 
 					createEvent.addClickHandler(new ClickHandler() {
-						
+
 						@Override
 						public void onClick(ClickEvent event) {
 							// TODO create popup asking for event title & date
-							
+
 							JSONObject param = new JSONObject();
 							param.put("name", new JSONString("ParkMe Sample Event"));
 							param.put("start_time", new JSONString("2012-12-12"));
@@ -1222,11 +1223,11 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 								@Override
 								public void onSuccess(JavaScriptObject result) {
-									
+
 									JSONObject res = new JSONObject(result);
 									String id = res.get("id").toString();
 									Window.alert("Created new Facebook Event with id " + id);
-									
+
 								}
 							});
 
@@ -1356,11 +1357,12 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		addHandler(addFaveButton,parkingLoc);
 
+
 		mapOperator.drawOnMap(parkingLoc, infoWindow, addFaveButton);
 		faveList.add(parkingLoc.getParkingID());
 		System.out.println("Currently printing parking " + parkingLoc.getParkingID());
-
 	}
+
 
 	private void addHandler(Button addFaveButton, final ParkingLocation parkingLoc) {
 		addFaveButton.addClickHandler(new ClickHandler() {
@@ -1474,8 +1476,16 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			return new Comparator<ParkingLocation>() {
 				@Override
 				public int compare(ParkingLocation o1, ParkingLocation o2) {
-					// TODO Auto-generated method stub
-					return 0;
+					LatLng point = searchResult.get(0).getGeometry().getLocation();
+					double pointx = point.lat();
+					double pointy = point.lng();
+					double distance1 = Vector.distanceToLine(pointx, pointy, o1.getStartLat(), o1.getStartLong(), o1.getEndLat(), o1.getEndLat());
+					System.out.println("Distance to " + o1.getStreet() + " is " + distance1);
+
+					double distance2 = Vector.distanceToLine(pointx, pointy, o2.getStartLat(), o2.getStartLong(), o2.getEndLat(), o2.getEndLat());
+					System.out.println("Distance to " + o2.getStreet() + " is " + distance2);
+
+					return new Double(distance1).compareTo(new Double(distance2));
 				}
 			};
 		} else {
@@ -1503,8 +1513,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 
-	 public void onValueChange(ValueChangeEvent<String> event) {
-	        renderApp ( event.getValue() );
-	    }
+	public void onValueChange(ValueChangeEvent<String> event) {
+		renderApp ( event.getValue() );
+	}
 
 }
