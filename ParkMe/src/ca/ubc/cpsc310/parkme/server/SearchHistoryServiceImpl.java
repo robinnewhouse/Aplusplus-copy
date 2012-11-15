@@ -24,22 +24,17 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 	public void addSearchString(String str) throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = PMF.getPersistenceManager();
-		//TEMP TO CHECK IF RPC IS WORKING
-		/*
 		try {
 			pm.makePersistent(new SearchString(getUser(), str));
 		} finally {
 			pm.close();
-		}
-		*/
+		}		
 	}
 
 	public ArrayList<String> getHist() throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = PMF.getPersistenceManager();
 		ArrayList<String> searchStrings=new ArrayList<String>();;
-		//TEMP TO CHECK IF RPC IS WORKING
-		/*
 		try {
 			Query q = pm.newQuery(SearchString.class, "user == u");
 			q.declareParameters("com.google.appengine.api.users.User u");
@@ -51,7 +46,7 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 		} finally {
 			pm.close();
 		}
-		*/
+		
 		//TEMP TO CHECK IF RPC IS WORKING
 		searchStrings.add("Robson and Georgia");
 		searchStrings.add("Macdonald and Broadway");

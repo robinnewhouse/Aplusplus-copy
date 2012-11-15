@@ -10,8 +10,13 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.users.User;
 
+
+@PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class SearchString {
+	@PrimaryKey
+	@Persistent
 	String searchString;
+	@Persistent
 	User user;
 	
 	public SearchString(User user, String searchString){
