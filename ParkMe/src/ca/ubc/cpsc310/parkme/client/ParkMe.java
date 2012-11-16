@@ -7,6 +7,11 @@ import java.util.Comparator;
 import java.util.List;
 
 
+import com.google.code.gwt.geolocation.client.Coordinates;
+import com.google.code.gwt.geolocation.client.Geolocation;
+import com.google.code.gwt.geolocation.client.Position;
+import com.google.code.gwt.geolocation.client.PositionCallback;
+import com.google.code.gwt.geolocation.client.PositionError;
 import com.google.gwt.core.client.JavaScriptObject;
 
 import ca.ubc.cpsc310.parkme.client.sdk.FBCore;
@@ -70,7 +75,7 @@ import com.kiouri.sliderbar.client.event.BarValueChangedHandler;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
-	
+
 	// DIRECTIONS
 	private DirectionsService ds = DirectionsService.create();
 	private DirectionsRequest dr = DirectionsRequest.create();
@@ -87,7 +92,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private boolean status = true;
 	private boolean xfbml = true;
 	private boolean cookie = true;
-
 
 	// TABPANEL
 	private TabPanel tabs = new TabPanel();
@@ -187,6 +191,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private Button searchButton = new Button("Search");
 
 	private List<ParkingLocation> allParkings = new ArrayList<ParkingLocation>();
+	private List<ParkingLocation> filteredParkings = new ArrayList<ParkingLocation>();
 	private int totalNum = 0;
 
 	// The most recent location searched for
@@ -229,14 +234,12 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		initializeLayout();
 		createMap();
 		addListenersToButtons();
-		addListenerToResults();
+		addListenerToResults();		
+		addListenerToSortBox();
+		initializeSliderValues();
 
-		//	addListenerToTabs();
-
-		//  initializeSliderValues();
-		//downloadData();
-		//displayData();
-
+		downloadData();
+		displayData();
 
 		addListenersToSliders();
 
@@ -366,7 +369,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		});
 	}
 
-	
+
 	public void renderFB() {
 		System.out.println("renderFB");
 
@@ -505,16 +508,28 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		});
 	}
 
-	private void addListenersToButtons() {
-
+	private void addListenerToSortBox() {
 		// Listen for events on the sortBox
 		sortBox.addChangeHandler(new ChangeHandler() {
 			public void onChange(ChangeEvent event) {
-				tabs.selectTab(0);
-				//				displayParkings(idList);
+				int selectedIndex = tabs.getTabBar().getSelectedTab();
+				switch (selectedIndex) {
+				case 0:
+					displayParkings(filteredParkings);
+					break;
+				case 1:
+					// displayFavourites(faveList);
+					break;
+				case 2:
+					// displayHist(histList);
+					break;
+				}
 			}
 		});
 
+	}
+
+	private void addListenersToButtons() {
 		// Listen for mouse events on the Load Data button.
 		// In the end, this should only be accessible by an admin
 		loadDataButton.addClickHandler(new ClickHandler() {
@@ -853,8 +868,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		flowpanel = new FlowPanel();
 		flowpanel.add(statsScroll);
 		tabs.add(flowpanel, "Statistics");
-		
-		
+
+
 		flowpanel = new FlowPanel();
 		flowpanel.add(dirScroll);
 		tabs.add(flowpanel, "Directions");
@@ -1008,6 +1023,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void filterParkings() {
+		filteredParkings.clear();
 		LatLng searchPoint;
 
 		double maxPrice = ((double)priceFilterSlider.getValue()/2); // Divide by two to get non-integer prices
@@ -1035,16 +1051,16 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		 **/
 		System.out.println("Filtering with maxPrice = " + maxPrice + " and minTime = " + minTime + " and maxRadius = " + maxRadius);
 
-		List<ParkingLocation> filtered = new ArrayList<ParkingLocation>();
+
 		for (int i = 0; i < totalNum; i++) {
 			ParkingLocation p = allParkings.get(i);
 			if ((p.getPrice() <= maxPrice) && (p.getLimit() >= minTime) && isInRadius(p, maxRadius, searchPoint.lat(), searchPoint.lng())) {
-				filtered.add(p);
+				filteredParkings.add(p);
 			}
-			System.out.println("Found " + filtered.size() + " locations");
+			System.out.println("Found " + filteredParkings.size() + " locations");
 		}
 
-		displayParkings(filtered);
+		displayParkings(filteredParkings);
 
 		/**
 		 * 
@@ -1077,29 +1093,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		 **/
 	}
-
-	private void getLocations(final ParkingLocation[] parkingLocs) {
-
-		final int size = parkingLocs.length;
-		Window.alert("Fetching street information for " + size
-				+ " parking locations.");
-
-		Timer refreshTimer = new Timer() {
-			int i = 0;
-
-			@Override
-			public void run() {
-				if (i < size) {
-					getLocation(parkingLocs[i]);
-					i++;
-				} else {
-					this.cancel();
-				}
-			}
-		};
-		refreshTimer.scheduleRepeating(2000);
-	}
-
+	
 	private void getLocation(final ParkingLocation parkingLoc) {
 
 		if (parkingLoc.getStreet().equals("Vancouver")) {
@@ -1176,6 +1170,30 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		}
 
 	}
+
+	private void getLocations(final ParkingLocation[] parkingLocs) {
+
+		final int size = parkingLocs.length;
+		Window.alert("Fetching street information for " + size
+				+ " parking locations.");
+
+		Timer refreshTimer = new Timer() {
+			int i = 0;
+
+			@Override
+			public void run() {
+				if (i < size) {
+					getLocation(parkingLocs[i]);
+					i++;
+				} else {
+					this.cancel();
+				}
+			}
+		};
+		refreshTimer.scheduleRepeating(2000);
+	}
+
+	
 
 	private void getAllLocations() {
 		loadDataService
@@ -1423,6 +1441,25 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		return parkingLocations;
 	}
 
+	
+	private void renderApp ( String token ) {
+
+		System.out.println(token);
+		token = token.replace("#", "");
+
+		if ( token == null || "".equals ( token ) || "#".equals ( token ) ) 
+		{
+			token = "home";
+		}
+
+		if ( token.endsWith("home") ) {
+			renderFB ();
+
+		} else {
+			Window.alert ( "Unknown  url "  + token );
+		}
+	}
+
 	private Comparator<ParkingLocation> getComparator(String sortParam) {
 		if ("Price".equals(sortParam)) {
 			return new Comparator<ParkingLocation>() {
@@ -1445,12 +1482,22 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					LatLng point = searchResult.get(0).getGeometry().getLocation();
 					double pointx = point.lat();
 					double pointy = point.lng();
-					double distance1 = Vector.distanceToLine(pointx, pointy, o1.getStartLat(), o1.getStartLong(), o1.getEndLat(), o1.getEndLat());
-					System.out.println("Distance to " + o1.getStreet() + " is " + distance1);
+					double distanceStart1 = distance(pointx, pointy, o1.getStartLat(), o1.getStartLong());
+					double distanceEnd1 = distance(pointx, pointy, o1.getEndLat(), o1.getEndLong());
+					double distanceStart2 = distance(pointx, pointy, o2.getStartLat(), o2.getStartLong());
+					double distanceEnd2 = distance(pointx, pointy, o2.getEndLat(), o2.getEndLong());
+					//						System.out.println("Distance to " + o1.getStreet() + " is " + distance1);
+					//						System.out.println("Distance to " + o2.getStreet() + " is " + distance2);
 
-					double distance2 = Vector.distanceToLine(pointx, pointy, o2.getStartLat(), o2.getStartLong(), o2.getEndLat(), o2.getEndLat());
-					System.out.println("Distance to " + o2.getStreet() + " is " + distance2);
+					double distance1 = distanceStart1;
+					double distance2 = distanceStart2;
 
+					if (distanceEnd1 < distanceStart1) {
+						distance1 = distanceEnd1;
+					}
+					if (distanceEnd2 < distanceStart2) {
+						distance2 = distanceEnd2;
+					}
 					return new Double(distance1).compareTo(new Double(distance2));
 				}
 			};
@@ -1458,101 +1505,83 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			throw new IllegalArgumentException("invalid sort field '" + sortParam + "'");
 		}
 	}
+	
+	
 
-
-	private void renderApp ( String token ) {
-
-		System.out.println(token);
-		token = token.replace("#", "");
-
-		if ( token == null || "".equals ( token ) || "#".equals ( token ) ) 
-		{
-			token = "home";
-		}
-
-		if ( token.endsWith("home") ) {
-			renderFB ();
-
-		} else {
-			Window.alert ( "Unknown  url "  + token );
-		}
-	}
-
-
-	public void onValueChange(ValueChangeEvent<String> event) {
-		renderApp ( event.getValue() );
-	}
-
-	private void createFBEvent(final String addr) {
-		// TODO: popup
-		JSONObject param = new JSONObject();
-		param.put("name", new JSONString("ParkMe Sample Event"));
-		param.put("start_time", new JSONString("2012-12-12"));
-		param.put("location", new JSONString(addr));
-		param.put("description", new JSONString("This event was automatically generated by the ParkMe app."));
-		fbCore.api("/me/events", "post", param.getJavaScriptObject(), new AsyncCallback<JavaScriptObject>() {
-			@Override
-			public void onFailure(Throwable caught) {
+			public void onValueChange(ValueChangeEvent<String> event) {
+				renderApp ( event.getValue() );
 			}
 
-			@Override
-			public void onSuccess(JavaScriptObject result) {
+			private void createFBEvent(final String addr) {
+				// TODO: popup asking for event name & start time
+				JSONObject param = new JSONObject();
+				param.put("name", new JSONString("ParkMe Sample Event"));
+				param.put("start_time", new JSONString("2012-12-12"));
+				param.put("location", new JSONString(addr));
+				param.put("description", new JSONString("This event was automatically generated by the ParkMe app."));
+				fbCore.api("/me/events", "post", param.getJavaScriptObject(), new AsyncCallback<JavaScriptObject>() {
+					@Override
+					public void onFailure(Throwable caught) {
+					}
 
-				JSONObject res = new JSONObject(result);
-				String id = res.get("id").toString();
-				Window.alert("Created new Facebook Event with id " + id);
+					@Override
+					public void onSuccess(JavaScriptObject result) {
 
+						JSONObject res = new JSONObject(result);
+						String id = res.get("id").toString();
+						Window.alert("Created new Facebook Event with id " + id);
+
+					}
+				});
 			}
-		});
-	}
 
-	private void getDirections(final LatLng latlong) {
-		// TODO get directions
-		System.out.println("I have clicked on get directions");
-		
-		displayDir.setMap(null);
-		displayDir.setPanel(null);
-		
-
-		dr.setDestination(latlong);
-		// currently, set origin to UBC.
-		LatLng ubc = LatLng.create(49.2661156, -123.2457198);
-		// TODO: get origin, either by asking for a location or using GPS
-		/**
-		PopupPanel popup = new PopupPanel();
-		Label popupOrig = new Label("Enter address of origin:");
-		TextBox popupBox = new TextBox();
-		Button popupButton = new Button("Start Navigation!");
-		Button cancel = new Button("Cancel");
-		VerticalPanel popupButtons = new VerticalPanel();
-		popupButtons.add(popupButton);
-		popupButtons.add(cancel);
-		popup.add(popupOrig);
-		popup.add(popupBox);
-		popup.add(popupButtons);
-		
-		popup.show();
-		**/
-		
-		
-		dr.setOrigin(ubc);
-		//dr.setOrigin(popupBox.getValue());
-		dr.setTravelMode(TravelMode.DRIVING);
-		ds.route(dr, new DirectionsService.Callback() {
-
-			@Override
-			public void handle(DirectionsResult result, DirectionsStatus status) {
-				System.out.println("Getting directions");
-				if (status.equals(DirectionsStatus.OK)) {
-					displayDir.setMap(theMap);
-					displayDir.setPanel(dirScroll.getElement());
-					tabs.selectTab(4);
-					displayDir.setDirections(result);
-					
+			private void getDirections(final LatLng latlong) {
+				
+				displayDir.setMap(null);
+				displayDir.setPanel(null);
+				dr.setDestination(latlong);
+				
+				if (Geolocation.isSupported()) {
+					// get Geo Location
+					Geolocation geo = Geolocation.getGeolocation();
+					geo.getCurrentPosition(new PositionCallback() {
+					    public void onFailure(PositionError error) {
+					        // Handle failure
+					    }
+					    public void onSuccess(Position position) {
+					        Coordinates coords = position.getCoords();
+					        double latitude = coords.getLatitude();
+					        double longitude = coords.getLongitude();
+					        displayDirections(LatLng.create(latitude, longitude));
+					    }
+					});
 				}
+				
+				else {
+					Window.alert("Geolocation is not supported. Will set origin to UBC.");
+					displayDirections(LatLng.create(49.2661156, -123.2457198));
+				}
+			
 
 			}
-		});
-	}
+			
+			private void displayDirections(LatLng latlong) {
 
-}
+				dr.setOrigin(latlong);
+				dr.setTravelMode(TravelMode.DRIVING);
+				ds.route(dr, new DirectionsService.Callback() {
+
+					@Override
+					public void handle(DirectionsResult result, DirectionsStatus status) {
+						
+						if (status.equals(DirectionsStatus.OK)) {
+							displayDir.setMap(theMap);
+							displayDir.setPanel(dirScroll.getElement());
+							tabs.selectTab(4);
+							displayDir.setDirections(result);
+						}
+					}
+				});
+			}
+
+		}

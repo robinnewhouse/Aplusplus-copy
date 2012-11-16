@@ -2,7 +2,7 @@
 <module rename-to='parkme'>
 	<!-- Inherit the core Web Toolkit stuff. -->
 	<inherits name='com.google.gwt.user.User' />
-	
+
 	<!-- Inherit NumberFormat for displaying prices -->
 	<!-- <inherits name='com.google.gwt.i18n.client.NumberFormat' /> -->
 
@@ -31,8 +31,14 @@
 
 
 
+	<!--  Inherit Geolocation -->
+	<inherits name="com.google.code.gwt.geolocation.Html5Geolocation" />
 	<!-- Specify the paths for translatable code -->
 	<source path='client' />
 	<source path='shared' />
+<<<<<<< HEAD
+=======
+	<!-- <source path='client/sdk' /> -->
+>>>>>>> ab20595538eb21650287375c2ed545c70afde06d
 
 </module>
