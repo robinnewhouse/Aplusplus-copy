@@ -4,6 +4,8 @@
 .DS_Store
 .DS_Store?
 ._*
+*.jar
+*.gwt.rpc
 
 .Spotlight-V100
 .Trashes
