@@ -46,10 +46,12 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -187,11 +189,14 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	// SEARCHING
 	private HorizontalPanel searchPanel = new HorizontalPanel();
-	private TextBox searchBox = new TextBox();
+	private final MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();	
+	private final SuggestBox searchBox = new SuggestBox(oracle);
+	private final SearchHistoryOrganizer searchHistoryOrganizer = new SearchHistoryOrganizer(histFlexTable,oracle);
 	private Label searchLabel = new Label("Enter Address: ");
 	private Button searchButton = new Button("Search");
 
 	private List<ParkingLocation> allParkings = new ArrayList<ParkingLocation>();
+	private List<ParkingLocation> filteredParkings = new ArrayList<ParkingLocation>();
 	private int totalNum = 0;
 
 	// The most recent location searched for
@@ -201,6 +206,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private final FilterServiceAsync filterService = GWT.create(FilterService.class);
 	private final ParkingLocServiceAsync parkService = GWT.create(ParkingLocService.class);
 	private final FaveAsync fave = GWT.create(Fave.class);
+	private final SearchHistoryServiceAsync searchHistoryService = GWT.create(SearchHistoryService.class);
 	private final UserInfoServiceAsync userInfoService = GWT.create(UserInfoService.class);
 
 	/**
@@ -465,6 +471,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	private void initializeFlexTables() {
 		showFaves();
+		searchHistoryOrganizer.loadAndShowSearchHistory();
 	}
 
 	//	private void addListenerToTabs() {
@@ -562,17 +569,29 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			}
 		});
 	}
-
-	private void addListenersToButtons() {
-
+	
+	private void addListenerToSortBox() {
 		// Listen for events on the sortBox
 		sortBox.addChangeHandler(new ChangeHandler() {
 			public void onChange(ChangeEvent event) {
-				tabs.selectTab(0);
-				//				displayParkings(idList);
+				int selectedIndex = tabs.getTabBar().getSelectedTab();
+				switch (selectedIndex) {
+				case 0:
+					displayParkings(filteredParkings);
+					break;
+				case 1:
+					// displayFavourites(faveList);
+					break;
+				case 2:
+					// displayHist(histList);
+					break;
+				}
 			}
 		});
 
+	}
+	
+	private void addListenersToButtons() {
 		// Listen for mouse events on the Load Data button.
 		// In the end, this should only be accessible by an admin
 		loadDataButton.addClickHandler(new ClickHandler() {
@@ -1068,6 +1087,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void filterParkings() {
+		filteredParkings.clear();
 		LatLng searchPoint;
 
 		double maxPrice = ((double)priceFilterSlider.getValue()/2); // Divide by two to get non-integer prices
@@ -1095,16 +1115,16 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		 **/
 		System.out.println("Filtering with maxPrice = " + maxPrice + " and minTime = " + minTime + " and maxRadius = " + maxRadius);
 
-		List<ParkingLocation> filtered = new ArrayList<ParkingLocation>();
+
 		for (int i = 0; i < totalNum; i++) {
 			ParkingLocation p = allParkings.get(i);
 			if ((p.getPrice() <= maxPrice) && (p.getLimit() >= minTime) && isInRadius(p, maxRadius, searchPoint.lat(), searchPoint.lng())) {
-				filtered.add(p);
+				filteredParkings.add(p);
 			}
-			System.out.println("Found " + filtered.size() + " locations");
+			System.out.println("Found " + filteredParkings.size() + " locations");
 		}
 
-		displayParkings(filtered);
+		displayParkings(filteredParkings);
 
 		/**
 		 * 
@@ -1268,6 +1288,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			public void handle(JsArray<GeocoderResult> results,
 					GeocoderStatus status) {
 				if (status == GeocoderStatus.OK) {
+					searchHistoryOrganizer.addAndSaveSearch(address);
 					Button createEvent = new Button("Create Event");
 					Button getDirections = new Button("Directions to Here");
 					searchResult = results;
@@ -1506,12 +1527,22 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					LatLng point = searchResult.get(0).getGeometry().getLocation();
 					double pointx = point.lat();
 					double pointy = point.lng();
-					double distance1 = Vector.distanceToLine(pointx, pointy, o1.getStartLat(), o1.getStartLong(), o1.getEndLat(), o1.getEndLat());
-					System.out.println("Distance to " + o1.getStreet() + " is " + distance1);
+					double distanceStart1 = distance(pointx, pointy, o1.getStartLat(), o1.getStartLong());
+					double distanceEnd1 = distance(pointx, pointy, o1.getEndLat(), o1.getEndLong());
+					double distanceStart2 = distance(pointx, pointy, o2.getStartLat(), o2.getStartLong());
+					double distanceEnd2 = distance(pointx, pointy, o2.getEndLat(), o2.getEndLong());
+					//						System.out.println("Distance to " + o1.getStreet() + " is " + distance1);
+					//						System.out.println("Distance to " + o2.getStreet() + " is " + distance2);
 
-					double distance2 = Vector.distanceToLine(pointx, pointy, o2.getStartLat(), o2.getStartLong(), o2.getEndLat(), o2.getEndLat());
-					System.out.println("Distance to " + o2.getStreet() + " is " + distance2);
+					double distance1 = distanceStart1;
+					double distance2 = distanceStart2;
 
+					if (distanceEnd1 < distanceStart1) {
+						distance1 = distanceEnd1;
+					}
+					if (distanceEnd2 < distanceStart2) {
+						distance2 = distanceEnd2;
+					}
 					return new Double(distance1).compareTo(new Double(distance2));
 				}
 			};
