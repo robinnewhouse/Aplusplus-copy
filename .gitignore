@@ -4,6 +4,9 @@
 .DS_Store
 .DS_Store?
 ._*
+*.jar
+*.gwt.rpc
+*.cache.html
 
 .Spotlight-V100
 .Trashes
@@ -123,3 +126,5 @@ ParkMe/.gwt/.gwt-log
 
 ParkMe/.classpath
 ParkMe/.settings/*
+
+*929F0336A7AD0.txt
