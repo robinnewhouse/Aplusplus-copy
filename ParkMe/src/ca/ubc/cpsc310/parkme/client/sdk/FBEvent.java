@@ -18,7 +18,7 @@ public class FBEvent {
 	public native void subscribe(String event, AsyncCallback<JavaScriptObject> callback ) /*-{
 		var app=this;
 		$wnd.FB.Event.subscribe(event,function(response){
-			app.@package ca.ubc.cpsc310.parkme.client.sdk.FBEvent::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
+			app.@ca.ubc.cpsc310.parkme.client.sdk.FBEvent::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
 		});
 	}-*/;
 	
@@ -28,7 +28,7 @@ public class FBEvent {
 	public native void unsubscribe(String event, AsyncCallback<JavaScriptObject> callback ) /*-{
 	    var app=this;
         $wnd.FB.Event.unsubscribe(event,function(response){
-            app.@package ca.ubc.cpsc310.parkme.client.sdk.FBEvent::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
+            app.@ca.ubc.cpsc310.parkme.client.sdk.FBEvent::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);
         });
 	}-*/;
 	

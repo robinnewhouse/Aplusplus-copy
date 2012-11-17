@@ -6,6 +6,7 @@
 ._*
 *.jar
 *.gwt.rpc
+*.cache.html
 
 .Spotlight-V100
 .Trashes

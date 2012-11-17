@@ -35,17 +35,21 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 		checkLoggedIn();
 		PersistenceManager pm = PMF.getPersistenceManager();
 		ArrayList<String> searchStrings=new ArrayList<String>();;
+		//* TEMP FOR DEBUGGING
 		try {
 			Query q = pm.newQuery(SearchString.class, "user == u");
 			q.declareParameters("com.google.appengine.api.users.User u");
 			q.setOrdering("createDate");
-			ArrayList<SearchString> pHist = (ArrayList<SearchString>) q.execute(getUser());
+			//TEMP FOR DEBUGGING
+			ArrayList<SearchString> pHist = new ArrayList<SearchString>();
+			//pHist = (ArrayList<SearchString>) q.execute(getUser());
 			for (int i = 0; i < pHist.size(); i++) {	
 				searchStrings.add(pHist.get(i).getSearchString());
 			}
 		} finally {
 			pm.close();
 		}
+		//*/
 		
 		//TEMP TO CHECK IF RPC IS WORKING
 		searchStrings.add("Robson and Georgia");
