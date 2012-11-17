@@ -26,13 +26,13 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+//import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+//import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
 public class ServerTest extends TestCase {
 
-	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
-			new LocalDatastoreServiceTestConfig());
+	//private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
+	//		new LocalDatastoreServiceTestConfig());
 
 	InputStream inputStream;
 	ParkingLocHandler kmlParser;

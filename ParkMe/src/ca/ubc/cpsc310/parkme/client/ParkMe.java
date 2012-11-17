@@ -93,7 +93,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private boolean xfbml = true;
 	private boolean cookie = true;
 
-
+	private String usertype;
 	// TABPANEL
 	private TabPanel tabs = new TabPanel();
 	private FlowPanel flowpanel;
@@ -218,18 +218,20 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				loginInfo = result;
 				if(!loginInfo.isLoggedIn()) {
 					loadLogin();
-				} else if (true) {
-					loadFacebook();
-					//loadSetUserType();
+			/**	} else if (true) {
+					loadUserInfo();
+					//loadFacebook();
+					//loadSetUserType();**/
 				} else {
-					loadParkMe();
+					loadUserInfo();
+				//	loadParkMe();
 				}
 			}
 		});
 	}
 
 	private void loadParkMe() {
-		loadUserInfo();
+		
 		initializeFlexTables();
 		initializeLayout();
 		createMap();
@@ -240,7 +242,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		//  initializeSliderValues();
 		downloadData();
-		displayData();
+		//displayData();
 
 
 		addListenersToSliders();
@@ -300,27 +302,44 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		userInfoService.getUserInfo(new AsyncCallback<UserInfoClient>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				System.out.println("No User Info found yet");
-				userInfo = new UserInfoClient(loginInfo.getNickname(), "driver", 5.00, 0, 0);
-				userInfoService.setUserInfo(userInfo, new AsyncCallback<Void>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-					}
-
-					@Override
-					public void onSuccess(Void result) {
-
-					}
-				});
+				
 			}
 
 			@Override
 			public void onSuccess(UserInfoClient result) {
+				if (result == null) {
+					// no user info yet;
+					System.out.println("Don't have a user info stored (result is null)");
+					loadSetUserType();
+				}
+				else {
+					
 				System.out.println("I'm at loadUserInfo");
 
 				userInfo = result;
-				initializeSliderValues();
+				
+				userInfoService.getType(userInfo, new AsyncCallback<String>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onSuccess(String type) {
+						if (type.equals(null)) {
+							loadSetUserType();
+						}
+						else {
+							loadFacebook();
+							initializeSliderValues();
+						}
+					}
+				});
+				
+				}
+				
 
 			}
 		});
@@ -365,8 +384,35 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		// Listen for mouse events on the Set User Type button.
 		setUserButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
+				if (driverButton.getValue()) {
+					usertype = "driver";
+				}
+				else if (busOwnButton.getValue()) {
+					usertype = "business";
+				}
+				else if (adminButton.getValue()) {
+					usertype = "admin";
+				}
+				else {
+					Window.alert("Please select one of the choices above.");
+					return;
+				}
 				setUserPanel.setVisible(false);
-				loadParkMe();
+				
+				userInfo = new UserInfoClient(loginInfo.getNickname(), usertype, 5.00, 0, 0);
+				userInfoService.setUserInfo(userInfo, new AsyncCallback<Void>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						loadParkMe();
+					}
+				});
+				
+				
 			}
 		});
 	}
@@ -379,7 +425,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			//fbPanel.setVisible(false);
 			//	RootPanel.get("parkMe").add(fbPanel);
 			//	FBXfbml.parse();
-			//loadSetUserType();
+			
+			
 			loadParkMe();
 		} else {
 			//fbPanel.add( new HTML ( "This demo uses Facebook Connect. Please click to login <fb:login-button autologoutlink='true' /> " ) );
@@ -408,6 +455,12 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		priceFilterSlider.setValue(initMaxPrice);
 		timeFilterSlider.setValue(initMinTime);
 		radiusFilterSlider.setValue(initMaxRadius);
+		
+		// Set slider text:
+		String formatted = NumberFormat.getFormat("#0.00").format(maxPrice);
+		maxPriceValueLabel.setText("$" + formatted + " / hr");
+		minTimeValueLabel.setText(minTime + " hrs");
+		maxRadiusValueLabel.setText(radius + " m");
 	}
 
 	private void initializeFlexTables() {
@@ -1263,12 +1316,12 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 			@Override
 			public void onSuccess(ParkingLocation[] result) {
-
 				for (ParkingLocation p : result) {
 					allParkings.add(p);
 				}
 				totalNum = allParkings.size();
 				Window.alert("Data has been downloaded to client successfully.");
+				filterParkings();
 			}
 		});
 	}
