@@ -84,7 +84,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	// FACEBOOK EVENT STUFF
 	// private static final String apiKey = "464072253644385";
 	//FOR LOCAL:
-	 private static final String apiKey = "219605264787363";
+	private static final String apiKey = "219605264787363";
 	private FBCore fbCore = GWT.create(FBCore.class);
 	private FBEvent fbEvent = GWT.create(FBEvent.class);
 	private VerticalPanel fbPanel = new VerticalPanel ();
@@ -328,6 +328,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 					@Override
 					public void onSuccess(String type) {
+						System.out.println(type);
 						if (type.equals(null)) {
 							loadSetUserType();
 						}
