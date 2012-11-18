@@ -37,13 +37,47 @@ public class UserInfoServiceImpl extends RemoteServiceServlet implements UserInf
 		}
 	}
 
-	public void setCriteria(double radius, double maxPrice, double minTime, UserInfoClient userInfo) throws NotLoggedInException {
+	public void setType(String type, UserInfoClient userInfo) throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
 			String name = userInfo.getUsername();
 			UserInfo user = pm.getObjectById(UserInfo.class, name);
 			if (userInfo == null) {
+				//setUserInfo(userInfo);
+			}
+			else {
+				user.setUserType(type);
+			}
+		} finally {
+			pm.close();
+		}
+	}
+	
+	public String getType(UserInfoClient userInfo) throws NotLoggedInException {
+		checkLoggedIn();
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			String name = userInfo.getUsername();
+			UserInfo user = pm.getObjectById(UserInfo.class, name);
+			if (user == null) {
+				return null;
+			}
+			else {
+				return user.getUserType();
+			}
+		} finally {
+			pm.close();
+		}
+	}
+	
+	public void setCriteria(double radius, double maxPrice, double minTime, UserInfoClient userInfo) throws NotLoggedInException {
+		checkLoggedIn();
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			String name = userInfo.getUsername();
+			UserInfo user = pm.getObjectById(UserInfo.class, name);
+			if (user == null) {
 				setUserInfo(userInfo);
 			}
 			else {
@@ -69,8 +103,9 @@ public class UserInfoServiceImpl extends RemoteServiceServlet implements UserInf
 
 			if (userInfoList.size() == 0) {
 				System.out.println("No UserInfo found yet");
-				userInfoClient = new UserInfoClient(getUser().getNickname(), "driver", 5, 0, 0);
-				setUserInfo(userInfoClient);
+				//userInfoClient = new UserInfoClient(getUser().getNickname(), "driver", 5, 0, 0);
+				//setUserInfo(userInfoClient);
+				return null;
 			}
 
 			else {

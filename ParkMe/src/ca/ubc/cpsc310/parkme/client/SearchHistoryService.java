@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-@RemoteServiceRelativePath("SearchHistoryService")
+@RemoteServiceRelativePath("search")
 public interface SearchHistoryService extends RemoteService {
 	public void addSearchString(String str) throws NotLoggedInException;
 	public ArrayList<String> getHist() throws NotLoggedInException;
