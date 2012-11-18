@@ -23,9 +23,7 @@ ParkMe/.gwt/.gwt-log
 
 *.class
 
-ParkMe/war/WEB-INF/appengine-generated/datastore-indexes-auto.xml
-
-ParkMe/war/WEB-INF/appengine-generated/local_db.bin
+ParkMe/war/WEB-INF/appengine-generated/*
 
 ParkMe/war/WEB-INF/appengine-web.xml
 
