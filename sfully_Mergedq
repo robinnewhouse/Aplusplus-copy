@@ -1,0 +1,1582 @@
+[33mtag Bruce_Successfully_Merged[m
+Tagger: Bruce Krayenhoff <wbrucek@gmail.com>
+Date:   Fri Nov 16 18:52:21 2012 -0800
+
+Finally Merged Successfully!
+
+[33mcommit ab65dafa5328def4677046002c55c65abc2acf97[m
+Merge: cbb7562 ab20595
+Author: Bruce Krayenhoff <wbrucek@gmail.com>
+Date:   Thu Nov 15 17:18:08 2012 -0800
+
+    Merge branch 'master' of
+    https://github.com/UBC-CPSC-310-2012W1/Aplusplus
+    
+    Conflicts:
+    	ParkMe/src/ca/ubc/cpsc310/parkme/ParkMe.gwt.xml
+    	ParkMe/src/ca/ubc/cpsc310/parkme/client/sdk/FBCore.java
+    	ParkMe/test-classes/ca/ubc/cpsc310/parkme/test/TestXml.kml
+    	ParkMe/test/ca/ubc/cpsc310/parkme/test/ServerTest.java
+    	ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/ParkMe.gwt.xml
+    
+    
+    	getting changes from the repo
+
+[1mdiff --cc .gitignore[m
+[1mindex bfff788,5023f11..2243227[m
+[1m--- a/.gitignore[m
+[1m+++ b/.gitignore[m
+[36m@@@ -124,4 -122,4 +124,6 @@@[m [mParkMe/war/WEB-INF/deploy/parkme/symbol[m
+  ParkMe/.gwt/.gwt-log[m
+  [m
+  ParkMe/.classpath[m
+[31m--ParkMe/.settings/*[m
+[32m++ParkMe/.settings/*[m
+[32m++[m
+[32m++*929F0336A7AD0.txt[m
+[1mdiff --cc ParkMe/src/ca/ubc/cpsc310/parkme/ParkMe.gwt.xml[m
+[1mindex 385b81c,bf094fe..c19cab1[m
+[1m--- a/ParkMe/src/ca/ubc/cpsc310/parkme/ParkMe.gwt.xml[m
+[1m+++ b/ParkMe/src/ca/ubc/cpsc310/parkme/ParkMe.gwt.xml[m
+[36m@@@ -1,41 -1,41 +1,82 @@@[m
+[31m -<?xml version="1.0" encoding="UTF-8"?>[m
+[31m -<module rename-to='parkme'>[m
+[31m -	<!-- Inherit the core Web Toolkit stuff. -->[m
+[31m -	<inherits name='com.google.gwt.user.User' />[m
+[31m -[m
+[31m -	<!-- Inherit NumberFormat for displaying prices -->[m
+[31m -	<!-- <inherits name='com.google.gwt.i18n.client.NumberFormat' /> -->[m
+[31m -[m
+[31m -	<!-- Inherit the default GWT style sheet. You can change -->[m
+[31m -	<!-- the theme of your GWT application by uncommenting -->[m
+[31m -	<!-- any one of the following lines. -->[m
+[31m -	<inherits name='com.google.gwt.user.theme.clean.Clean' />[m
+[31m -	<!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->[m
+[31m -	<!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->[m
+[31m -	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->[m
+[31m -[m
+[31m -	<!-- Inherit Google Maps -->[m
+[31m -	<inherits name="com.google.maps.gwt.GoogleMaps" />[m
+[31m -[m
+[31m -	<!-- Inherit slider bar implementation -->[m
+[31m -	<inherits name="com.kiouri.sliderbar.SliderBarMVP" />[m
+[31m -[m
+[31m -	<!-- Inherit AddThis Button -->[m
+[31m -	<inherits name="org.spacetimeresearch.gwt.addthis.AddThisWidget" />[m
+[31m -[m
+[31m -	<!-- Inherit Number Formatter -->[m
+[31m -	<inherits name="com.google.gwt.i18n.I18N" />[m
+[31m -[m
+[31m -	<!-- Specify the app entry point class. -->[m
+[31m -	<entry-point class='ca.ubc.cpsc310.parkme.client.ParkMe' />[m
+[31m -[m
+[31m -	<inherits name="com.google.gwt.json.JSON" />[m
+[31m -[m
+[31m -	<!--  Inherit Geolocation -->[m
+[31m -	<inherits name="com.google.code.gwt.geolocation.Html5Geolocation" />[m
+[31m -	<!-- Specify the paths for translatable code -->[m
+[31m -	<source path='client' />[m
+[31m -	<source path='shared' />[m
+[31m -	<!-- <source path='client/sdk' /> -->[m
+[31m -[m
+[31m -</module>[m
+[32m +<?xml version="1.0" encoding="UTF-8"?>[m
+[32m +<module rename-to='parkme'>[m
+[32m +	<!-- Inherit the core Web Toolkit stuff. -->[m
+[32m +	<inherits name='com.google.gwt.user.User' />[m
+[32m +[m
+[32m +	<!-- Inherit NumberFormat for displaying prices -->[m
+[32m +	<!-- <inherits name='com.google.gwt.i18n.client.NumberFormat' /> -->[m
+[32m +[m
+[32m +	<!-- Inherit the default GWT style sheet. You can change -->[m
+[32m +	<!-- the theme of your GWT application by uncommenting -->[m
+[32m +	<!-- any one of the following lines. -->[m
+[32m +	<inherits name='com.google.gwt.user.theme.clean.Clean' />[m
+[32m++	<!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->[m
+[32m++	<!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->[m
+[32m++	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->[m
+[32m++[m
+[32m++	<!-- Inherit Google Maps -->[m
+[32m++	<inherits name="com.google.maps.gwt.GoogleMaps" />[m
+[32m++[m
+[32m++	<!-- Inherit slider bar implementation -->[m
+[32m++	<inherits name="com.kiouri.sliderbar.SliderBarMVP" />[m
+[32m++[m
+[32m++	<!-- Inherit AddThis Button -->[m
+[32m++	<inherits name="org.spacetimeresearch.gwt.addthis.AddThisWidget" />[m
+[32m++[m
+[32m++	<!-- Inherit Number Formatter -->[m
+[32m++	<inherits name="com.google.gwt.i18n.I18N" />[m
+[32m++[m
+[32m++	<!-- Specify the app entry point class. -->[m
+[32m++	<entry-point class='ca.ubc.cpsc310.parkme.client.ParkMe' />[m
+[32m++[m
+[32m++	<inherits name="com.google.gwt.json.JSON" />[m
+[32m++[m
+[32m++	<!--  Inherit Geolocation -->[m
+[32m++	<inherits name="com.google.code.gwt.geolocation.Html5Geolocation" />[m
+[32m++	<!-- Specify the paths for translatable code -->[m
+[32m++	<source path='client' />[m
+[32m++	<source path='shared' />[m
+[32m++	<!-- <source path='client/sdk' /> -->[m
+[32m++[m
+[32m++</module>[m
+[32m++<?xml version="1.0" encoding="UTF-8"?>[m
+[32m++<module rename-to='parkme'>[m
+[32m++	<!-- Inherit the core Web Toolkit stuff. -->[m
+[32m++	<inherits name='com.google.gwt.user.User' />[m
+[32m++[m
+[32m++	<!-- Inherit NumberFormat for displaying prices -->[m
+[32m++	<!-- <inherits name='com.google.gwt.i18n.client.NumberFormat' /> -->[m
+[32m++[m
+[32m++	<!-- Inherit the default GWT style sheet. You can change -->[m
+[32m++	<!-- the theme of your GWT application by uncommenting -->[m
+[32m++	<!-- any one of the following lines. -->[m
+[32m++	<inherits name='com.google.gwt.user.theme.clean.Clean' />[m
+[32m +	<!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->[m
+[32m +	<!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->[m
+[32m +	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->[m
+[32m +[m
+[32m +	<!-- Inherit Google Maps -->[m
+[32m +	<inherits name="com.google.maps.gwt.GoogleMaps" />[m
+[32m +[m
+[32m +	<!-- Inherit slider bar implementation -->[m
+[32m +	<inherits name="com.kiouri.sliderbar.SliderBarMVP" />[m
+[32m +[m
+[32m +	<!-- Inherit AddThis Button -->[m
+[32m +	<inherits name="org.spacetimeresearch.gwt.addthis.AddThisWidget" />[m
+[32m +[m
+[32m +	<!-- Inherit Number Formatter -->[m
+[32m +	<inherits name="com.google.gwt.i18n.I18N" />[m
+[32m +[m
+[32m +	<!-- Specify the app entry point class. -->[m
+[32m +	<entry-point class='ca.ubc.cpsc310.parkme.client.ParkMe' />[m
+[32m +[m
+[32m +	<inherits name="com.google.gwt.json.JSON" />[m
+[32m +[m
+[32m +	<!--  Inherit Geolocation -->[m
+[32m +	<inherits name="com.google.code.gwt.geolocation.Html5Geolocation" />[m
+[32m +	<!-- Specify the paths for translatable code -->[m
+[32m +	<source path='client' />[m
+[32m +	<source path='shared' />[m
+[32m +	<!-- <source path='client/sdk' /> -->[m
+[32m +[m
+[32m +</module>[m
+[1mdiff --cc ParkMe/src/ca/ubc/cpsc310/parkme/client/sdk/FBCore.java[m
+[1mindex 848faa3,87e6af3..541eb03[m
+[1m--- a/ParkMe/src/ca/ubc/cpsc310/parkme/client/sdk/FBCore.java[m
+[1m+++ b/ParkMe/src/ca/ubc/cpsc310/parkme/client/sdk/FBCore.java[m
+[36m@@@ -1,140 -1,142 +1,285 @@@[m
+[31m -package ca.ubc.cpsc310.parkme.client.sdk;[m
+[31m -[m
+[31m -import com.google.gwt.core.client.JavaScriptObject;[m
+[31m -import com.google.gwt.user.client.rpc.AsyncCallback;[m
+[31m -[m
+[31m -/**[m
+[31m - * Class that wraps facebook Javascript SDK[m
+[31m - * [m
+[31m - * @author ola the wrapper[m
+[31m - */[m
+[31m -public class FBCore {[m
+[31m -[m
+[31m -	/**[m
+[31m -	 * Wrapper method[m
+[31m -	 * @see http://developers.facebook.com/docs/reference/javascript/FB.init[m
+[31m -	 */[m
+[31m -	public native void init (String appId, boolean status, boolean cookie, boolean xfbml) /*-{[m
+[31m -		$wnd.FB.init({[m
+[31m -			'appId': appId, [m
+[31m -			'status': status,[m
+[31m -			'cookie': cookie,[m
+[31m -			'xfbml' : xfbml[m
+[31m -		});[m
+[31m -	}-*/;[m
+[31m -	[m
+[31m -	[m
+[31m -	/**[m
+[31m -	 * Wrapper method[m
+[31m -	 */[m
+[31m -	public native void api (String path, AsyncCallback<JavaScriptObject> callback) /*-{[m
+[31m -		var app=this;[m
+[31m -		$wnd.FB.api (path, function(response){[m
+[31m -	        app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[31m -		});[m
+[31m -	}-*/;[m
+[31m -[m
+[31m -	 public native void api (String path, String params, AsyncCallback<JavaScriptObject> callback) /*-{[m
+[31m -       var app=this;[m
+[31m -       $wnd.FB.api (path, params, function(response){[m
+[31m -           app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[31m -       });[m
+[31m -   }-*/;[m
+[31m -[m
+[31m -	/**[m
+[31m -	 * Wrapper method[m
+[31m -	 */[m
+[31m -	public native void api (String path, JavaScriptObject params, AsyncCallback<JavaScriptObject> callback) /*-{[m
+[31m -		var app=this;[m
+[31m -		$wnd.FB.api (path, params, function(response){[m
+[31m -		    app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[31m -		});[m
+[31m -	}-*/;[m
+[31m -	[m
+[31m -	/**[m
+[31m -	 * Wrapper method[m
+[31m -	 */[m
+[31m -	public native void api (String path, String method,JavaScriptObject params, AsyncCallback<JavaScriptObject> callback) /*-{[m
+[31m -		var app=this;[m
+[31m -		$wnd.FB.api (path,method, params, function(response){[m
+[31m -		    app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[31m -		});[m
+[31m -	}-*/;[m
+[31m -	[m
+[31m -[m
+[31m -	/**[m
+[31m -	 * Wrapper method for the OLD REST API[m
+[31m -	 */[m
+[31m -	public native void api (JavaScriptObject params, AsyncCallback<JavaScriptObject> callback) /*-{[m
+[31m -    	var app=this;[m
+[31m -    	$wnd.FB.api(params,function(response){[m
+[31m -        	app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[31m -    	});[m
+[31m -	}-*/; [m
+[31m -	[m
+[31m -	/**[m
+[31m -	 * Wrapper method[m
+[31m -	 */[m
+[31m -	public native void getLoginStatus (AsyncCallback<JavaScriptObject> callback) /*-{[m
+[31m -        var app=this;[m
+[31m -		$wnd.FB.getLoginStatus(function(response) {[m
+[31m -            app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[31m -		});[m
+[31m -		[m
+[31m -	}-*/;[m
+[31m -[m
+[31m -	/**[m
+[31m -	 * Wrapper method[m
+[31m -	 */[m
+[31m -	public native JavaScriptObject getAuthResponse () /*-{[m
+[31m -		return $wnd.FB.getAuthResponse();[m
+[31m -	}-*/;[m
+[31m -[m
+[31m -	[m
+[31m -	[m
+[31m -	/**[m
+[31m -	 * Wrapper method[m
+[31m -	 */[m
+[31m -	public native void login (AsyncCallback<JavaScriptObject> callback) /*-{[m
+[31m -		var app=this;[m
+[31m -        $wnd.FB.login (function(response){[m
+[31m -    	    app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[31m -		});[m
+[31m -	}-*/;[m
+[31m -	[m
+[31m -	/**[m
+[31m -	 * Wrapper method[m
+[31m -	 */[m
+[31m -	public native void login (AsyncCallback<JavaScriptObject> callback ,String permissions) /*-{[m
+[31m -       	var app=this;[m
+[31m -        $wnd.FB.login (function(response){[m
+[31m -    	    app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[31m -		},{perms:permissions});[m
+[31m -	}-*/;[m
+[31m -	[m
+[31m -	/**[m
+[31m -	 * Wrapper method[m
+[31m -	 */[m
+[31m -	public native void logout (AsyncCallback<JavaScriptObject> callback) /*-{[m
+[31m -		var app=this;[m
+[31m -		$wnd.FB.logout(function(response){[m
+[31m -    	    app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[31m -		});[m
+[31m -	}-*/;[m
+[31m -	[m
+[31m -	/**[m
+[31m -	 * Wrapper method[m
+[31m -	 */[m
+[31m -	public native void ui (JavaScriptObject params, AsyncCallback<JavaScriptObject> callback) /*-{[m
+[31m -		var app=this;[m
+[31m -		$wnd.FB.ui(params,function(response){[m
+[31m -    	    app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[31m -		});[m
+[31m -	}-*/;[m
+[31m -	[m
+[31m -	/*[m
+[31m -     * Called when method succeeded.[m
+[31m -     */[m
+[31m -    protected void callbackSuccess(AsyncCallback<JavaScriptObject> callback, JavaScriptObject obj) {[m
+[31m -        callback.onSuccess (obj);[m
+[31m -    }[m
+[31m -[m
+[31m -}[m
+[32m++<<<<<<< HEAD[m
+[32m +package ca.ubc.cpsc310.parkme.client.sdk;[m
+[32m +[m
+[32m +import com.google.gwt.core.client.JavaScriptObject;[m
+[32m +import com.google.gwt.user.client.rpc.AsyncCallback;[m
+[32m +[m
+[32m +/**[m
+[32m + * Class that wraps facebook Javascript SDK[m
+[32m + * [m
+[32m + * @author ola the wrapper[m
+[32m + */[m
+[32m +public class FBCore {[m
+[32m +[m
+[32m +	/**[m
+[32m +	 * Wrapper method[m
+[32m +	 * @see http://developers.facebook.com/docs/reference/javascript/FB.init[m
+[32m +	 */[m
+[32m +	public native void init (String appId, boolean status, boolean cookie, boolean xfbml) /*-{[m
+[32m +		$wnd.FB.init({[m
+[32m +			'appId': appId, [m
+[32m +			'status': status,[m
+[32m +			'cookie': cookie,[m
+[32m +			'xfbml' : xfbml[m
+[32m +		});[m
+[32m +	}-*/;[m
+[32m +	[m
+[32m +	[m
+[32m +	/**[m
+[32m +	 * Wrapper method[m
+[32m +	 */[m
+[32m +	public native void api (String path, AsyncCallback<JavaScriptObject> callback) /*-{[m
+[32m +		var app=this;[m
+[32m +		$wnd.FB.api (path, function(response){[m
+[32m +	        app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m +		});[m
+[32m +	}-*/;[m
+[32m +[m
+[32m +	 public native void api (String path, String params, AsyncCallback<JavaScriptObject> callback) /*-{[m
+[32m +       var app=this;[m
+[32m +       $wnd.FB.api (path, params, function(response){[m
+[32m +           app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m +       });[m
+[32m +   }-*/;[m
+[32m +[m
+[32m +	/**[m
+[32m +	 * Wrapper method[m
+[32m +	 */[m
+[32m +	public native void api (String path, JavaScriptObject params, AsyncCallback<JavaScriptObject> callback) /*-{[m
+[32m +		var app=this;[m
+[32m +		$wnd.FB.api (path, params, function(response){[m
+[32m +		    app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m +		});[m
+[32m +	}-*/;[m
+[32m +	[m
+[32m +	/**[m
+[32m +	 * Wrapper method[m
+[32m +	 */[m
+[32m +	public native void api (String path, String method,JavaScriptObject params, AsyncCallback<JavaScriptObject> callback) /*-{[m
+[32m +		var app=this;[m
+[32m +		$wnd.FB.api (path,method, params, function(response){[m
+[32m +		    app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m +		});[m
+[32m +	}-*/;[m
+[32m +	[m
+[32m +[m
+[32m +	/**[m
+[32m +	 * Wrapper method for the OLD REST API[m
+[32m +	 */[m
+[32m +	public native void api (JavaScriptObject params, AsyncCallback<JavaScriptObject> callback) /*-{[m
+[32m +    	var app=this;[m
+[32m +    	$wnd.FB.api(params,function(response){[m
+[32m +        	app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m +    	});[m
+[32m +	}-*/; [m
+[32m +	[m
+[32m +	/**[m
+[32m +	 * Wrapper method[m
+[32m +	 */[m
+[32m +	public native void getLoginStatus (AsyncCallback<JavaScriptObject> callback) /*-{[m
+[32m +        var app=this;[m
+[32m +		$wnd.FB.getLoginStatus(function(response) {[m
+[32m +            app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m +		});[m
+[32m +		[m
+[32m +	}-*/;[m
+[32m +[m
+[32m +	/**[m
+[32m +	 * Wrapper method[m
+[32m +	 */[m
+[32m +	public native JavaScriptObject getAuthResponse () /*-{[m
+[32m +		return $wnd.FB.getAuthResponse();[m
+[32m +	}-*/;[m
+[32m +[m
+[32m +	/**[m
+[32m +	 * Wrapper method[m
+[32m +	 */[m
+[32m +	public native void login (AsyncCallback<JavaScriptObject> callback) /*-{[m
+[32m +		var app=this;[m
+[32m +        $wnd.FB.login (function(response){[m
+[32m +    	    app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m +		});[m
+[32m +	}-*/;[m
+[32m +	[m
+[32m +	/**[m
+[32m +	 * Wrapper method[m
+[32m +	 */[m
+[32m +	public native void login (AsyncCallback<JavaScriptObject> callback ,String permissions) /*-{[m
+[32m +       	var app=this;[m
+[32m +        $wnd.FB.login (function(response){[m
+[32m +    	    app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m +		},{perms:permissions});[m
+[32m +	}-*/;[m
+[32m +	[m
+[32m +	/**[m
+[32m +	 * Wrapper method[m
+[32m +	 */[m
+[32m +	public native void logout (AsyncCallback<JavaScriptObject> callback) /*-{[m
+[32m +		var app=this;[m
+[32m +		$wnd.FB.logout(function(response){[m
+[32m +    	    app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m +		});[m
+[32m +	}-*/;[m
+[32m +	[m
+[32m +	/**[m
+[32m +	 * Wrapper method[m
+[32m +	 */[m
+[32m +	public native void ui (JavaScriptObject params, AsyncCallback<JavaScriptObject> callback) /*-{[m
+[32m +		var app=this;[m
+[32m +		$wnd.FB.ui(params,function(response){[m
+[32m +    	    app.@package ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m +		});[m
+[32m +	}-*/;[m
+[32m +	[m
+[32m +	/*[m
+[32m +     * Called when method succeeded.[m
+[32m +     */[m
+[32m +    protected void callbackSuccess(AsyncCallback<JavaScriptObject> callback, JavaScriptObject obj) {[m
+[32m +        callback.onSuccess (obj);[m
+[32m +    }[m
+[32m +[m
+[32m +}[m
+[32m++=======[m
+[32m++package ca.ubc.cpsc310.parkme.client.sdk;[m
+[32m++[m
+[32m++import com.google.gwt.core.client.JavaScriptObject;[m
+[32m++import com.google.gwt.user.client.rpc.AsyncCallback;[m
+[32m++[m
+[32m++/**[m
+[32m++ * Class that wraps facebook Javascript SDK[m
+[32m++ * [m
+[32m++ * @author ola the wrapper[m
+[32m++ */[m
+[32m++public class FBCore {[m
+[32m++[m
+[32m++	/**[m
+[32m++	 * Wrapper method[m
+[32m++	 * @see http://developers.facebook.com/docs/reference/javascript/FB.init[m
+[32m++	 */[m
+[32m++	public native void init (String appId, boolean status, boolean cookie, boolean xfbml) /*-{[m
+[32m++		$wnd.FB.init({[m
+[32m++			'appId': appId, [m
+[32m++			'status': status,[m
+[32m++			'cookie': cookie,[m
+[32m++			'xfbml' : xfbml[m
+[32m++		});[m
+[32m++	}-*/;[m
+[32m++	[m
+[32m++	[m
+[32m++	/**[m
+[32m++	 * Wrapper method[m
+[32m++	 */[m
+[32m++	public native void api (String path, AsyncCallback<JavaScriptObject> callback) /*-{[m
+[32m++		var app=this;[m
+[32m++		$wnd.FB.api (path, function(response){[m
+[32m++	        app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m++		});[m
+[32m++	}-*/;[m
+[32m++[m
+[32m++	 public native void api (String path, String params, AsyncCallback<JavaScriptObject> callback) /*-{[m
+[32m++       var app=this;[m
+[32m++       $wnd.FB.api (path, params, function(response){[m
+[32m++           app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m++       });[m
+[32m++   }-*/;[m
+[32m++[m
+[32m++	/**[m
+[32m++	 * Wrapper method[m
+[32m++	 */[m
+[32m++	public native void api (String path, JavaScriptObject params, AsyncCallback<JavaScriptObject> callback) /*-{[m
+[32m++		var app=this;[m
+[32m++		$wnd.FB.api (path, params, function(response){[m
+[32m++		    app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m++		});[m
+[32m++	}-*/;[m
+[32m++	[m
+[32m++	/**[m
+[32m++	 * Wrapper method[m
+[32m++	 */[m
+[32m++	public native void api (String path, String method,JavaScriptObject params, AsyncCallback<JavaScriptObject> callback) /*-{[m
+[32m++		var app=this;[m
+[32m++		$wnd.FB.api (path,method, params, function(response){[m
+[32m++		    app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m++		});[m
+[32m++	}-*/;[m
+[32m++	[m
+[32m++[m
+[32m++	/**[m
+[32m++	 * Wrapper method for the OLD REST API[m
+[32m++	 */[m
+[32m++	public native void api (JavaScriptObject params, AsyncCallback<JavaScriptObject> callback) /*-{[m
+[32m++    	var app=this;[m
+[32m++    	$wnd.FB.api(params,function(response){[m
+[32m++        	app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m++    	});[m
+[32m++	}-*/; [m
+[32m++	[m
+[32m++	/**[m
+[32m++	 * Wrapper method[m
+[32m++	 */[m
+[32m++	public native void getLoginStatus (AsyncCallback<JavaScriptObject> callback) /*-{[m
+[32m++        var app=this;[m
+[32m++		$wnd.FB.getLoginStatus(function(response) {[m
+[32m++            app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m++		});[m
+[32m++		[m
+[32m++	}-*/;[m
+[32m++[m
+[32m++	/**[m
+[32m++	 * Wrapper method[m
+[32m++	 */[m
+[32m++	public native JavaScriptObject getAuthResponse () /*-{[m
+[32m++		return $wnd.FB.getAuthResponse();[m
+[32m++	}-*/;[m
+[32m++[m
+[32m++	[m
+[32m++	[m
+[32m++	/**[m
+[32m++	 * Wrapper method[m
+[32m++	 */[m
+[32m++	public native void login (AsyncCallback<JavaScriptObject> callback) /*-{[m
+[32m++		var app=this;[m
+[32m++        $wnd.FB.login (function(response){[m
+[32m++    	    app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m++		});[m
+[32m++	}-*/;[m
+[32m++	[m
+[32m++	/**[m
+[32m++	 * Wrapper method[m
+[32m++	 */[m
+[32m++	public native void login (AsyncCallback<JavaScriptObject> callback ,String permissions) /*-{[m
+[32m++       	var app=this;[m
+[32m++        $wnd.FB.login (function(response){[m
+[32m++    	    app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m++		},{perms:permissions});[m
+[32m++	}-*/;[m
+[32m++	[m
+[32m++	/**[m
+[32m++	 * Wrapper method[m
+[32m++	 */[m
+[32m++	public native void logout (AsyncCallback<JavaScriptObject> callback) /*-{[m
+[32m++		var app=this;[m
+[32m++		$wnd.FB.logout(function(response){[m
+[32m++    	    app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m++		});[m
+[32m++	}-*/;[m
+[32m++	[m
+[32m++	/**[m
+[32m++	 * Wrapper method[m
+[32m++	 */[m
+[32m++	public native void ui (JavaScriptObject params, AsyncCallback<JavaScriptObject> callback) /*-{[m
+[32m++		var app=this;[m
+[32m++		$wnd.FB.ui(params,function(response){[m
+[32m++    	    app.@ca.ubc.cpsc310.parkme.client.sdk.FBCore::callbackSuccess(Lcom/google/gwt/user/client/rpc/AsyncCallback;Lcom/google/gwt/core/client/JavaScriptObject;)(callback,response);[m
+[32m++		});[m
+[32m++	}-*/;[m
+[32m++	[m
+[32m++	/*[m
+[32m++     * Called when method succeeded.[m
+[32m++     */[m
+[32m++    protected void callbackSuccess(AsyncCallback<JavaScriptObject> callback, JavaScriptObject obj) {[m
+[32m++        callback.onSuccess (obj);[m
+[32m++    }[m
+[32m++[m
+[32m++}[m
+[32m++>>>>>>> ab20595538eb21650287375c2ed545c70afde06d[m
+[1mdiff --cc ParkMe/test-classes/ca/ubc/cpsc310/parkme/test/TestXml.kml[m
+[1mindex eb81013,03a78a3..8b5ed2e[m
+[1m--- a/ParkMe/test-classes/ca/ubc/cpsc310/parkme/test/TestXml.kml[m
+[1m+++ b/ParkMe/test-classes/ca/ubc/cpsc310/parkme/test/TestXml.kml[m
+[36m@@@ -1,81 -1,81 +1,165 @@@[m
+[31m -<?xml version="1.0" encoding="UTF-8"?>[m
+[31m -[m
+[31m -<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gx="http://www.google.com/kml/ext/2.2">[m
+[31m -<Document>[m
+[31m -[m
+[31m -<Placemark id="kml_1">[m
+[31m -<name>$1.00 / hr 2hr time limit</name>[m
+[31m -<snippet> </snippet>[m
+[31m -<description><![CDATA[<center><table><tr><th colspan='2' align='center'><em>Attributes</em></th></tr><tr bgcolor="#E3E3F3">[m
+[31m -<th>RATE</th>[m
+[31m -<td>$1.00</td>[m
+[31m -</tr><tr bgcolor="">[m
+[31m -<th>LIMIT</th>[m
+[31m -<td>2hr</td>[m
+[31m -</tr></table></center>]]></description>[m
+[31m -<styleUrl>#ParkingMeterStyler_KMLStyler</styleUrl>[m
+[31m -<ExtendedData>[m
+[31m -<SchemaData schemaUrl="#Meter_Rates_and_Time_Limits">[m
+[31m -<SimpleData name="RATE">$1.00</SimpleData>[m
+[31m -<SimpleData name="LIMIT">2hr</SimpleData>[m
+[31m -</SchemaData>[m
+[31m -</ExtendedData>[m
+[31m -<LineString>[m
+[31m -<coordinates>-123.100739208611,49.2630169018194,0 -123.100348847572,49.2630078055425,0 </coordinates>[m
+[31m -</LineString>[m
+[31m -</Placemark>[m
+[31m -<Placemark id="kml_2">[m
+[31m -<name>$1.00 / hr 2hr time limit</name>[m
+[31m -<snippet> </snippet>[m
+[31m -<description><![CDATA[<center><table><tr><th colspan='2' align='center'><em>Attributes</em></th></tr><tr bgcolor="#E3E3F3">[m
+[31m -<th>RATE</th>[m
+[31m -<td>$1.00</td>[m
+[31m -</tr><tr bgcolor="">[m
+[31m -<th>LIMIT</th>[m
+[31m -<td>2hr</td>[m
+[31m -</tr></table></center>]]></description>[m
+[31m -<styleUrl>#ParkingMeterStyler_KMLStyler</styleUrl>[m
+[31m -<ExtendedData>[m
+[31m -<SchemaData schemaUrl="#Meter_Rates_and_Time_Limits">[m
+[31m -<SimpleData name="RATE">$1.00</SimpleData>[m
+[31m -<SimpleData name="LIMIT">2hr</SimpleData>[m
+[31m -</SchemaData>[m
+[31m -</ExtendedData>[m
+[31m -<LineString>[m
+[31m -<coordinates>-123.100756446135,49.2627730507724,0 -123.100366087016,49.2627639545521,0 </coordinates>[m
+[31m -</LineString>[m
+[31m -</Placemark>[m
+[31m -<Placemark id="1.00 price">[m
+[31m -<SimpleData name="RATE">$1.00</SimpleData>[m
+[31m -</Placemark>[m
+[31m -<Placemark id="1.50 price">[m
+[31m -<SimpleData name="RATE">$1.50</SimpleData>[m
+[31m -</Placemark>[m
+[31m -<Placemark id="2.00 price">[m
+[31m -<SimpleData name="RATE">$2.00</SimpleData>[m
+[31m -</Placemark>[m
+[31m -<Placemark id="2.50 price">[m
+[31m -<SimpleData name="RATE">$2.50</SimpleData>[m
+[31m -</Placemark>[m
+[31m -<Placemark id="3.00 price">[m
+[31m -<SimpleData name="RATE">$3.00</SimpleData>[m
+[31m -</Placemark>[m
+[31m -<Placemark id="3.50 price">[m
+[31m -<SimpleData name="RATE">$3.50</SimpleData>[m
+[31m -</Placemark>[m
+[31m -<Placemark id="4.00 price">[m
+[31m -<SimpleData name="RATE">$4.00</SimpleData>[m
+[31m -</Placemark>[m
+[31m -<Placemark id="4.50 price">[m
+[31m -<SimpleData name="RATE">$4.50</SimpleData>[m
+[31m -</Placemark>[m
+[31m -<Placemark id="5.00 price">[m
+[31m -<SimpleData name="RATE">$5.00</SimpleData>[m
+[31m -</Placemark>[m
+[31m -<Placemark id="100.00 price">[m
+[31m -<SimpleData name="RATE">$100.00</SimpleData>[m
+[31m -</Placemark>[m
+[31m -<Placemark id="-1.00 price">[m
+[31m -<SimpleData name="RATE">$-1.00</SimpleData>[m
+[31m -</Placemark>[m
+[31m -</Document></kml>[m
+[32m++<<<<<<< HEAD[m
+[32m +<?xml version="1.0" encoding="UTF-8"?>[m
+[32m +[m
+[32m +<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gx="http://www.google.com/kml/ext/2.2">[m
+[32m +<Document>[m
+[32m +[m
+[32m +<Placemark id="kml_1">[m
+[32m +<name>$1.00 / hr 2hr time limit</name>[m
+[32m +<snippet> </snippet>[m
+[32m +<description><![CDATA[<center><table><tr><th colspan='2' align='center'><em>Attributes</em></th></tr><tr bgcolor="#E3E3F3">[m
+[32m +<th>RATE</th>[m
+[32m +<td>$1.00</td>[m
+[32m +</tr><tr bgcolor="">[m
+[32m +<th>LIMIT</th>[m
+[32m +<td>2hr</td>[m
+[32m +</tr></table></center>]]></description>[m
+[32m +<styleUrl>#ParkingMeterStyler_KMLStyler</styleUrl>[m
+[32m +<ExtendedData>[m
+[32m +<SchemaData schemaUrl="#Meter_Rates_and_Time_Limits">[m
+[32m +<SimpleData name="RATE">$1.00</SimpleData>[m
+[32m +<SimpleData name="LIMIT">2hr</SimpleData>[m
+[32m +</SchemaData>[m
+[32m +</ExtendedData>[m
+[32m +<LineString>[m
+[32m +<coordinates>-123.100739208611,49.2630169018194,0 -123.100348847572,49.2630078055425,0 </coordinates>[m
+[32m +</LineString>[m
+[32m +</Placemark>[m
+[32m +<Placemark id="kml_2">[m
+[32m +<name>$1.00 / hr 2hr time limit</name>[m
+[32m +<snippet> </snippet>[m
+[32m +<description><![CDATA[<center><table><tr><th colspan='2' align='center'><em>Attributes</em></th></tr><tr bgcolor="#E3E3F3">[m
+[32m +<th>RATE</th>[m
+[32m +<td>$1.00</td>[m
+[32m +</tr><tr bgcolor="">[m
+[32m +<th>LIMIT</th>[m
+[32m +<td>2hr</td>[m
+[32m +</tr></table></center>]]></description>[m
+[32m +<styleUrl>#ParkingMeterStyler_KMLStyler</styleUrl>[m
+[32m +<ExtendedData>[m
+[32m +<SchemaData schemaUrl="#Meter_Rates_and_Time_Limits">[m
+[32m +<SimpleData name="RATE">$1.00</SimpleData>[m
+[32m +<SimpleData name="LIMIT">2hr</SimpleData>[m
+[32m +</SchemaData>[m
+[32m +</ExtendedData>[m
+[32m +<LineString>[m
+[32m +<coordinates>-123.100756446135,49.2627730507724,0 -123.100366087016,49.2627639545521,0 </coordinates>[m
+[32m +</LineString>[m
+[32m +</Placemark>[m
+[32m +<Placemark id="1.00 price">[m
+[32m +<SimpleData name="RATE">$1.00</SimpleData>[m
+[32m +</Placemark>[m
+[32m +<Placemark id="1.50 price">[m
+[32m +<SimpleData name="RATE">$1.50</SimpleData>[m
+[32m +</Placemark>[m
+[32m +<Placemark id="2.00 price">[m
+[32m +<SimpleData name="RATE">$2.00</SimpleData>[m
+[32m +</Placemark>[m
+[32m +<Placemark id="2.50 price">[m
+[32m +<SimpleData name="RATE">$2.50</SimpleData>[m
+[32m +</Placemark>[m
+[32m +<Placemark id="3.00 price">[m
+[32m +<SimpleData name="RATE">$3.00</SimpleData>[m
+[32m +</Placemark>[m
+[32m +<Placemark id="3.50 price">[m
+[32m +<SimpleData name="RATE">$3.50</SimpleData>[m
+[32m +</Placemark>[m
+[32m +<Placemark id="4.00 price">[m
+[32m +<SimpleData name="RATE">$4.00</SimpleData>[m
+[32m +</Placemark>[m
+[32m +<Placemark id="4.50 price">[m
+[32m +<SimpleData name="RATE">$4.50</SimpleData>[m
+[32m +</Placemark>[m
+[32m +<Placemark id="5.00 price">[m
+[32m +<SimpleData name="RATE">$5.00</SimpleData>[m
+[32m +</Placemark>[m
+[32m +<Placemark id="100.00 price">[m
+[32m +<SimpleData name="RATE">$100.00</SimpleData>[m
+[32m +</Placemark>[m
+[32m +<Placemark id="-1.00 price">[m
+[32m +<SimpleData name="RATE">$-1.00</SimpleData>[m
+[32m +</Placemark>[m
+[32m +</Document></kml>[m
+[32m++=======[m
+[32m++<?xml version="1.0" encoding="UTF-8"?>[m
+[32m++[m
+[32m++<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gx="http://www.google.com/kml/ext/2.2">[m
+[32m++<Document>[m
+[32m++[m
+[32m++<Placemark id="kml_1">[m
+[32m++<name>$1.00 / hr 2hr time limit</name>[m
+[32m++<snippet> </snippet>[m
+[32m++<description><![CDATA[<center><table><tr><th colspan='2' align='center'><em>Attributes</em></th></tr><tr bgcolor="#E3E3F3">[m
+[32m++<th>RATE</th>[m
+[32m++<td>$1.00</td>[m
+[32m++</tr><tr bgcolor="">[m
+[32m++<th>LIMIT</th>[m
+[32m++<td>2hr</td>[m
+[32m++</tr></table></center>]]></description>[m
+[32m++<styleUrl>#ParkingMeterStyler_KMLStyler</styleUrl>[m
+[32m++<ExtendedData>[m
+[32m++<SchemaData schemaUrl="#Meter_Rates_and_Time_Limits">[m
+[32m++<SimpleData name="RATE">$1.00</SimpleData>[m
+[32m++<SimpleData name="LIMIT">2hr</SimpleData>[m
+[32m++</SchemaData>[m
+[32m++</ExtendedData>[m
+[32m++<LineString>[m
+[32m++<coordinates>-123.100739208611,49.2630169018194,0 -123.100348847572,49.2630078055425,0 </coordinates>[m
+[32m++</LineString>[m
+[32m++</Placemark>[m
+[32m++<Placemark id="kml_2">[m
+[32m++<name>$1.00 / hr 2hr time limit</name>[m
+[32m++<snippet> </snippet>[m
+[32m++<description><![CDATA[<center><table><tr><th colspan='2' align='center'><em>Attributes</em></th></tr><tr bgcolor="#E3E3F3">[m
+[32m++<th>RATE</th>[m
+[32m++<td>$1.00</td>[m
+[32m++</tr><tr bgcolor="">[m
+[32m++<th>LIMIT</th>[m
+[32m++<td>2hr</td>[m
+[32m++</tr></table></center>]]></description>[m
+[32m++<styleUrl>#ParkingMeterStyler_KMLStyler</styleUrl>[m
+[32m++<ExtendedData>[m
+[32m++<SchemaData schemaUrl="#Meter_Rates_and_Time_Limits">[m
+[32m++<SimpleData name="RATE">$1.00</SimpleData>[m
+[32m++<SimpleData name="LIMIT">2hr</SimpleData>[m
+[32m++</SchemaData>[m
+[32m++</ExtendedData>[m
+[32m++<LineString>[m
+[32m++<coordinates>-123.100756446135,49.2627730507724,0 -123.100366087016,49.2627639545521,0 </coordinates>[m
+[32m++</LineString>[m
+[32m++</Placemark>[m
+[32m++<Placemark id="1.00 price">[m
+[32m++<SimpleData name="RATE">$1.00</SimpleData>[m
+[32m++</Placemark>[m
+[32m++<Placemark id="1.50 price">[m
+[32m++<SimpleData name="RATE">$1.50</SimpleData>[m
+[32m++</Placemark>[m
+[32m++<Placemark id="2.00 price">[m
+[32m++<SimpleData name="RATE">$2.00</SimpleData>[m
+[32m++</Placemark>[m
+[32m++<Placemark id="2.50 price">[m
+[32m++<SimpleData name="RATE">$2.50</SimpleData>[m
+[32m++</Placemark>[m
+[32m++<Placemark id="3.00 price">[m
+[32m++<SimpleData name="RATE">$3.00</SimpleData>[m
+[32m++</Placemark>[m
+[32m++<Placemark id="3.50 price">[m
+[32m++<SimpleData name="RATE">$3.50</SimpleData>[m
+[32m++</Placemark>[m
+[32m++<Placemark id="4.00 price">[m
+[32m++<SimpleData name="RATE">$4.00</SimpleData>[m
+[32m++</Placemark>[m
+[32m++<Placemark id="4.50 price">[m
+[32m++<SimpleData name="RATE">$4.50</SimpleData>[m
+[32m++</Placemark>[m
+[32m++<Placemark id="5.00 price">[m
+[32m++<SimpleData name="RATE">$5.00</SimpleData>[m
+[32m++</Placemark>[m
+[32m++<Placemark id="100.00 price">[m
+[32m++<SimpleData name="RATE">$100.00</SimpleData>[m
+[32m++</Placemark>[m
+[32m++<Placemark id="-1.00 price">[m
+[32m++<SimpleData name="RATE">$-1.00</SimpleData>[m
+[32m++</Placemark>[m
+[32m++</Document></kml>[m
+[32m++>>>>>>> ab20595538eb21650287375c2ed545c70afde06d[m
+[1mdiff --cc ParkMe/test/ca/ubc/cpsc310/parkme/test/ServerTest.java[m
+[1mindex 9f820cb,267c417..83282d5[m
+[1m--- a/ParkMe/test/ca/ubc/cpsc310/parkme/test/ServerTest.java[m
+[1m+++ b/ParkMe/test/ca/ubc/cpsc310/parkme/test/ServerTest.java[m
+[36m@@@ -1,296 -1,206 +1,502 @@@[m
+[31m -package ca.ubc.cpsc310.parkme.test;[m
+[31m -[m
+[31m -import static com.google.appengine.api.datastore.FetchOptions.Builder.withLimit;[m
+[31m -[m
+[31m -import java.io.IOException;[m
+[31m -import java.io.InputStream;[m
+[31m -import java.util.List;[m
+[31m -[m
+[31m -import javax.jdo.JDOHelper;[m
+[31m -import javax.jdo.PersistenceManager;[m
+[31m -import javax.jdo.PersistenceManagerFactory;[m
+[31m -import javax.xml.parsers.ParserConfigurationException;[m
+[31m -import javax.xml.parsers.SAXParser;[m
+[31m -import javax.xml.parsers.SAXParserFactory;[m
+[31m -[m
+[31m -import junit.framework.TestCase;[m
+[31m -[m
+[31m -import org.junit.Before;[m
+[31m -import org.junit.Test;[m
+[31m -import org.xml.sax.SAXException;[m
+[31m -[m
+[31m -import ca.ubc.cpsc310.parkme.server.ParkingLoc;[m
+[31m -import ca.ubc.cpsc310.parkme.server.ParkingLocHandler;[m
+[31m -[m
+[31m -import com.google.appengine.api.datastore.DatastoreService;[m
+[31m -import com.google.appengine.api.datastore.DatastoreServiceFactory;[m
+[31m -import com.google.appengine.api.datastore.Entity;[m
+[31m -import com.google.appengine.api.datastore.Query;[m
+[31m -import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;[m
+[31m -import com.google.appengine.tools.development.testing.LocalServiceTestHelper;[m
+[31m -[m
+[31m -public class ServerTest extends TestCase {[m
+[31m -[m
+[31m -	private final LocalServiceTestHelper helper = new LocalServiceTestHelper([m
+[31m -			new LocalDatastoreServiceTestConfig());[m
+[31m -[m
+[31m -	InputStream inputStream;[m
+[31m -	ParkingLocHandler kmlParser;[m
+[31m -	SAXParserFactory factory;[m
+[31m -	SAXParser saxParser;[m
+[31m -	List<ParkingLoc> pll;[m
+[31m -	private static final PersistenceManagerFactory PMF = JDOHelper[m
+[31m -			.getPersistenceManagerFactory("transactions-optional");[m
+[31m -	PersistenceManager pm = PMF.getPersistenceManager();[m
+[31m -[m
+[31m -	// QUESTION: this will not run before my tests. to not have to parse the[m
+[31m -	// data[m
+[31m -	// every time, i knidof need it to.[m
+[31m -	// there is an issue on stackoverflow regarding this, what should i do?[m
+[31m -	// http://stackoverflow.com/questions/733037/why-isnt-my-beforeclass-method-running[m
+[31m -	@Before[m
+[31m -	public void parseTestXml() {[m
+[31m -		inputStream = this.getClass().getResourceAsStream("TestXml.kml");[m
+[31m -[m
+[31m -		try {[m
+[31m -			if (inputStream.available() > 0) {[m
+[31m -				assertTrue(true);[m
+[31m -			} else {[m
+[31m -				System.out.println("file is empty");[m
+[31m -				assertTrue(false);[m
+[31m -			}[m
+[31m -		} catch (IOException e) {[m
+[31m -			System.out.println("IOException in testKmlParser");[m
+[31m -			assertTrue(false);[m
+[31m -			e.printStackTrace();[m
+[31m -		}[m
+[31m -		// Setup for parsing[m
+[31m -		kmlParser = new ParkingLocHandler();[m
+[31m -		factory = SAXParserFactory.newInstance();[m
+[31m -		try {[m
+[31m -			saxParser = factory.newSAXParser();[m
+[31m -			saxParser.parse(inputStream, kmlParser);[m
+[31m -		} catch (ParserConfigurationException e) {[m
+[31m -			System.out.println("ParserConfigurationException in testKmlParser");[m
+[31m -			assertTrue(false);[m
+[31m -			e.printStackTrace();[m
+[31m -		} catch (SAXException e) {[m
+[31m -			System.out.println("SAXException in testKmlParser");[m
+[31m -			assertTrue(false);[m
+[31m -			e.printStackTrace();[m
+[31m -		} catch (IOException e) {[m
+[31m -			System.out.println("IOException in testKmlParser");[m
+[31m -			assertTrue(false);[m
+[31m -			e.printStackTrace();[m
+[31m -		}[m
+[31m -[m
+[31m -		pll = kmlParser.getParkingLocList();[m
+[31m -[m
+[31m -	}[m
+[31m -[m
+[31m -	/**[m
+[31m -	 * Must refer to a valid module that sources this class.[m
+[31m -	 */[m
+[31m -	public String getModuleName() { // (2)[m
+[31m -		return "ca.ubc.cpsc310.parkme.ParkMe";[m
+[31m -	}[m
+[31m -[m
+[31m -	@Test[m
+[31m -	public void testSimple() { // (3)[m
+[31m -		assertTrue(true);[m
+[31m -	}[m
+[31m -[m
+[31m -	// You need to make sure data is parsed as intended[m
+[31m -	@Test[m
+[31m -	public void testKmlData() {[m
+[31m -[m
+[31m -		parseTestXml();[m
+[31m -[m
+[31m -		List<ParkingLoc> pll = kmlParser.getParkingLocList();[m
+[31m -[m
+[31m -		ParkingLoc pl0 = pll.get(0);[m
+[31m -		ParkingLoc pl1 = pll.get(1);[m
+[31m -[m
+[31m -		assertEquals(49.2630169018194, pl0.getStartLat(), 0.0000000000001);[m
+[31m -		assertEquals(-123.100739208611, pl0.getStartLong(), 0.0000000000001);[m
+[31m -		assertEquals(49.2630078055425, pl0.getEndLat(), 0.0000000000001);[m
+[31m -		assertEquals(-123.100348847572, pl0.getEndLong(), 0.0000000000001);[m
+[31m -		assertEquals(2.00, pl0.getLimit());[m
+[31m -		assertEquals(1.00, pl0.getPrice());[m
+[31m -		assertEquals("kml_1", pl0.getParkingID());[m
+[31m -[m
+[31m -		assertEquals(49.2627730507724, pl1.getStartLat(), 0.0000000000001);[m
+[31m -		assertEquals(-123.100756446135, pl1.getStartLong(), 0.0000000000001);[m
+[31m -		assertEquals(49.2627639545521, pl1.getEndLat(), 0.0000000000001);[m
+[31m -		assertEquals(-123.100366087016, pl1.getEndLong(), 0.0000000000001);[m
+[31m -		assertEquals(2.00, pl1.getLimit());[m
+[31m -		assertEquals(1.00, pl1.getPrice());[m
+[31m -		assertEquals("kml_2", pl1.getParkingID());[m
+[31m -[m
+[31m -		assertTrue(true);[m
+[31m -	}[m
+[31m -[m
+[31m -	// check for colors[m
+[31m -	@Test[m
+[31m -	public void testColorCalculation() {[m
+[31m -		parseTestXml();[m
+[31m -[m
+[31m -		List<ParkingLoc> pll = kmlParser.getParkingLocList();[m
+[31m -[m
+[31m -		ParkingLoc pl100 = findParkingLocByPrice(pll, 1.00);[m
+[31m -		ParkingLoc pl150 = findParkingLocByPrice(pll, 1.50);[m
+[31m -		ParkingLoc pl200 = findParkingLocByPrice(pll, 2.00);[m
+[31m -		ParkingLoc pl250 = findParkingLocByPrice(pll, 2.50);[m
+[31m -		ParkingLoc pl300 = findParkingLocByPrice(pll, 3.00);[m
+[31m -		ParkingLoc pl350 = findParkingLocByPrice(pll, 3.50);[m
+[31m -		ParkingLoc pl400 = findParkingLocByPrice(pll, 4.00);[m
+[31m -		ParkingLoc pl450 = findParkingLocByPrice(pll, 4.50);[m
+[31m -		ParkingLoc pl500 = findParkingLocByPrice(pll, 5.00);[m
+[31m -		ParkingLoc pl10000 = findParkingLocByPrice(pll, 100.00);[m
+[31m -		ParkingLoc plneg1 = findParkingLocByPrice(pll, -1.00);[m
+[31m -[m
+[31m -		assertEquals(pl100.getColor(), "#66CD00");[m
+[31m -		assertEquals(pl150.getColor(), "#9BD500");[m
+[31m -		assertEquals(pl200.getColor(), "#B7D900");[m
+[31m -		assertEquals(pl250.getColor(), "#E0CF00");[m
+[31m -		assertEquals(pl300.getColor(), "#E8A100");[m
+[31m -		assertEquals(pl350.getColor(), "#EC8800");[m
+[31m -		assertEquals(pl400.getColor(), "#F35400");[m
+[31m -		assertEquals(pl450.getColor(), "#FB1D00");[m
+[31m -		assertEquals(pl500.getColor(), "#FF0000");[m
+[31m -		assertEquals(pl10000.getColor(), "#FF0000");[m
+[31m -		assertEquals(plneg1.getColor(), "#66CD00");[m
+[31m -[m
+[31m -		assertTrue(true);[m
+[31m -	}[m
+[31m -[m
+[31m -	// TODO and returned in a correct format. QUESTION HOW?[m
+[31m -	// TODO test that kml is retrievable from kmz[m
+[31m -	public void testRetrievalOfKmlFromKmz() {[m
+[31m -[m
+[31m -	}[m
+[31m -[m
+[31m -	// and also that persisted objects can be retrieved[m
+[31m -	[m
+[31m -[m
+[31m -		    // run this test twice to prove we're not leaking any state across tests[m
+[31m -		    private void doTest() {[m
+[31m -		        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();[m
+[31m -		        assertEquals(0, ds.prepare(new Query("yam")).countEntities(withLimit(10)));[m
+[31m -		        ds.put(new Entity("yam"));[m
+[31m -		        ds.put(new Entity("yam"));[m
+[31m -		        assertEquals(2, ds.prepare(new Query("yam")).countEntities(withLimit(10)));[m
+[31m -		    }[m
+[31m -[m
+[31m -		    @Test[m
+[31m -		    public void testInsert1() {[m
+[31m -		        doTest();[m
+[31m -		    }[m
+[31m -[m
+[31m -		    @Test[m
+[31m -		    public void testInsert2() {[m
+[31m -		        doTest();[m
+[31m -		    }[m
+[31m -[m
+[31m -	// and have the same attributes as before.[m
+[31m -[m
+[31m -	// A helper method to traverse the list of parking locs[m
+[31m -	public ParkingLoc findParkingLocByPrice(List<ParkingLoc> pll, double price) {[m
+[31m -		for (ParkingLoc parkingLoc : pll) {[m
+[31m -			if (parkingLoc.getPrice() == price)[m
+[31m -				return parkingLoc;[m
+[31m -		}[m
+[31m -		return null;[m
+[31m -	}[m
+[31m -[m
+[31m -}[m
+[32m +package ca.ubc.cpsc310.parkme.test;[m
+[32m +[m
+[32m +import java.io.IOException;[m
+[32m +import java.io.InputStream;[m
+[32m +import java.net.MalformedURLException;[m
+[32m +import java.net.URL;[m
+[32m +import java.net.URLConnection;[m
+[32m +import java.util.ArrayList;[m
+[32m +import java.util.List;[m
+[32m +import java.util.zip.ZipEntry;[m
+[32m +import java.util.zip.ZipInputStream;[m
+[32m +[m
+[32m +import javax.jdo.JDOHelper;[m
+[32m +import javax.jdo.PersistenceManager;[m
+[32m +import javax.jdo.PersistenceManagerFactory;[m
+[32m +import javax.xml.parsers.ParserConfigurationException;[m
+[32m +import javax.xml.parsers.SAXParser;[m
+[32m +import javax.xml.parsers.SAXParserFactory;[m
+[32m +[m
+[32m +import junit.framework.TestCase;[m
+[32m +[m
+[32m +import org.junit.Before;[m
+[32m +import org.junit.BeforeClass;[m
+[32m +import org.junit.Test;[m
+[32m +import org.xml.sax.SAXException;[m
+[32m +[m
+[32m +import com.google.gwt.core.client.GWT;[m
+[32m +[m
+[32m +import ca.ubc.cpsc310.parkme.client.LoadDataService;[m
+[32m +import ca.ubc.cpsc310.parkme.client.LoadDataServiceAsync;[m
+[32m +import ca.ubc.cpsc310.parkme.server.LoadDataServiceImpl;[m
+[32m +import ca.ubc.cpsc310.parkme.server.ParkingLoc;[m
+[32m +import ca.ubc.cpsc310.parkme.server.ParkingLocHandler;[m
+[32m +[m
+[32m +public class ServerTest extends TestCase{[m
+[32m +[m
+[32m +	InputStream inputStream;[m
+[32m +	ParkingLocHandler kmlParser;[m
+[32m +	SAXParserFactory factory;[m
+[32m +	SAXParser saxParser;[m
+[32m +	List<ParkingLoc> pll;[m
+[32m +	private static final PersistenceManagerFactory PMF = JDOHelper.getPersistenceManagerFactory("transactions-optional");[m
+[32m +	PersistenceManager pm = PMF.getPersistenceManager();[m
+[32m +[m
+[32m +[m
+[32m +	//QUESTION: this will not run before my tests. to not have to parse the data [m
+[32m +	// every time, i knidof need it to. [m
+[32m +	// there is an issue on stackoverflow regarding this, what should i do?[m
+[32m +	// http://stackoverflow.com/questions/733037/why-isnt-my-beforeclass-method-running[m
+[32m +	@Before[m
+[32m +	public void parseTestXml(){[m
+[32m +		inputStream = this.getClass().getResourceAsStream("TestXml.kml");[m
+[32m +[m
+[32m +		try {[m
+[32m +			if (inputStream.available() > 0){[m
+[32m +				assertTrue(true);[m
+[32m +			}else{[m
+[32m +				System.out.println("file is empty");[m
+[32m +				assertTrue(false);[m
+[32m +			}[m
+[32m +		} catch (IOException e) {[m
+[32m +			System.out.println("IOException in testKmlParser");[m
+[32m +			assertTrue(false);[m
+[32m +			e.printStackTrace();[m
+[32m +		}[m
+[32m +		//Setup for parsing[m
+[32m +		kmlParser = new ParkingLocHandler();[m
+[32m +		factory = SAXParserFactory.newInstance();[m
+[32m +		try {[m
+[32m +			saxParser = factory.newSAXParser();[m
+[32m +			saxParser.parse(inputStream, kmlParser);[m
+[32m +		} catch (ParserConfigurationException e) {[m
+[32m +			System.out.println("ParserConfigurationException in testKmlParser");[m
+[32m +			assertTrue(false);[m
+[32m +			e.printStackTrace();[m
+[32m +		} catch (SAXException e) {[m
+[32m +			System.out.println("SAXException in testKmlParser");[m
+[32m +			assertTrue(false);[m
+[32m +			e.printStackTrace();[m
+[32m +		} catch (IOException e) {[m
+[32m +			System.out.println("IOException in testKmlParser");[m
+[32m +			assertTrue(false);[m
+[32m +			e.printStackTrace();[m
+[32m +		}[m
+[32m +[m
+[32m +		pll =  kmlParser.getParkingLocList();[m
+[32m +[m
+[32m +	}[m
+[32m +[m
+[32m +[m
+[32m +[m
+[32m +	/**[m
+[32m +	 * Must refer to a valid module that sources this class.[m
+[32m +	 */[m
+[32m +	public String getModuleName() { // (2)[m
+[32m +		return "ca.ubc.cpsc310.parkme.ParkMe";[m
+[32m +	}[m
+[32m +[m
+[32m +	@Test[m
+[32m +	public void testSimple() { // (3)[m
+[32m +		assertTrue(true);[m
+[32m +	}[m
+[32m +[m
+[32m +	//You need to make sure data is parsed as intended[m
+[32m +	@Test[m
+[32m +	public void testKmlData(){[m
+[32m +		//get the test kml file from the test directory[m
+[32m +		InputStream inputStream = this.getClass().getResourceAsStream("TestXml.kml");[m
+[32m +[m
+[32m +		try {[m
+[32m +			if (inputStream.available() > 0){[m
+[32m +				assertTrue(true);[m
+[32m +			}else{[m
+[32m +				System.out.println("file is empty");[m
+[32m +				assertTrue(false);[m
+[32m +			}[m
+[32m +		} catch (IOException e) {[m
+[32m +			System.out.println("IOException in testKmlParser");[m
+[32m +			assertTrue(false);[m
+[32m +			e.printStackTrace();[m
+[32m +		}[m
+[32m +		//Setup for parsing[m
+[32m +		ParkingLocHandler kmlParser = new ParkingLocHandler();[m
+[32m +		SAXParserFactory factory = SAXParserFactory.newInstance();[m
+[32m +		try {[m
+[32m +			SAXParser saxParser = factory.newSAXParser();[m
+[32m +			saxParser.parse(inputStream, kmlParser);[m
+[32m +		} catch (ParserConfigurationException e) {[m
+[32m +			System.out.println("ParserConfigurationException in testKmlParser");[m
+[32m +			assertTrue(false);[m
+[32m +			e.printStackTrace();[m
+[32m +		} catch (SAXException e) {[m
+[32m +			System.out.println("SAXException in testKmlParser");[m
+[32m +			assertTrue(false);[m
+[32m +			e.printStackTrace();[m
+[32m +		} catch (IOException e) {[m
+[32m +			System.out.println("IOException in testKmlParser");[m
+[32m +			assertTrue(false);[m
+[32m +			e.printStackTrace();[m
+[32m +		}[m
+[32m +[m
+[32m +		List<ParkingLoc> pll =  kmlParser.getParkingLocList();[m
+[32m +[m
+[32m +		ParkingLoc pl0 = pll.get(0);[m
+[32m +		ParkingLoc pl1 = pll.get(1);[m
+[32m +[m
+[32m +		assertEquals(49.2630169018194, pl0.getStartLat(), 0.0000000000001);[m
+[32m +		assertEquals(-123.100739208611, pl0.getStartLong(), 0.0000000000001);[m
+[32m +		assertEquals(49.2630078055425, pl0.getEndLat(), 0.0000000000001);[m
+[32m +		assertEquals(-123.100348847572, pl0.getEndLong(), 0.0000000000001);[m
+[32m +		assertEquals(2.00, pl0.getLimit());[m
+[32m +		assertEquals(1.00, pl0.getPrice());[m
+[32m +		assertEquals("kml_1", pl0.getParkingID());[m
+[32m +[m
+[32m +		assertEquals(49.2627730507724, pl1.getStartLat(), 0.0000000000001);[m
+[32m +		assertEquals(-123.100756446135, pl1.getStartLong(), 0.0000000000001);[m
+[32m +		assertEquals(49.2627639545521, pl1.getEndLat(), 0.0000000000001);[m
+[32m +		assertEquals(-123.100366087016, pl1.getEndLong(), 0.0000000000001);[m
+[32m +		assertEquals(2.00, pl1.getLimit());[m
+[32m +		assertEquals(1.00, pl1.getPrice());[m
+[32m +		assertEquals("kml_2", pl1.getParkingID());[m
+[32m +[m
+[32m +		assertTrue(true);	[m
+[32m +	}[m
+[32m +[m
+[32m +	//check for colors[m
+[32m +	@Test[m
+[32m +	public void testColorCalculation(){[m
+[32m +		//get the test kml file from the test directory[m
+[32m +		InputStream inputStream = this.getClass().getResourceAsStream("TestXml.kml");[m
+[32m +[m
+[32m +		try {[m
+[32m +			if (inputStream.available() > 0){[m
+[32m +				assertTrue(true);[m
+[32m +			}else{[m
+[32m +				System.out.println("file is empty");[m
+[32m +				assertTrue(false);[m
+[32m +			}[m
+[32m +		} catch (IOException e) {[m
+[32m +			System.out.println("IOException in testKmlParser");[m
+[32m +			assertTrue(false);[m
+[32m +			e.printStackTrace();[m
+[32m +		}[m
+[32m +		//Setup for parsing[m
+[32m +		ParkingLocHandler kmlParser = new ParkingLocHandler();[m
+[32m +		SAXParserFactory factory = SAXParserFactory.newInstance();[m
+[32m +		try {[m
+[32m +			SAXParser saxParser = factory.newSAXParser();[m
+[32m +			saxParser.parse(inputStream, kmlParser);[m
+[32m +		} catch (ParserConfigurationException e) {[m
+[32m +			System.out.println("ParserConfigurationException in testKmlParser");[m
+[32m +			assertTrue(false);[m
+[32m +			e.printStackTrace();[m
+[32m +		} catch (SAXException e) {[m
+[32m +			System.out.println("SAXException in testKmlParser");[m
+[32m +			assertTrue(false);[m
+[32m +			e.printStackTrace();[m
+[32m +		} catch (IOException e) {[m
+[32m +			System.out.println("IOException in testKmlParser");[m
+[32m +			assertTrue(false);[m
+[32m +			e.printStackTrace();[m
+[32m +		}[m
+[32m +[m
+[32m +		List<ParkingLoc> pll =  kmlParser.getParkingLocList();[m
+[32m +[m
+[32m +[m
+[32m +		ParkingLoc pl100 = findParkingLocByPrice( pll, 1.00);[m
+[32m +		ParkingLoc pl150 = findParkingLocByPrice( pll, 1.50);[m
+[32m +		ParkingLoc pl200 = findParkingLocByPrice( pll, 2.00);[m
+[32m +		ParkingLoc pl250 = findParkingLocByPrice( pll, 2.50);[m
+[32m +		ParkingLoc pl300 = findParkingLocByPrice( pll, 3.00);[m
+[32m +		ParkingLoc pl350 = findParkingLocByPrice( pll, 3.50);[m
+[32m +		ParkingLoc pl400 = findParkingLocByPrice( pll, 4.00);[m
+[32m +		ParkingLoc pl450 = findParkingLocByPrice( pll, 4.50);[m
+[32m +		ParkingLoc pl500 = findParkingLocByPrice( pll, 5.00);[m
+[32m +		ParkingLoc pl10000 = findParkingLocByPrice( pll, 100.00);[m
+[32m +		ParkingLoc plneg1 = findParkingLocByPrice( pll, -1.00);[m
+[32m +[m
+[32m +		assertEquals(pl100.getColor(), "#66CD00");[m
+[32m +		assertEquals(pl150.getColor(), "#9BD500");[m
+[32m +		assertEquals(pl200.getColor(), "#B7D900");[m
+[32m +		assertEquals(pl250.getColor(), "#E0CF00");[m
+[32m +		assertEquals(pl300.getColor(), "#E8A100");[m
+[32m +		assertEquals(pl350.getColor(), "#EC8800");[m
+[32m +		assertEquals(pl400.getColor(), "#F35400");[m
+[32m +		assertEquals(pl450.getColor(), "#FB1D00");[m
+[32m +		assertEquals(pl500.getColor(), "#FF0000");[m
+[32m +		assertEquals(pl10000.getColor(), "#FF0000");[m
+[32m +		assertEquals(plneg1.getColor(), "#66CD00");[m
+[32m +		[m
+[32m +		assertTrue(true);	[m
+[32m +	}[m
+[32m +[m
+[32m +	// TODO and returned in a correct format. QUESTION HOW?[m
+[32m +	// TODO test that kml is retrievable from kmz[m
+[32m +	public void testRetrievalOfKmlFromKmz() {[m
+[32m +		[m
+[32m +	}[m
+[32m +[m
+[32m +	//and also that persisted objects can be retrieved [m
+[32m +	public void testPersistanceOfParkingLocs(){[m
+[32m +		//get the test kml file from the test directory[m
+[32m +				InputStream inputStream = this.getClass().getResourceAsStream("TestXml.kml");[m
+[32m +[m
+[32m +				try {[m
+[32m +					if (inputStream.available() > 0){[m
+[32m +						assertTrue(true);[m
+[32m +					}else{[m
+[32m +						System.out.println("file is empty");[m
+[32m +						assertTrue(false);[m
+[32m +					}[m
+[32m +				} catch (IOException e) {[m
+[32m +					System.out.println("IOException in testKmlParser");[m
+[32m +					assertTrue(false);[m
+[32m +					e.printStackTrace();[m
+[32m +				}[m
+[32m +				//Setup for parsing[m
+[32m +				ParkingLocHandler kmlParser = new ParkingLocHandler();[m
+[32m +				SAXParserFactory factory = SAXParserFactory.newInstance();[m
+[32m +				try {[m
+[32m +					SAXParser saxParser = factory.newSAXParser();[m
+[32m +					saxParser.parse(inputStream, kmlParser);[m
+[32m +				} catch (ParserConfigurationException e) {[m
+[32m +					System.out.println("ParserConfigurationException in testKmlParser");[m
+[32m +					assertTrue(false);[m
+[32m +					e.printStackTrace();[m
+[32m +				} catch (SAXException e) {[m
+[32m +					System.out.println("SAXException in testKmlParser");[m
+[32m +					assertTrue(false);[m
+[32m +					e.printStackTrace();[m
+[32m +				} catch (IOException e) {[m
+[32m +					System.out.println("IOException in testKmlParser");[m
+[32m +					assertTrue(false);[m
+[32m +					e.printStackTrace();[m
+[32m +				}[m
+[32m +[m
+[32m +				List<ParkingLoc> pll =  kmlParser.getParkingLocList();		[m
+[32m +				[m
+[32m +				if (pll != null) {[m
+[32m +			//TODO pm.makePersistentAll(pll);[m
+[32m +				}[m
+[32m +				// ^^^ ERROR: java.lang.NullPointerException: No API environment is registered for this thread.[m
+[32m +				[m
+[32m +	}[m
+[32m +	//and have the same attributes as before.[m
+[32m +	[m
+[32m +	//A helper method to traverse the list of parking locs[m
+[32m +	private ParkingLoc findParkingLocByPrice(List<ParkingLoc> pll, double price){[m
+[32m +		for (ParkingLoc parkingLoc : pll) {[m
+[32m +			if (parkingLoc.getPrice() == price) return parkingLoc;[m
+[32m +		}[m
+[32m +		return null;[m
+[32m +	}[m
+[32m +[m
+[32m +[m
+[32m +}[m
+[32m++package ca.ubc.cpsc310.parkme.test;[m
+[32m++[m
+[32m++import static com.google.appengine.api.datastore.FetchOptions.Builder.withLimit;[m
+[32m++[m
+[32m++import java.io.IOException;[m
+[32m++import java.io.InputStream;[m
+[32m++import java.util.List;[m
+[32m++[m
+[32m++import javax.jdo.JDOHelper;[m
+[32m++import javax.jdo.PersistenceManager;[m
+[32m++import javax.jdo.PersistenceManagerFactory;[m
+[32m++import javax.xml.parsers.ParserConfigurationException;[m
+[32m++import javax.xml.parsers.SAXParser;[m
+[32m++import javax.xml.parsers.SAXParserFactory;[m
+[32m++[m
+[32m++import junit.framework.TestCase;[m
+[32m++[m
+[32m++import org.junit.Before;[m
+[32m++import org.junit.Test;[m
+[32m++import org.xml.sax.SAXException;[m
+[32m++[m
+[32m++import ca.ubc.cpsc310.parkme.server.ParkingLoc;[m
+[32m++import ca.ubc.cpsc310.parkme.server.ParkingLocHandler;[m
+[32m++[m
+[32m++import com.google.appengine.api.datastore.DatastoreService;[m
+[32m++import com.google.appengine.api.datastore.DatastoreServiceFactory;[m
+[32m++import com.google.appengine.api.datastore.Entity;[m
+[32m++import com.google.appengine.api.datastore.Query;[m
+[32m++import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;[m
+[32m++import com.google.appengine.tools.development.testing.LocalServiceTestHelper;[m
+[32m++[m
+[32m++public class ServerTest extends TestCase {[m
+[32m++[m
+[32m++	private final LocalServiceTestHelper helper = new LocalServiceTestHelper([m
+[32m++			new LocalDatastoreServiceTestConfig());[m
+[32m++[m
+[32m++	InputStream inputStream;[m
+[32m++	ParkingLocHandler kmlParser;[m
+[32m++	SAXParserFactory factory;[m
+[32m++	SAXParser saxParser;[m
+[32m++	List<ParkingLoc> pll;[m
+[32m++	private static final PersistenceManagerFactory PMF = JDOHelper[m
+[32m++			.getPersistenceManagerFactory("transactions-optional");[m
+[32m++	PersistenceManager pm = PMF.getPersistenceManager();[m
+[32m++[m
+[32m++	// QUESTION: this will not run before my tests. to not have to parse the[m
+[32m++	// data[m
+[32m++	// every time, i knidof need it to.[m
+[32m++	// there is an issue on stackoverflow regarding this, what should i do?[m
+[32m++	// http://stackoverflow.com/questions/733037/why-isnt-my-beforeclass-method-running[m
+[32m++	@Before[m
+[32m++	public void parseTestXml() {[m
+[32m++		inputStream = this.getClass().getResourceAsStream("TestXml.kml");[m
+[32m++[m
+[32m++		try {[m
+[32m++			if (inputStream.available() > 0) {[m
+[32m++				assertTrue(true);[m
+[32m++			} else {[m
+[32m++				System.out.println("file is empty");[m
+[32m++				assertTrue(false);[m
+[32m++			}[m
+[32m++		} catch (IOException e) {[m
+[32m++			System.out.println("IOException in testKmlParser");[m
+[32m++			assertTrue(false);[m
+[32m++			e.printStackTrace();[m
+[32m++		}[m
+[32m++		// Setup for parsing[m
+[32m++		kmlParser = new ParkingLocHandler();[m
+[32m++		factory = SAXParserFactory.newInstance();[m
+[32m++		try {[m
+[32m++			saxParser = factory.newSAXParser();[m
+[32m++			saxParser.parse(inputStream, kmlParser);[m
+[32m++		} catch (ParserConfigurationException e) {[m
+[32m++			System.out.println("ParserConfigurationException in testKmlParser");[m
+[32m++			assertTrue(false);[m
+[32m++			e.printStackTrace();[m
+[32m++		} catch (SAXException e) {[m
+[32m++			System.out.println("SAXException in testKmlParser");[m
+[32m++			assertTrue(false);[m
+[32m++			e.printStackTrace();[m
+[32m++		} catch (IOException e) {[m
+[32m++			System.out.println("IOException in testKmlParser");[m
+[32m++			assertTrue(false);[m
+[32m++			e.printStackTrace();[m
+[32m++		}[m
+[32m++[m
+[32m++		pll = kmlParser.getParkingLocList();[m
+[32m++[m
+[32m++	}[m
+[32m++[m
+[32m++	/**[m
+[32m++	 * Must refer to a valid module that sources this class.[m
+[32m++	 */[m
+[32m++	public String getModuleName() { // (2)[m
+[32m++		return "ca.ubc.cpsc310.parkme.ParkMe";[m
+[32m++	}[m
+[32m++[m
+[32m++	@Test[m
+[32m++	public void testSimple() { // (3)[m
+[32m++		assertTrue(true);[m
+[32m++	}[m
+[32m++[m
+[32m++	// You need to make sure data is parsed as intended[m
+[32m++	@Test[m
+[32m++	public void testKmlData() {[m
+[32m++[m
+[32m++		parseTestXml();[m
+[32m++[m
+[32m++		List<ParkingLoc> pll = kmlParser.getParkingLocList();[m
+[32m++[m
+[32m++		ParkingLoc pl0 = pll.get(0);[m
+[32m++		ParkingLoc pl1 = pll.get(1);[m
+[32m++[m
+[32m++		assertEquals(49.2630169018194, pl0.getStartLat(), 0.0000000000001);[m
+[32m++		assertEquals(-123.100739208611, pl0.getStartLong(), 0.0000000000001);[m
+[32m++		assertEquals(49.2630078055425, pl0.getEndLat(), 0.0000000000001);[m
+[32m++		assertEquals(-123.100348847572, pl0.getEndLong(), 0.0000000000001);[m
+[32m++		assertEquals(2.00, pl0.getLimit());[m
+[32m++		assertEquals(1.00, pl0.getPrice());[m
+[32m++		assertEquals("kml_1", pl0.getParkingID());[m
+[32m++[m
+[32m++		assertEquals(49.2627730507724, pl1.getStartLat(), 0.0000000000001);[m
+[32m++		assertEquals(-123.100756446135, pl1.getStartLong(), 0.0000000000001);[m
+[32m++		assertEquals(49.2627639545521, pl1.getEndLat(), 0.0000000000001);[m
+[32m++		assertEquals(-123.100366087016, pl1.getEndLong(), 0.0000000000001);[m
+[32m++		assertEquals(2.00, pl1.getLimit());[m
+[32m++		assertEquals(1.00, pl1.getPrice());[m
+[32m++		assertEquals("kml_2", pl1.getParkingID());[m
+[32m++[m
+[32m++		assertTrue(true);[m
+[32m++	}[m
+[32m++[m
+[32m++	// check for colors[m
+[32m++	@Test[m
+[32m++	public void testColorCalculation() {[m
+[32m++		parseTestXml();[m
+[32m++[m
+[32m++		List<ParkingLoc> pll = kmlParser.getParkingLocList();[m
+[32m++[m
+[32m++		ParkingLoc pl100 = findParkingLocByPrice(pll, 1.00);[m
+[32m++		ParkingLoc pl150 = findParkingLocByPrice(pll, 1.50);[m
+[32m++		ParkingLoc pl200 = findParkingLocByPrice(pll, 2.00);[m
+[32m++		ParkingLoc pl250 = findParkingLocByPrice(pll, 2.50);[m
+[32m++		ParkingLoc pl300 = findParkingLocByPrice(pll, 3.00);[m
+[32m++		ParkingLoc pl350 = findParkingLocByPrice(pll, 3.50);[m
+[32m++		ParkingLoc pl400 = findParkingLocByPrice(pll, 4.00);[m
+[32m++		ParkingLoc pl450 = findParkingLocByPrice(pll, 4.50);[m
+[32m++		ParkingLoc pl500 = findParkingLocByPrice(pll, 5.00);[m
+[32m++		ParkingLoc pl10000 = findParkingLocByPrice(pll, 100.00);[m
+[32m++		ParkingLoc plneg1 = findParkingLocByPrice(pll, -1.00);[m
+[32m++[m
+[32m++		assertEquals(pl100.getColor(), "#66CD00");[m
+[32m++		assertEquals(pl150.getColor(), "#9BD500");[m
+[32m++		assertEquals(pl200.getColor(), "#B7D900");[m
+[32m++		assertEquals(pl250.getColor(), "#E0CF00");[m
+[32m++		assertEquals(pl300.getColor(), "#E8A100");[m
+[32m++		assertEquals(pl350.getColor(), "#EC8800");[m
+[32m++		assertEquals(pl400.getColor(), "#F35400");[m
+[32m++		assertEquals(pl450.getColor(), "#FB1D00");[m
+[32m++		assertEquals(pl500.getColor(), "#FF0000");[m
+[32m++		assertEquals(pl10000.getColor(), "#FF0000");[m
+[32m++		assertEquals(plneg1.getColor(), "#66CD00");[m
+[32m++[m
+[32m++		assertTrue(true);[m
+[32m++	}[m
+[32m++[m
+[32m++	// TODO and returned in a correct format. QUESTION HOW?[m
+[32m++	// TODO test that kml is retrievable from kmz[m
+[32m++	public void testRetrievalOfKmlFromKmz() {[m
+[32m++[m
+[32m++	}[m
+[32m++[m
+[32m++	// and also that persisted objects can be retrieved[m
+[32m++	[m
+[32m++[m
+[32m++		    // run this test twice to prove we're not leaking any state across tests[m
+[32m++		    private void doTest() {[m
+[32m++		        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();[m
+[32m++		        assertEquals(0, ds.prepare(new Query("yam")).countEntities(withLimit(10)));[m
+[32m++		        ds.put(new Entity("yam"));[m
+[32m++		        ds.put(new Entity("yam"));[m
+[32m++		        assertEquals(2, ds.prepare(new Query("yam")).countEntities(withLimit(10)));[m
+[32m++		    }[m
+[32m++[m
+[32m++		    @Test[m
+[32m++		    public void testInsert1() {[m
+[32m++		        doTest();[m
+[32m++		    }[m
+[32m++[m
+[32m++		    @Test[m
+[32m++		    public void testInsert2() {[m
+[32m++		        doTest();[m
+[32m++		    }[m
+[32m++[m
+[32m++	// and have the same attributes as before.[m
+[32m++[m
+[32m++	// A helper method to traverse the list of parking locs[m
+[32m++	public ParkingLoc findParkingLocByPrice(List<ParkingLoc> pll, double price) {[m
+[32m++		for (ParkingLoc parkingLoc : pll) {[m
+[32m++			if (parkingLoc.getPrice() == price)[m
+[32m++				return parkingLoc;[m
+[32m++		}[m
+[32m++		return null;[m
+[32m++	}[m
+[32m++[m
+[32m++}[m
+[1mdiff --cc ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/ParkMe.gwt.xml[m
+[1mindex 9b4bcc8,385b81c..07989f9[m
+[1m--- a/ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/ParkMe.gwt.xml[m
+[1m+++ b/ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/ParkMe.gwt.xml[m
+[36m@@@ -29,10 -29,13 +29,16 @@@[m
+  	<!-- Specify the app entry point class. -->[m
+  	<entry-point class='ca.ubc.cpsc310.parkme.client.ParkMe' />[m
+  [m
+[31m -	<inherits name="com.google.gwt.json.JSON" />[m
+[32m +[m
+  [m
+[32m+ 	<!--  Inherit Geolocation -->[m
+[32m+ 	<inherits name="com.google.code.gwt.geolocation.Html5Geolocation" />[m
+  	<!-- Specify the paths for translatable code -->[m
+  	<source path='client' />[m
+  	<source path='shared' />[m
+[32m++<<<<<<< HEAD[m
+[32m++=======[m
+[32m+ 	<!-- <source path='client/sdk' /> -->[m
+[32m++>>>>>>> ab20595538eb21650287375c2ed545c70afde06d[m
+  [m
+  </module>[m
