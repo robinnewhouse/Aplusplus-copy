@@ -1,2 +1,0 @@
-serviceClass: ca.ubc.cpsc310.parkme.client.LoginService
-path: 73FF878800BC83202CF167036C2634A2.gwt.rpc

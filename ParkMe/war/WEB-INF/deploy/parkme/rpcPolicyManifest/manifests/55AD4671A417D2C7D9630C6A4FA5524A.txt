@@ -1,2 +1,0 @@
-serviceClass: ca.ubc.cpsc310.parkme.client.FilterService
-path: 0CDF024A2DFAD8E6C41B65D5F82AE3FB.gwt.rpc

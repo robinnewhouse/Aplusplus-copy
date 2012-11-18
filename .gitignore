@@ -7,7 +7,7 @@
 *.jar
 *.gwt.rpc
 *.cache.html
-ParkMe/war/WEB-INF/deploy/parkme/rpcPolicyManifest/manifests/*
+ParkMe/war/WEB-INF/deploy/parkme/rpcPolicyManifest/manifests/*.txt
 
 .Spotlight-V100
 .Trashes
@@ -39,87 +39,11 @@ ParkMe/war/parkme/parkme.nocache.js
 
 *.class
 
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/LoadDataService.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/LoadDataServiceAsync.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/MapOperater$1.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/MapOperater.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe$1.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe$10.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe$11.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe$12.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/server/ParkingLocServiceImpl.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/server/ParkingLocHandler.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe$8.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe$9.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkingLocation.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkingLocServiceAsync.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkingLocService.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/server/FilterServiceImpl.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/server/LoadDataServiceImpl.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe$8.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe$13.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe$6.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe$5.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe$2.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe$6.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe$3.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe$4.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe$6.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe$13.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe$14.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/client/ParkMe$7.class
-
-ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/server/ParkingLoc.class
-
 ParkMe/war/.gitignore
 
 ParkMe/war/WEB-INF/classes/ca/ubc/cpsc310/parkme/.gitignore
 
-ParkMe/war/WEB-INF/deploy/parkme/rpcPolicyManifest/manifests/36A6EB63BF715FF2E85F1DE43D69E9A2.txt
-
-ParkMe/war/WEB-INF/deploy/parkme/rpcPolicyManifest/manifests/40D452F19F6EA5CC64DB8190EF3957C1.txt
-
-ParkMe/war/WEB-INF/deploy/parkme/rpcPolicyManifest/manifests/6663CC1B8AD5A48DC8A2EF8ACE837D68.txt
-
-ParkMe/war/WEB-INF/deploy/parkme/symbolMaps/0F32EDA0F758719CFE59287DB460EEBE.symbolMap
-
-ParkMe/war/WEB-INF/deploy/parkme/symbolMaps/831D270495D57ABC4A9494137F5584A9.symbolMap
-
 ParkMe/war/WEB-INF/.gitignore
-
-ParkMe/war/WEB-INF/deploy/parkme/symbolMaps/8D856060685B3E59C4BC80E69876434A.symbolMap
-
-ParkMe/war/WEB-INF/deploy/parkme/symbolMaps/D4D0D0614D5DED7D4A9C70621DDDEF75.symbolMap
 
 *.symbolMap
 
@@ -128,4 +52,3 @@ ParkMe/.gwt/.gwt-log
 ParkMe/.classpath
 ParkMe/.settings/*
 
-*929F0336A7AD0.txt
