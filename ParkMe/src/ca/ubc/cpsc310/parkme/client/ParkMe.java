@@ -68,6 +68,7 @@ import com.google.maps.gwt.client.GeocoderRequest;
 import com.google.maps.gwt.client.GeocoderResult;
 import com.google.maps.gwt.client.GeocoderStatus;
 import com.google.maps.gwt.client.GoogleMap;
+import com.google.maps.gwt.client.InfoWindow;
 import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.MapTypeId;
@@ -80,6 +81,16 @@ import com.kiouri.sliderbar.client.event.BarValueChangedHandler;
  */
 public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
+	// FB EVENT POPUP
+	private PopupPanel popUp = new PopupPanel();
+	private VerticalPanel mainPan = new VerticalPanel();
+	private TextBox eventName = new TextBox();
+	private TextBox eventTime = new TextBox();
+	private Button eventCreate = new Button("Create Event");
+	private Button eventCancel = new Button("Cancel");
+	private HorizontalPanel buttonPanel = new HorizontalPanel();
+	
+	
 	// DIRECTIONS
 	private DirectionsService ds = DirectionsService.create();
 	private DirectionsRequest dr = DirectionsRequest.create();
@@ -1312,7 +1323,39 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					createEvent.addClickHandler(new ClickHandler() {
 						@Override
 						public void onClick(ClickEvent event) {
-							createFBEvent(addr, "ParkMe Sample Event", "2012-12-12");
+							buttonPanel.add(eventCancel);
+							buttonPanel.add(eventCreate);
+							eventName.setText("Event Name");
+							eventTime.setText("YYYY-MM-DD");
+							mainPan.add(eventName);
+							mainPan.add(eventTime);
+							mainPan.add(buttonPanel);
+							//popUp.add(mainPan);
+							//popUp.show();
+							infoWindow.setContent(mainPan);
+							infoWindow.open(theMap);
+							eventCancel.addClickHandler(new ClickHandler() {
+								
+								@Override
+								public void onClick(ClickEvent event) {
+									// TODO Auto-generated method stub
+									//popUp.hide();
+									infoWindow.close();
+								}
+							});
+							
+							eventCreate.addClickHandler(new ClickHandler() {
+								
+								@Override
+								public void onClick(ClickEvent event) {
+									// TODO Auto-generated method stub
+									String title = eventName.getText();
+									String date = eventTime.getText();
+									createFBEvent(addr, title, date);
+								}
+							});
+							
+							
 						}
 					});
 
