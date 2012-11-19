@@ -89,17 +89,18 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private Button eventCreate = new Button("Create Event");
 	private Button eventCancel = new Button("Cancel");
 	private HorizontalPanel buttonPanel = new HorizontalPanel();
-	
-	
+
+
 	// DIRECTIONS
 	private DirectionsService ds = DirectionsService.create();
 	private DirectionsRequest dr = DirectionsRequest.create();
 	private final DirectionsRenderer displayDir = DirectionsRenderer.create();
 
 	// FACEBOOK EVENT STUFF
-	// private static final String apiKey = "464072253644385";
+	private String apiKey;
+	//private static String apiKey = "464072253644385";
 	//FOR LOCAL:
-	private static final String apiKey = "219605264787363";
+	//private static final String apiKey = "219605264787363";
 	private FBCore fbCore = GWT.create(FBCore.class);
 	private FBEvent fbEvent = GWT.create(FBEvent.class);
 	private VerticalPanel fbPanel = new VerticalPanel ();
@@ -267,6 +268,14 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void loadFacebook(final String type) {
+
+		if (GWT.isProdMode()) {
+			apiKey = "464072253644385";
+		}
+		else {
+			apiKey = "219605264787363";
+		}
+
 		fbCore.init(apiKey, status, cookie, xfbml);
 		System.out.println("load facebook");
 
@@ -295,7 +304,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		class LoginStatusCallback implements AsyncCallback<JavaScriptObject> {
 			public void onSuccess ( JavaScriptObject response ) {
 				System.out.println("LoginStatusCallback");
-					renderApp( Window.Location.getHash() , type);
+				renderApp( Window.Location.getHash() , type);
 			}
 
 			@Override
@@ -586,9 +595,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void addListenersToButtons() {
-		
+
 		// Listen for key press on search box
-	
+
 		searchBox.addKeyPressHandler(new KeyPressHandler() {
 			public void onKeyPress(KeyPressEvent event) {
 				if (event.getCharCode() == KeyCodes.KEY_ENTER) {
@@ -1335,7 +1344,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 							infoWindow.setContent(mainPan);
 							infoWindow.open(theMap);
 							eventCancel.addClickHandler(new ClickHandler() {
-								
+
 								@Override
 								public void onClick(ClickEvent event) {
 									// TODO Auto-generated method stub
@@ -1343,9 +1352,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 									infoWindow.close();
 								}
 							});
-							
+
 							eventCreate.addClickHandler(new ClickHandler() {
-								
+
 								@Override
 								public void onClick(ClickEvent event) {
 									// TODO Auto-generated method stub
@@ -1354,8 +1363,24 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 									createFBEvent(addr, title, date);
 								}
 							});
-							
-							
+
+							eventName.addClickHandler(new ClickHandler() {
+
+								@Override
+								public void onClick(ClickEvent event) {
+									// TODO Auto-generated method stub
+									eventName.setText("");
+								}
+							});
+							eventTime.addClickHandler(new ClickHandler() {
+
+								@Override
+								public void onClick(ClickEvent event) {
+									// TODO Auto-generated method stub
+									eventTime.setText("");
+								}
+							});
+
 						}
 					});
 
@@ -1601,7 +1626,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		}
 	}
 
-	
+
 	private void renderApp ( String token, String type ) {
 
 		System.out.println(token);
@@ -1624,8 +1649,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	public void onValueChange(ValueChangeEvent<String> event) {
 		renderApp ( event.getValue() , usertype);
 	}
-	 
-	private void createFBEvent(final String addr, String title, String date) {
+
+	private void createFBEvent(final String addr, final String title, String date) {
 		// TODO: popup asking for event name & start time
 		JSONObject param = new JSONObject();
 		param.put("name", new JSONString(title));
@@ -1639,11 +1664,17 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 			@Override
 			public void onSuccess(JavaScriptObject result) {
-
+				// change info window to link to FB event
 				JSONObject res = new JSONObject(result);
 				String id = res.get("id").toString();
-				Window.alert("Created new Facebook Event with id " + id);
-
+				//Window.alert("Created new Facebook Event with id " + id);
+				Label eventTitle = new Label("Successfully created Facebook event " + title);
+				HTML link = new HTML("<a href=\"http://www.facebook.com/events/" + id +"\" target=\"_blank\">Event Link</a>");
+				VerticalPanel fbE = new VerticalPanel();
+				fbE.add(eventTitle);
+				fbE.add(link);
+				infoWindow.setContent(fbE);
+				infoWindow.open(theMap);
 			}
 		});
 	}
