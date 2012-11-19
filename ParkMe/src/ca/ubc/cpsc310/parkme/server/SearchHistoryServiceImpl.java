@@ -50,12 +50,12 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 			pm.close();
 		}
 		//*/
-		
+		/**
 		//TEMP TO CHECK IF RPC IS WORKING
 		searchStrings.add("Robson and Georgia");
 		searchStrings.add("Macdonald and Broadway");
 		searchStrings.add("V6E 1V9");
-		
+		**/
 		return searchStrings;
 	}
 	

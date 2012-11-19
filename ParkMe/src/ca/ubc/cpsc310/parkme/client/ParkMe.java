@@ -80,7 +80,7 @@ import com.kiouri.sliderbar.client.event.BarValueChangedHandler;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
-	
+
 	// DIRECTIONS
 	private DirectionsService ds = DirectionsService.create();
 	private DirectionsRequest dr = DirectionsRequest.create();
@@ -225,20 +225,20 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				loginInfo = result;
 				if(!loginInfo.isLoggedIn()) {
 					loadLogin();
-			/**	} else if (true) {
+					/**	} else if (true) {
 					loadUserInfo();
 					//loadFacebook();
 					//loadSetUserType();**/
 				} else {
 					loadUserInfo();
-				//	loadParkMe();
+					//	loadParkMe();
 				}
 			}
 		});
 	}
 
 	private void loadParkMe() {
-		
+
 		initializeFlexTables();
 		initializeLayout();
 		createMap();
@@ -256,7 +256,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	}
 
-	private void loadFacebook() {
+	private void loadFacebook(final String type) {
 		fbCore.init(apiKey, status, cookie, xfbml);
 		System.out.println("load facebook");
 
@@ -266,7 +266,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		class SessionChangeCallback implements AsyncCallback<JavaScriptObject> {
 			public void onSuccess ( JavaScriptObject response ) {
 				System.out.println("SessionChangeCallback");
-				renderFB();
+				renderFB(type);
 			}
 
 			@Override
@@ -285,7 +285,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		class LoginStatusCallback implements AsyncCallback<JavaScriptObject> {
 			public void onSuccess ( JavaScriptObject response ) {
 				System.out.println("LoginStatusCallback");
-				renderApp( Window.Location.getHash() );
+					renderApp( Window.Location.getHash() , type);
 			}
 
 			@Override
@@ -309,7 +309,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		userInfoService.getUserInfo(new AsyncCallback<UserInfoClient>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				
+
 			}
 
 			@Override
@@ -320,34 +320,34 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					loadSetUserType();
 				}
 				else {
-					
-				System.out.println("I'm at loadUserInfo");
 
-				userInfo = result;
-				
-				userInfoService.getType(userInfo, new AsyncCallback<String>() {
+					System.out.println("I'm at loadUserInfo");
 
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
-						
-					}
+					userInfo = result;
 
-					@Override
-					public void onSuccess(String type) {
-						System.out.println(type);
-						if (type.equals(null)) {
-							loadSetUserType();
+					userInfoService.getType(userInfo, new AsyncCallback<String>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							// TODO Auto-generated method stub
+
 						}
-						else {
-							loadFacebook();
-							initializeSliderValues();
+
+						@Override
+						public void onSuccess(String type) {
+							System.out.println(type);
+							if (type.equals(null)) {
+								loadSetUserType();
+							}
+							else {
+								loadFacebook(type);
+								initializeSliderValues();
+							}
 						}
-					}
-				});
-				
+					});
+
 				}
-				
+
 
 			}
 		});
@@ -406,7 +406,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					return;
 				}
 				setUserPanel.setVisible(false);
-				
+
 				userInfo = new UserInfoClient(loginInfo.getNickname(), usertype, 5.00, 0, 0);
 				userInfoService.setUserInfo(userInfo, new AsyncCallback<Void>() {
 
@@ -416,26 +416,29 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 					@Override
 					public void onSuccess(Void result) {
-						loadParkMe();
+						//loadParkMe();
+						loadCorrectPage(usertype);
+
 					}
 				});
-				
-				
+
+
 			}
 		});
 	}
 
-	
-	public void renderFB() {
+
+	public void renderFB(String type) {
 		System.out.println("renderFB");
 
 		if ( fbCore.getAuthResponse() != null ) {
 			//fbPanel.setVisible(false);
 			//	RootPanel.get("parkMe").add(fbPanel);
 			//	FBXfbml.parse();
-			
-			
-			loadParkMe();
+
+			loadCorrectPage(type);
+			//loadParkMe();
+
 		} else {
 			//fbPanel.add( new HTML ( "This demo uses Facebook Connect. Please click to login <fb:login-button autologoutlink='true' /> " ) );
 			//			fbPanel.add ( new HTML ( "This app uses Facebook Connect. Please click to login " ) );
@@ -463,7 +466,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		priceFilterSlider.setValue(initMaxPrice);
 		timeFilterSlider.setValue(initMinTime);
 		radiusFilterSlider.setValue(initMaxRadius);
-		
+
 		// Set slider text:
 		String formatted = NumberFormat.getFormat("#0.00").format(maxPrice);
 		maxPriceValueLabel.setText("$" + formatted + " / hr");
@@ -831,7 +834,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		options.setMapTypeControl(true);
 		options.setScaleControl(true);
 		options.setScrollwheel(true);
-		
+
 
 		// Add map to mapPanel
 		theMap = GoogleMap.create(mapPanel.getElement(), options);
@@ -875,7 +878,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		searchPanel.add(clearDataButton);
 		searchPanel.add(signOutLink);
 		//searchPanel.add(loadDataButton);
-		
+
 		searchLabel.setText("Enter Address (or leave blank to search whole Vancouver):");
 
 		// ADMIN CONTROLS:
@@ -922,8 +925,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		flowpanel = new FlowPanel();
 		flowpanel.add(statsScroll);
 		tabs.add(flowpanel, "Statistics");
-		
-		
+
+
 		flowpanel = new FlowPanel();
 		flowpanel.add(dirScroll);
 		tabs.add(flowpanel, "Directions");
@@ -1110,7 +1113,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			if ((p.getPrice() <= maxPrice) && (p.getLimit() >= minTime) && isInRadius(p, maxRadius, searchPoint.lat(), searchPoint.lng())) {
 				filtered.add(p);
 			}
-			System.out.println("Found " + filtered.size() + " locations");
+			//System.out.println("Found " + filtered.size() + " locations");
 		}
 
 		displayParkings(filtered);
@@ -1270,7 +1273,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		GeocoderRequest request = GeocoderRequest.create();
 		request.setAddress(address + " Vancouver");
 		request.setRegion("ca");
-		
+
 		geocoder.geocode(request, new Geocoder.Callback() {
 
 			@Override
@@ -1540,8 +1543,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		}
 	}
 
-
-	private void renderApp ( String token ) {
+	
+	private void renderApp ( String token, String type ) {
 
 		System.out.println(token);
 		token = token.replace("#", "");
@@ -1552,7 +1555,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		}
 
 		if ( token.endsWith("home") ) {
-			renderFB ();
+			renderFB (type);
 
 		} else {
 			Window.alert ( "Unknown  url "  + token );
@@ -1561,9 +1564,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 
 	public void onValueChange(ValueChangeEvent<String> event) {
-		renderApp ( event.getValue() );
+		renderApp ( event.getValue() , usertype);
 	}
-
+	 
 	private void createFBEvent(final String addr) {
 		// TODO: popup asking for event name & start time
 		JSONObject param = new JSONObject();
@@ -1588,35 +1591,35 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void getDirections(final LatLng latlong) {
-		
+
 		displayDir.setMap(null);
 		displayDir.setPanel(null);
 		dr.setDestination(latlong);
-		
+
 		if (Geolocation.isSupported()) {
 			// get Geo Location
 			Geolocation geo = Geolocation.getGeolocation();
 			geo.getCurrentPosition(new PositionCallback() {
-			    public void onFailure(PositionError error) {
-			        // Handle failure
-			    }
-			    public void onSuccess(Position position) {
-			        Coordinates coords = position.getCoords();
-			        double latitude = coords.getLatitude();
-			        double longitude = coords.getLongitude();
-			        displayDirections(LatLng.create(latitude, longitude));
-			    }
+				public void onFailure(PositionError error) {
+					// Handle failure
+				}
+				public void onSuccess(Position position) {
+					Coordinates coords = position.getCoords();
+					double latitude = coords.getLatitude();
+					double longitude = coords.getLongitude();
+					displayDirections(LatLng.create(latitude, longitude));
+				}
 			});
 		}
-		
+
 		else {
 			Window.alert("Geolocation is not supported. Will set origin to UBC.");
 			displayDirections(LatLng.create(49.2661156, -123.2457198));
 		}
-	
+
 
 	}
-	
+
 	private void displayDirections(LatLng latlong) {
 
 		dr.setOrigin(latlong);
@@ -1625,7 +1628,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 			@Override
 			public void handle(DirectionsResult result, DirectionsStatus status) {
-				
+
 				if (status.equals(DirectionsStatus.OK)) {
 					displayDir.setMap(theMap);
 					displayDir.setPanel(dirScroll.getElement());
@@ -1642,8 +1645,48 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 	private void loadBusiness() {
 		// stub
+		addListenersToButtons();
+		initBusinessLayout();
 	}
 	private void loadAdmin() {
 		// stub
+		addListenersToButtons();
+		initAdminLayout();
+	}
+
+	private void initAdminLayout() {
+		// buttons to load data & street info
+		// no option to filter
+		// whole page about statistics
+		signOutLink.setHref(loginInfo.getLogoutUrl());
+		RootPanel.get("parkMe").add(mainPanel);
+		mainPanel.add(loadDataButton);
+		mainPanel.add(getAddressesButton);
+		mainPanel.add(statsScroll);
+		mainPanel.add(signOutLink);
+	}
+	private void initBusinessLayout() {
+		signOutLink.setHref(loginInfo.getLogoutUrl());
+		RootPanel.get("parkMe").add(mainPanel);
+		mainPanel.add(new Label("Business Layout"));
+		mainPanel.add(signOutLink);
+
+
+	}
+
+	private void loadCorrectPage(String usertype) {
+		if (usertype.equals("driver")) {
+			loadDriver();
+		}
+		else if (usertype.equals("admin")) {
+			loadAdmin();
+		}
+		else if (usertype.equals("business")) {
+			loadBusiness();
+		}
+		else {
+			Window.alert("Can't figure out usertype");
+			loadSetUserType();
+		}
 	}
 }
