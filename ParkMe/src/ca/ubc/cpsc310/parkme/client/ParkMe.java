@@ -46,10 +46,12 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -117,7 +119,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	// FAVORITES, RESULTS & HISTORY
 	private List<String> faveList = new ArrayList<String>();
 	private List<String> idList = new ArrayList<String>();
-	private List<String> histList = new ArrayList<String>();
 	private ScrollPanel resultsScroll = new ScrollPanel();
 	private ScrollPanel faveScroll = new ScrollPanel();
 	private ScrollPanel histScroll = new ScrollPanel();
@@ -187,7 +188,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	// SEARCHING
 	private HorizontalPanel searchPanel = new HorizontalPanel();
-	private TextBox searchBox = new TextBox();
+	private final MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();	
+	private final SuggestBox searchBox = new SuggestBox(oracle);
+	private final SearchHistoryOrganizer searchHistoryOrganizer = new SearchHistoryOrganizer(histFlexTable,oracle);
 	private Label searchLabel = new Label("Enter Address: ");
 	private Button searchButton = new Button("Search");
 
@@ -201,6 +204,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private final FilterServiceAsync filterService = GWT.create(FilterService.class);
 	private final ParkingLocServiceAsync parkService = GWT.create(ParkingLocService.class);
 	private final FaveAsync fave = GWT.create(Fave.class);
+	private final SearchHistoryServiceAsync searchHistoryService = GWT.create(SearchHistoryService.class);
 	private final UserInfoServiceAsync userInfoService = GWT.create(UserInfoService.class);
 
 	/**
@@ -466,6 +470,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	private void initializeFlexTables() {
 		showFaves();
+		searchHistoryOrganizer.loadAndShowSearchHistory();
 	}
 
 	//	private void addListenerToTabs() {
@@ -1269,6 +1274,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			public void handle(JsArray<GeocoderResult> results,
 					GeocoderStatus status) {
 				if (status == GeocoderStatus.OK) {
+					searchHistoryOrganizer.addAndSaveSearch(address);
 					Button createEvent = new Button("Create Event");
 					Button getDirections = new Button("Directions to Here");
 					searchResult = results;

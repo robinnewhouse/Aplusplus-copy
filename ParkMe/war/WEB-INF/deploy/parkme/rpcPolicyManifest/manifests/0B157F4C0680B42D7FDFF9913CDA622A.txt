@@ -1,2 +1,0 @@
-serviceClass: ca.ubc.cpsc310.parkme.client.UserInfoService
-path: C1AD7E9D71B3877B8AD6B7A50E5D34DD.gwt.rpc
