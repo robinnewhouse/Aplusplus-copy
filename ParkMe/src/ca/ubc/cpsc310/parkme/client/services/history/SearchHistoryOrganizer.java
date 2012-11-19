@@ -1,4 +1,4 @@
-package ca.ubc.cpsc310.parkme.client;
+package ca.ubc.cpsc310.parkme.client.services.history;
 
 import java.util.ArrayList;
 

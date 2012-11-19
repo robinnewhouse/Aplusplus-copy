@@ -17,6 +17,9 @@ import com.google.gwt.core.client.JavaScriptObject;
 import ca.ubc.cpsc310.parkme.client.sdk.FBCore;
 import ca.ubc.cpsc310.parkme.client.sdk.FBEvent;
 import ca.ubc.cpsc310.parkme.client.sdk.FBXfbml;
+import ca.ubc.cpsc310.parkme.client.services.history.SearchHistoryOrganizer;
+import ca.ubc.cpsc310.parkme.client.services.history.SearchHistoryService;
+import ca.ubc.cpsc310.parkme.client.services.history.SearchHistoryServiceAsync;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;

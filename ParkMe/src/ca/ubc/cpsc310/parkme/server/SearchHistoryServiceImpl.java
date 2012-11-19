@@ -7,8 +7,8 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
-import ca.ubc.cpsc310.parkme.client.SearchHistoryService;
 import ca.ubc.cpsc310.parkme.client.NotLoggedInException;
+import ca.ubc.cpsc310.parkme.client.services.history.SearchHistoryService;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
