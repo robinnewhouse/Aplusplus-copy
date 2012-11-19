@@ -38,8 +38,10 @@ public class SearchHistoryOrganizer {
 	}
 
 	public void addAndSaveSearch(String search) {
-		addSearch(search);
-		saveSearch(search);
+		if(!searchHistList.contains(search)){
+			addSearch(search);
+			saveSearch(search);
+		}
 	}
 	
 	private void addSearch(String search) {
