@@ -866,7 +866,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		searchPanel.add(searchButton);
 		searchPanel.add(clearDataButton);
 		searchPanel.add(signOutLink);
-		
+		//searchPanel.add(loadDataButton);
 		
 		searchLabel.setText("Enter Address (or leave blank to search whole Vancouver):");
 
@@ -1627,5 +1627,14 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		});
 	}
 
-	
+	private void loadDriver() {
+		// stub
+		loadParkMe();
+	}
+	private void loadBusiness() {
+		// stub
+	}
+	private void loadAdmin() {
+		// stub
+	}
 }
