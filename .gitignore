@@ -8,6 +8,7 @@
 *.gwt.rpc
 *.cache.html
 ParkMe/war/WEB-INF/deploy/parkme/rpcPolicyManifest/manifests/*.txt
+*rpcPolicyManifest/manifests*
 
 .Spotlight-V100
 .Trashes
