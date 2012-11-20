@@ -68,11 +68,11 @@ import com.google.maps.gwt.client.GeocoderRequest;
 import com.google.maps.gwt.client.GeocoderResult;
 import com.google.maps.gwt.client.GeocoderStatus;
 import com.google.maps.gwt.client.GoogleMap;
-import com.google.maps.gwt.client.InfoWindow;
 import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.MapTypeId;
 import com.google.maps.gwt.client.TravelMode;
+
 import com.kiouri.sliderbar.client.event.BarValueChangedEvent;
 import com.kiouri.sliderbar.client.event.BarValueChangedHandler;
 
@@ -90,7 +90,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private Button eventCancel = new Button("Cancel");
 	private HorizontalPanel buttonPanel = new HorizontalPanel();
 
-
+	
 	// DIRECTIONS
 	private DirectionsService ds = DirectionsService.create();
 	private DirectionsRequest dr = DirectionsRequest.create();
@@ -153,6 +153,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private Button avgPriceButton = new Button("Calculate Average");
 	private Label avgPrice = new Label("");
 
+	
+	
 	// GEOCODER
 	private Geocoder geocoder = Geocoder.create();
 	private MyInfoWindow infoWindow = MyInfoWindow.create(0L);
@@ -525,6 +527,11 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				}
 				int row = resultsFlexTable.getCellForEvent(event).getRowIndex();
 				String parkingID = idList.get(row);
+				
+				if (parkingID.equals("noresults")) {
+					return;
+				}
+				else {
 				System.out.println("I have clicked on parking with ID: "
 						+ parkingID);
 				// get corresponding ParkingLocation with parkingID
@@ -552,7 +559,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 				});
 
-			}
+			}}
 		});
 
 
@@ -877,6 +884,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		// testing - Robin//
 		mapOperator = new MapOperater(theMap);
+		
+		
 	}
 
 	private void initializeLayout() {
@@ -1058,6 +1067,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		if (parkingLocations.size() == 0) {
 			resultsFlexTable.setText(0, 0, "No results found.");
+			idList.add("noresults");
 		} else {
 
 			int index = sortBox.getSelectedIndex();
