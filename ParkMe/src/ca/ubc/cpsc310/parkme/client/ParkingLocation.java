@@ -7,6 +7,7 @@ import org.spacetimeresearch.gwt.addthis.client.AddThisWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
@@ -75,6 +76,7 @@ public class ParkingLocation implements Serializable {
 		VerticalPanel main = new VerticalPanel();
 		main.add(info);
 		main.add(addToFave);
+		main.add(addTicket); // robin
 		AddThisWidget addThisWidget = new AddThisWidget("ra-5094b7074b51725f",
 				"There is a nice parking spot at " + getStreet()
 						+ " with a rate of $" + getPrice() + "/hr!", 300);
@@ -90,7 +92,15 @@ public class ParkingLocation implements Serializable {
 				addToFave.setEnabled(false);
 				addToFave.setText("FAVED!");
 			}
+
 		});
+
+		addTicket.addClickHandler(new ClickHandler() { // robin
+					@Override
+					public void onClick(ClickEvent event) {
+						Window.alert("You made it here! Start implementing");
+					}
+				});
 
 		/**
 		 * addToFave.addClickHandler(new ClickHandler() {
