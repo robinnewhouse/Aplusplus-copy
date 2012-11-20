@@ -7,6 +7,7 @@ import org.spacetimeresearch.gwt.addthis.client.AddThisWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -98,7 +99,34 @@ public class ParkingLocation implements Serializable {
 		addTicket.addClickHandler(new ClickHandler() { // robin
 					@Override
 					public void onClick(ClickEvent event) {
-						Window.alert("You made it here! Start implementing");
+
+						String msg = "Please enter the amount of your paking fine";
+						Boolean correct = false;
+						NumberFormat formatter = NumberFormat
+								.getCurrencyFormat("CAD");
+						while (correct == false) {
+							String stringAmount;
+							Float floatAmount;
+							stringAmount = Window.prompt(msg,
+									"enter ticket amount");
+							try {
+								stringAmount = stringAmount.replaceAll(
+										"[^\\d.]", "");
+								floatAmount = Float.parseFloat(stringAmount);
+								correct = Window
+										.confirm("Upload the following data: \n you were fined "
+												+ formatter.format(floatAmount)
+												+ " is this correct?");
+							} catch (NullPointerException e) {
+								e.printStackTrace();
+								break;
+							} catch (Exception e) {
+								msg = "Please enter the amount of your paking fine. Format must be: 000.00";
+								e.printStackTrace();
+							}
+
+						}
+						Window.alert("you got here");
 					}
 				});
 
