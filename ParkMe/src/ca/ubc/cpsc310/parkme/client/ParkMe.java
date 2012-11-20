@@ -1815,10 +1815,12 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 						// id);
 						Label eventTitle = new Label(
 								"Successfully created Facebook event " + title);
-						HTML link = new HTML(
-								"<a href=\"http://www.facebook.com/events/"
-										+ id
-										+ "\" target=\"_blank\">Event Link</a>");
+						String url = "<a href=\"http://www.facebook.com/events/"
+								+ id.substring(1, id.length()-1)
+								+ "\" target=\"_blank\">Event Link</a>";
+						HTML link = new HTML(url
+								);
+						System.out.println(url);
 						VerticalPanel fbE = new VerticalPanel();
 						fbE.add(eventTitle);
 						fbE.add(link);
