@@ -12,7 +12,7 @@ import com.google.appengine.api.users.User;
 
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
-public class SearchString {
+public class SearchRecord {
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Long id;
@@ -23,51 +23,24 @@ public class SearchString {
 	@Persistent
 	private Date createDate;
 
-	
-	public SearchString(User user, String searchString){
-		this.user=user;
+	//Constructors
+	public SearchRecord(String searchString){
 		this.searchString=searchString;	
 		this.createDate = new Date();
 	}
-
-
-	public Long getId() {
-		return id;
-	}
-
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-
-	public String getSearchString() {
-		return searchString;
-	}
-
-
-	public void setSearchString(String searchString) {
-		this.searchString = searchString;
-	}
-
-
-	public User getUser() {
-		return user;
-	}
-
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-
-	public Date getCreateDate() {
-		return createDate;
-	}
-
-
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
 	
+	public SearchRecord(User user, String searchString){
+		this(searchString);
+		this.user=user;
+	}
+
+	//Getters and Setters
+	public Long getId() {return id;	}
+	public void setId(Long id) {this.id = id;	}
+	public String getSearchString() {return searchString;	}
+	public void setSearchString(String searchString) {this.searchString = searchString;	}
+	public User getUser() {	return user;}
+	public void setUser(User user) {this.user = user;}
+	public Date getCreateDate() {return createDate;}
+	public void setCreateDate(Date createDate) {this.createDate = createDate;}	
 }

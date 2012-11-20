@@ -1,6 +1,7 @@
 package ca.ubc.cpsc310.parkme.client.services.history;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
@@ -16,7 +17,7 @@ public class SearchHistoryOrganizer {
 	private final MultiWordSuggestOracle oracle;
 	
 	//Variables to create here
-	private final ArrayList<String> searchHistList = new ArrayList<String>();
+	private final ArrayList<String> searchStrings = new ArrayList<String>();
 	private final SearchHistoryServiceAsync searchHistoryService = GWT.create(SearchHistoryService.class);
 
 	public SearchHistoryOrganizer(FlexTable flexTableToUpdate, MultiWordSuggestOracle oracle){
@@ -25,27 +26,31 @@ public class SearchHistoryOrganizer {
 	}
 	
 	public void loadAndShowSearchHistory() {
-		searchHistoryService.getHist(new AsyncCallback<ArrayList<String>>() {
+		System.out.println("Starting SearchHistoryOrganizer.loadAndShowSearchHistory");
+		searchHistoryService.getHist(new AsyncCallback<List<String>>() {
 			public void onFailure(Throwable caught) {
 				Window.alert("Error occurred trying to get search history from server:"+caught.getMessage());
 			}
-			public void onSuccess(ArrayList<String> result) {
+			public void onSuccess(List<String> result) {
+				System.out.println("Starting SearchHistoryOrganizer.loadAndShowSearchHistory-onSuccess: "+result.size());
 				for(String search: result)
 					addSearch(search);
+				System.out.println("Finishing SearchHistoryOrganizer.loadAndShowSearchHistory-onSuccess: ");
 			}
 		});
-		
+		System.out.println("Finishing SearchHistoryOrganizer.loadAndShowSearchHistory");		
 	}
 
 	public void addAndSaveSearch(String search) {
-		if(!searchHistList.contains(search)){
+		//Decided to have a good history it was good to include the multiplicity of searchs as well
+		//if(!searchHistList.contains(search)){
 			addSearch(search);
 			saveSearch(search);
-		}
+		//}
 	}
 	
 	private void addSearch(String search) {
-		searchHistList.add(search);
+		searchStrings.add(search);
 		oracle.add(search);
 		int rows = histFlexTable.getRowCount();
 		histFlexTable.setText(rows, 0, search);		
@@ -75,7 +80,7 @@ public class SearchHistoryOrganizer {
 			@Override
 			public void onSuccess(Void result) {
 				histFlexTable.clear();
-				searchHistList.clear();
+				searchStrings.clear();
 			}
 		});
 	}

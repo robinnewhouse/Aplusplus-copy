@@ -23,30 +23,29 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 			JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
 	public void addSearchString(String str) throws NotLoggedInException {
+		System.out.println("Starting SearchHistoryServiceImpl.addSearchString()");
 		checkLoggedIn();
 		PersistenceManager pm = PMF.getPersistenceManager();
 		try {
-			pm.makePersistent(new SearchString(getUser(), str));
+			pm.makePersistent(new SearchRecord(getUser(),str));
 		} finally {
 			pm.close();
 		}		
+		System.out.println("Finishing SearchHistoryServiceImpl.addSearchString()");
 	}
 
-	public ArrayList<String> getHist() throws NotLoggedInException {
+	public List<String> getHist() throws NotLoggedInException {
+		System.out.println("Starting SearchHistoryServiceImpl.getHist()");
 		checkLoggedIn();
 		PersistenceManager pm = PMF.getPersistenceManager();
-		ArrayList<String> searchStrings=new ArrayList<String>();;
-		//* TEMP FOR DEBUGGING
+		List<String> searchStrings = new ArrayList<String>();
 		try {
-			Query q = pm.newQuery(SearchString.class, "user == u");
+			Query q = pm.newQuery(SearchRecord.class, "user == u");
 			q.declareParameters("com.google.appengine.api.users.User u");
 			q.setOrdering("createDate");
-			//TEMP FOR DEBUGGING
-			ArrayList<SearchString> pHist = new ArrayList<SearchString>();
-			//pHist = (ArrayList<SearchString>) q.execute(getUser());
-			for (int i = 0; i < pHist.size(); i++) {	
-				searchStrings.add(pHist.get(i).getSearchString());
-			}
+			List<SearchRecord> pHist = (List<SearchRecord>) q.execute(getUser());
+			for(SearchRecord rec: pHist)
+				searchStrings.add(rec.getSearchString());			
 		} finally {
 			pm.close();
 		}
@@ -57,6 +56,7 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 		searchStrings.add("Macdonald and Broadway");
 		searchStrings.add("V6E 1V9");
 		**/
+		System.out.println("Finishing SearchHistoryServiceImpl.getHist()");
 		return searchStrings;
 	}
 	
@@ -76,13 +76,14 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 	@Override
 	public void clear() throws Exception {
 		// TODO Auto-generated method stub
+		System.out.println("Starting SearchHistoryServiceImpl.clear()");
 		checkLoggedIn();
 		PersistenceManager pm = PMF.getPersistenceManager();
 		try {
-			Query q = pm.newQuery(SearchString.class);
+			Query q = pm.newQuery(SearchRecord.class);
 
-			List<SearchString> fullHistory = (List<SearchString>) q.execute();
-			for (SearchString histString : fullHistory) {
+			List<SearchRecord> fullHistory = (List<SearchRecord>) q.execute();
+			for (SearchRecord histString : fullHistory) {
 					pm.deletePersistent(histString);
 					System.out.println("Deleted " + histString.getSearchString() + " from favorites.");
 			}
@@ -93,6 +94,7 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 		finally {
 			pm.close();
 		}
+		System.out.println("Finishing SearchHistoryServiceImpl.clear()");
 	}
 
 }
