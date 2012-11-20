@@ -1,9 +1,5 @@
 package ca.ubc.cpsc310.parkme.client;
 
-import javax.jdo.PersistenceManager;
-
-import ca.ubc.cpsc310.parkme.server.UserInfo;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface UserInfoServiceAsync {

@@ -9,8 +9,6 @@ import ca.ubc.cpsc310.parkme.client.sdk.FBCore;
 import ca.ubc.cpsc310.parkme.client.sdk.FBEvent;
 import ca.ubc.cpsc310.parkme.client.sdk.FBXfbml;
 import ca.ubc.cpsc310.parkme.client.services.history.SearchHistoryOrganizer;
-import ca.ubc.cpsc310.parkme.client.services.history.SearchHistoryService;
-import ca.ubc.cpsc310.parkme.client.services.history.SearchHistoryServiceAsync;
 
 import com.google.code.gwt.geolocation.client.Coordinates;
 import com.google.code.gwt.geolocation.client.Geolocation;
@@ -79,8 +77,6 @@ import com.kiouri.sliderbar.client.event.BarValueChangedHandler;
  */
 public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
-	
-	
 	// FB EVENT POPUP
 	private PopupPanel popUp = new PopupPanel();
 	private VerticalPanel mainPan = new VerticalPanel();
@@ -634,7 +630,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			}
 		});
 	}
-	
+
 	private void addListenerToMarker() {
 		// Make the popup appear when you click on the map marker
 		Marker.ClickHandler markerClickHandler = new Marker.ClickHandler() {
@@ -687,8 +683,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				}
 			}
 		});
-
-
 
 		// Listen for mouse events on the Load Data button.
 		// In the end, this should only be accessible by an admin
@@ -760,7 +754,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			@Override
 			public void onClick(ClickEvent event) {
 				searchHistoryOrganizer.clearHistory();
-			}			
+			}
 		});
 
 		setColor.addClickHandler(new ClickHandler() {
@@ -834,11 +828,13 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 			else {
 				final double radius = Double.parseDouble(avgPriceRadius
-						.getText());
+						.getText().replaceAll("[^\\d.]", ""));
+				// removes non-numerical characters
 
 				GeocoderRequest request = GeocoderRequest.create();
 				request.setAddress(address + " Vancouver");
 				request.setRegion("ca");
+				request.setLocation(theMap.getCenter());
 				geocoder.geocode(request, new Geocoder.Callback() {
 
 					@Override
@@ -891,30 +887,31 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void onSuccess(Criteria result) {
 				// TODO Auto-generated method stub
 				System.out.println("At Get Avg Crit");
-				
+
 				Double radius = result.getRadius();
 				Double price = result.getMaxPrice();
 				Double time = result.getMinTime();
-				
+
 				Label radiusLabel = new Label("Average Radius: " + radius + "m");
-				Label priceLabel = new Label("Average Max Price: $" + price+ "/hr");
+				Label priceLabel = new Label("Average Max Price: $" + price
+						+ "/hr");
 				Label timeLabel = new Label("Average Min Time: " + time + "hrs");
-				
+
 				avgCritVP.add(radiusLabel);
 				avgCritVP.add(priceLabel);
 				avgCritVP.add(timeLabel);
-				
+
 			}
 		});
 	}
-	
+
 	// Returns true if the endpoints or midpoint of the parking location are
 	// within radius metres of point
 	private boolean isInRadius(ParkingLocation p, Double radius, double ctrLat,
@@ -1034,7 +1031,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		sortBox.setVisibleItemCount(1);
 		sortPanel.add(sortLabel);
 		sortPanel.add(sortBox);
-		
+
 		// Set up searchPanel
 		searchBox.setHeight("1em");
 		// searchPanel.add(searchLabel);
@@ -1042,12 +1039,12 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		searchPanel.add(searchButton);
 		searchPanel.add(clearDataButton);
 		searchPanel.add(signOutLink);
-		//searchPanel.add(loadDataButton); // ROBIN
-		//searchPanel.add(downloadData);
+		// searchPanel.add(loadDataButton); // ROBIN
+		// searchPanel.add(downloadData);
 
 		searchLabel
 				.setText("Enter Address (or leave blank to search whole Vancouver):");
-		
+
 		// ADMIN CONTROLS:
 		// tabPanel.add(loadDataButton);
 		// tabPanel.add(getAddressesButton);
@@ -1093,14 +1090,13 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		avgPriceVP.add(avgPrice);
 		mainStatsVP.add(avgPriceVP);
 		mainStatsVP.add(avgCritVP);
-		
+
 		calculateAvgCriteria();
 		statsScroll.add(mainStatsVP);
 		flowpanel = new FlowPanel();
 		flowpanel.add(statsScroll);
 		tabs.add(flowpanel, "Statistics");
 		// TODO: move out of here
-		
 
 		flowpanel = new FlowPanel();
 		flowpanel.add(dirScroll);
@@ -1498,7 +1494,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					searchHistoryOrganizer.addAndSaveSearch(address);
 
 					searchResult = results;
-					final LatLng latlong = searchResult.get(0).getGeometry().getLocation();
+					final LatLng latlong = searchResult.get(0).getGeometry()
+							.getLocation();
 					theMap.setCenter(latlong);
 					mapOperator.setMarker(latlong);
 					theMap.setZoom(17);
@@ -1598,62 +1595,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	private void addTicketHandler(Button addTicket,
 			final ParkingLocation parkingLoc) {
-		// addTicket.addClickHandler(new ClickHandler() {
-		//
-		// @Override
-		// public void onClick(ClickEvent event) {
-		//
-		// String msg = "Please enter the amount of your paking fine";
-		// Boolean correct = false;
-		// NumberFormat formatter = NumberFormat.getCurrencyFormat("CAD");
-		// String stringAmount;
-		// Float floatAmount;
-		// String formattedFine = null;
-		// while (correct == false) {
-		// stringAmount = Window.prompt(msg, "00.00");
-		// try {
-		// stringAmount = stringAmount.replaceAll("[^\\d.]", "");
-		// floatAmount = Float.parseFloat(stringAmount);
-		// formattedFine = formatter.format(floatAmount);
-		// correct = Window
-		// .confirm("Upload the following data: \n you were fined "
-		// + formattedFine + " is this correct?");
-		// } catch (NullPointerException e) {
-		// e.printStackTrace();
-		// break;
-		// } catch (Exception e) {
-		// msg =
-		// "Please enter the amount of your paking fine. Format must be: 00.00";
-		// e.printStackTrace();
-		// }
-		//
-		// }
-		// if (correct) {
-		//
-		// Window.alert("ticket of "
-		// + formattedFine
-		// + " was successfully uploaded to the server. Thank you");
-		// } else
-		// Window.alert("ticket not uploaded");
-		// }
-		//
-		// // public void onClick(ClickEvent event) {
-		// //
-		// // FaveAsync fave = GWT.create(Fave.class);
-		// // fave.addFave(parkingLoc.getParkingID(),
-		// // new AsyncCallback<Void>() {
-		// //
-		// // @Override
-		// // public void onSuccess(Void result) {
-		// // addFaveToDisplay(parkingLoc);
-		// // }
-		// //
-		// // @Override
-		// // public void onFailure(Throwable caught) {
-		// // }
-		// // });
-		// // }
-		// });
+
 	}
 
 	private void addFaveHandler(Button addFaveButton,
@@ -1975,11 +1917,11 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			loadSetUserType();
 		}
 	}
-	
+
 	private VerticalPanel createSearchLocationPopup() {
 		final LatLng latlong = searchResult.get(0).getGeometry().getLocation();
 		final String addr = searchResult.get(0).getFormattedAddress();
-		
+
 		Button createEvent = new Button("Create Event");
 		Button getDirections = new Button("Directions to Here");
 		VerticalPanel main = new VerticalPanel();
@@ -1988,7 +1930,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		buttons.add(createEvent);
 		buttons.add(getDirections);
 		main.add(buttons);
-		
+
 		createEvent.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -2052,7 +1994,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				getDirections(latlong);
 			}
 		});
-		
+
 		return main;
 	}
 }
