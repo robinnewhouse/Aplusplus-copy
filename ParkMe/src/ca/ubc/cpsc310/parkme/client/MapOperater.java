@@ -10,6 +10,7 @@ import com.google.maps.gwt.client.CircleOptions;
 import com.google.maps.gwt.client.GoogleMap;
 import com.google.maps.gwt.client.InfoWindow;
 import com.google.maps.gwt.client.LatLng;
+import com.google.maps.gwt.client.Marker;
 import com.google.maps.gwt.client.MouseEvent;
 import com.google.maps.gwt.client.Polyline;
 import com.google.maps.gwt.client.PolylineOptions;
@@ -19,6 +20,7 @@ public class MapOperater {
 	private GoogleMap theMap;
 	private HashSet<Polyline> polylines = new HashSet<Polyline>();
 	private Circle circle = Circle.create();
+	public Marker marker = Marker.create();
 	LatLng DEFAULT_CENTER = LatLng.create(49.251, -123.119);
 
 	public MapOperater(GoogleMap map) {
@@ -91,6 +93,15 @@ public class MapOperater {
 	
 	public void clearCircle() {
 		circle.setMap(null);
+	}
+	
+	public void setMarker(LatLng latlong) {
+		marker.setPosition(latlong);
+		marker.setVisible(true);
+	}
+	
+	public void clearMarker() {
+		marker.setVisible(false);
 	}
 
 }
