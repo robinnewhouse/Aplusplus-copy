@@ -6,7 +6,11 @@ public class TicketInfo implements Serializable {
 
 	private String parkingID;
 	private Double fine;
-	
+
+	public TicketInfo() {
+
+	}
+
 	public TicketInfo(String parkingID, Double fine) {
 		this.parkingID = parkingID;
 		this.fine = fine;
@@ -27,5 +31,5 @@ public class TicketInfo implements Serializable {
 	public void setFine(Double fine) {
 		this.fine = fine;
 	}
-	
+
 }

@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.maps.gwt.client.Circle;
 import com.google.maps.gwt.client.CircleOptions;
 import com.google.maps.gwt.client.GoogleMap;
-import com.google.maps.gwt.client.InfoWindow;
 import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.Marker;
 import com.google.maps.gwt.client.MouseEvent;
@@ -27,15 +26,17 @@ public class MapOperater {
 		this.theMap = map;
 	}
 
-	public void drawLocs(ParkingLocation[] lopl, MyInfoWindow infoWindow, Button addToFave) {
+	public void drawLocs(ParkingLocation[] lopl, MyInfoWindow infoWindow,
+			Button addToFave, Button addTicket) {
 		clearMap();
 		for (ParkingLocation parkingLocation : lopl) {
-			drawOnMap(parkingLocation, infoWindow, addToFave);
+			drawOnMap(parkingLocation, infoWindow, addToFave, addTicket);
 		}
 	}
 
 	public void drawOnMap(final ParkingLocation parkingLocation,
-			final MyInfoWindow infoWindow, final Button addToFave) {
+			final MyInfoWindow infoWindow, final Button addToFave,
+			final Button addTicket) {
 		// create a new line, options, and path
 		Polyline currentPolyLine = Polyline.create();
 		PolylineOptions polyoptions = PolylineOptions.create();
@@ -58,7 +59,8 @@ public class MapOperater {
 		Polyline.ClickHandler clickHandler = new Polyline.ClickHandler() {
 			@Override
 			public void handle(MouseEvent event) {
-				parkingLocation.displayPopup(theMap, infoWindow, addToFave);
+				parkingLocation.displayPopup(theMap, infoWindow, addToFave,
+						addTicket);
 
 			}
 		};
@@ -90,7 +92,7 @@ public class MapOperater {
 		options.setZindex(-1);
 		circle.setOptions(options);
 	}
-	
+
 	public void clearCircle() {
 		circle.setMap(null);
 	}
