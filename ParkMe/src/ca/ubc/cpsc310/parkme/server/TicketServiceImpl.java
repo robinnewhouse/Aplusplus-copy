@@ -7,7 +7,6 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
-import ca.ubc.cpsc310.parkme.client.Fave;
 import ca.ubc.cpsc310.parkme.client.NotLoggedInException;
 import ca.ubc.cpsc310.parkme.client.TicketInfo;
 import ca.ubc.cpsc310.parkme.client.TicketService;
@@ -17,11 +16,13 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-public class TicketServiceImpl extends RemoteServiceServlet implements TicketService{
-	private static final PersistenceManagerFactory PMF =
-			JDOHelper.getPersistenceManagerFactory("transactions-optional");
+public class TicketServiceImpl extends RemoteServiceServlet implements
+		TicketService {
+	private static final PersistenceManagerFactory PMF = JDOHelper
+			.getPersistenceManagerFactory("transactions-optional");
 
-	public void addTicket(String parkingID, Double fine) throws NotLoggedInException {
+	public void addTicket(String parkingID, Double fine)
+			throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
@@ -30,7 +31,7 @@ public class TicketServiceImpl extends RemoteServiceServlet implements TicketSer
 			pm.close();
 		}
 	}
-	
+
 	public TicketInfo[] getTickets() throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
@@ -43,15 +44,16 @@ public class TicketServiceImpl extends RemoteServiceServlet implements TicketSer
 
 			int size = pTicket.size();
 			tickets = new TicketInfo[size];
-			for (int i = 0; i < size; i++) {	
-				tickets[i] = new TicketInfo(pTicket.get(i).getParkingID(), pTicket.get(i).getFine());
+			for (int i = 0; i < size; i++) {
+				tickets[i] = new TicketInfo(pTicket.get(i).getParkingID(),
+						pTicket.get(i).getFine());
 			}
 		} finally {
 			pm.close();
 		}
 		return tickets;
 	}
-	
+
 	private void checkLoggedIn() throws NotLoggedInException {
 		if (getUser() == null) {
 			throw new NotLoggedInException("Not logged in.");
