@@ -138,6 +138,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private FlexTable resultsFlexTable = new FlexTable();
 	private FlexTable faveFlexTable = new FlexTable();
 	private FlexTable histFlexTable = new FlexTable();
+	private final Button clearHistoryButton = new Button("Clear History");
 
 	// STATISTICS
 	private ScrollPanel statsScroll = new ScrollPanel();
@@ -224,8 +225,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private final ParkingLocServiceAsync parkService = GWT
 			.create(ParkingLocService.class);
 	private final FaveAsync fave = GWT.create(Fave.class);
-	private final SearchHistoryServiceAsync searchHistoryService = GWT
-			.create(SearchHistoryService.class);
 	private final UserInfoServiceAsync userInfoService = GWT
 			.create(UserInfoService.class);
 
@@ -743,6 +742,13 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			}
 		});
 
+		clearHistoryButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				searchHistoryOrganizer.clearHistory();
+			}			
+		});
+
 		setColor.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -984,7 +990,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		sortBox.setVisibleItemCount(1);
 		sortPanel.add(sortLabel);
 		sortPanel.add(sortBox);
-
+		
 		// Set up searchPanel
 		searchBox.setHeight("1em");
 		// searchPanel.add(searchLabel);
@@ -997,7 +1003,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		searchLabel
 				.setText("Enter Address (or leave blank to search whole Vancouver):");
-
+		
 		// ADMIN CONTROLS:
 		// tabPanel.add(loadDataButton);
 		// tabPanel.add(getAddressesButton);
@@ -1014,7 +1020,10 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		resultsScroll.add(resultsFlexTable);
 		faveScroll.add(faveFlexTable);
-		histScroll.add(histFlexTable);
+		VerticalPanel histPanel = new VerticalPanel();
+		histScroll.add(histPanel);
+		histPanel.add(clearHistoryButton);
+		histPanel.add(histFlexTable);
 
 		// mainHorzPanel.add(resultsScroll);
 
@@ -1471,7 +1480,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 								@Override
 								public void onClick(ClickEvent event) {
-									// TODO Auto-generated method stub
 									// popUp.hide();
 									infoWindow.close();
 								}
@@ -1481,7 +1489,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 								@Override
 								public void onClick(ClickEvent event) {
-									// TODO Auto-generated method stub
 									String title = eventName.getText();
 									String date = eventTime.getText();
 									createFBEvent(addr, title, date);
@@ -1492,7 +1499,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 								@Override
 								public void onClick(ClickEvent event) {
-									// TODO Auto-generated method stub
 									eventName.setText("");
 								}
 							});
@@ -1500,7 +1506,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 								@Override
 								public void onClick(ClickEvent event) {
-									// TODO Auto-generated method stub
 									eventTime.setText("");
 								}
 							});
