@@ -63,6 +63,5 @@ public class SearchHistoryOrganizer {
 				// No Need to do anything
 			}
 		});
-	}	
-	
+	}		
 }
