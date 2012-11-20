@@ -23,6 +23,7 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 			JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
 	public void addSearchString(String str) throws NotLoggedInException {
+		System.out.println("Starting SearchHistoryServiceImpl.addSearchString()");
 		checkLoggedIn();
 		PersistenceManager pm = PMF.getPersistenceManager();
 		try {
@@ -30,6 +31,7 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 		} finally {
 			pm.close();
 		}		
+		System.out.println("Finishing SearchHistoryServiceImpl.addSearchString()");
 	}
 
 	public ArrayList<String> getHist() throws NotLoggedInException {
@@ -57,6 +59,7 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 		searchStrings.add("Macdonald and Broadway");
 		searchStrings.add("V6E 1V9");
 		**/
+		System.out.println("Finishing SearchHistoryServiceImpl.getHist()");
 		return searchStrings;
 	}
 	
@@ -76,6 +79,7 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 	@Override
 	public void clear() throws Exception {
 		// TODO Auto-generated method stub
+		System.out.println("Starting SearchHistoryServiceImpl.clear()");
 		checkLoggedIn();
 		PersistenceManager pm = PMF.getPersistenceManager();
 		try {
@@ -93,6 +97,7 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 		finally {
 			pm.close();
 		}
+		System.out.println("Finishing SearchHistoryServiceImpl.clear()");
 	}
 
 }

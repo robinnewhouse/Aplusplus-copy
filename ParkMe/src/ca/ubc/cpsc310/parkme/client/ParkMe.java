@@ -145,6 +145,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private FlexTable resultsFlexTable = new FlexTable();
 	private FlexTable faveFlexTable = new FlexTable();
 	private FlexTable histFlexTable = new FlexTable();
+	private final Button clearHistoryButton = new Button("Clear History");
 
 	// STATISTICS
 	private ScrollPanel statsScroll = new ScrollPanel();
@@ -230,8 +231,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private final ParkingLocServiceAsync parkService = GWT
 			.create(ParkingLocService.class);
 	private final FaveAsync fave = GWT.create(Fave.class);
-	private final SearchHistoryServiceAsync searchHistoryService = GWT
-			.create(SearchHistoryService.class);
 	private final UserInfoServiceAsync userInfoService = GWT
 			.create(UserInfoService.class);
 
@@ -719,6 +718,13 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			}
 		});
 
+		clearHistoryButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				searchHistoryOrganizer.clearHistory();
+			}			
+		});
+
 		setColor.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -989,6 +995,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		resultsScroll.add(resultsFlexTable);
 		faveScroll.add(faveFlexTable);
+		histScroll.add(clearHistoryButton);
 		histScroll.add(histFlexTable);
 
 		// mainHorzPanel.add(resultsScroll);

@@ -1,6 +1,7 @@
 package ca.ubc.cpsc310.parkme.client.services.history;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
@@ -32,16 +33,18 @@ public class SearchHistoryOrganizer {
 			public void onSuccess(ArrayList<String> result) {
 				for(String search: result)
 					addSearch(search);
+				System.out.println("Finishing SearchHistoryOrganizer.loadAndShowSearchHistory-onSuccess: ");
 			}
 		});
-		
+		System.out.println("Finishing SearchHistoryOrganizer.loadAndShowSearchHistory");		
 	}
 
 	public void addAndSaveSearch(String search) {
-		if(!searchHistList.contains(search)){
+		//Decided to have a good history it was good to include the multiplicity of searchs as well
+		//if(!searchHistList.contains(search)){
 			addSearch(search);
 			saveSearch(search);
-		}
+		//}
 	}
 	
 	private void addSearch(String search) {
