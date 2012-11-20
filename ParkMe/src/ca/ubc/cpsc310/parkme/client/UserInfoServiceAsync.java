@@ -15,4 +15,9 @@ public interface UserInfoServiceAsync {
 	void setCriteria(double radius, double maxPrice, double minTime,
 			UserInfoClient userInfo, AsyncCallback<Void> callback);
 
+	void getType(UserInfoClient userInfo, AsyncCallback<String> callback);
+
+	void setType(String type, UserInfoClient userInfo,
+			AsyncCallback<Void> callback);
+
 }
