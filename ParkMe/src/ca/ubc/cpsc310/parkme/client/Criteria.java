@@ -22,6 +22,12 @@ public class Criteria implements Serializable {
 		this.ctrLat = ctrLat;
 		this.ctrLng = ctrLng;
 	}
+	public Criteria (double radius, double maxPrice, double minTime) {
+		this.radius = radius;
+		this.maxPrice = maxPrice;
+		this.minTime = minTime;
+
+	}
 	
 	public double getCtrLat() {
 		return ctrLat;

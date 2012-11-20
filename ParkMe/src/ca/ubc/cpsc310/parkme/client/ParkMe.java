@@ -79,6 +79,8 @@ import com.kiouri.sliderbar.client.event.BarValueChangedHandler;
  */
 public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
+	
+	
 	// FB EVENT POPUP
 	private PopupPanel popUp = new PopupPanel();
 	private VerticalPanel mainPan = new VerticalPanel();
@@ -143,7 +145,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	// STATISTICS
 	private ScrollPanel statsScroll = new ScrollPanel();
+	private VerticalPanel mainStatsVP = new VerticalPanel();
 	private ScrollPanel dirScroll = new ScrollPanel();
+	private VerticalPanel avgCritVP = new VerticalPanel();
 
 	// average price
 	private VerticalPanel avgPriceVP = new VerticalPanel();
@@ -875,6 +879,36 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	}
 
+	private void calculateAvgCriteria() {
+		userInfoService.getAvgCriteria(new AsyncCallback<Criteria>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(Criteria result) {
+				// TODO Auto-generated method stub
+				System.out.println("At Get Avg Crit");
+				
+				Double radius = result.getRadius();
+				Double price = result.getMaxPrice();
+				Double time = result.getMinTime();
+				
+				Label radiusLabel = new Label("Average Radius: " + radius + "m");
+				Label priceLabel = new Label("Average Max Price: $" + price+ "/hr");
+				Label timeLabel = new Label("Average Min Time: " + time + "hrs");
+				
+				avgCritVP.add(radiusLabel);
+				avgCritVP.add(priceLabel);
+				avgCritVP.add(timeLabel);
+				
+			}
+		});
+	}
+	
 	// Returns true if the endpoints or midpoint of the parking location are
 	// within radius metres of point
 	private boolean isInRadius(ParkingLocation p, Double radius, double ctrLat,
@@ -1048,10 +1082,16 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		avgPriceVP.add(avgPriceRadius);
 		avgPriceVP.add(avgPriceButton);
 		avgPriceVP.add(avgPrice);
-		statsScroll.add(avgPriceVP);
+		mainStatsVP.add(avgPriceVP);
+		mainStatsVP.add(avgCritVP);
+		
+		calculateAvgCriteria();
+		statsScroll.add(mainStatsVP);
 		flowpanel = new FlowPanel();
 		flowpanel.add(statsScroll);
 		tabs.add(flowpanel, "Statistics");
+		// TODO: move out of here
+		
 
 		flowpanel = new FlowPanel();
 		flowpanel.add(dirScroll);

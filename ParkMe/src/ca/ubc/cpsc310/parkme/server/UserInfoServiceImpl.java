@@ -7,7 +7,9 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
+import ca.ubc.cpsc310.parkme.client.Criteria;
 import ca.ubc.cpsc310.parkme.client.NotLoggedInException;
+import ca.ubc.cpsc310.parkme.client.ParkingLocation;
 import ca.ubc.cpsc310.parkme.client.UserInfoClient;
 import ca.ubc.cpsc310.parkme.client.UserInfoService;
 
@@ -137,6 +139,29 @@ public class UserInfoServiceImpl extends RemoteServiceServlet implements UserInf
 
 	private PersistenceManager getPersistenceManager() {
 		return PMF.getPersistenceManager();
+	}
+	
+	public Criteria getAvgCriteria() {
+		Double avgRadius = 0.00;
+		Double avgTime = 0.00;
+		Double avgRate = 0.00;
+		int count = 0;
+		PersistenceManager pm = getPersistenceManager();
+		Query q = pm.newQuery(UserInfo.class);
+		List<UserInfo> userInfos = (List<UserInfo>) q.execute();
+		
+		for (UserInfo ui : userInfos) {
+			avgRadius += ui.getRadius();
+			avgTime += ui.getMinTime();
+			avgRate += ui.getMaxPrice();
+			count++;
+		}
+		
+		avgRadius = avgRadius/count;
+		avgTime = avgTime/count;
+		avgRate = avgRate/count;
+		
+		return new Criteria(avgRadius, avgRate, avgTime);
 	}
 
 }

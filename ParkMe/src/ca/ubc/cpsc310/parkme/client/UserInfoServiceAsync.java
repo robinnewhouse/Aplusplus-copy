@@ -20,4 +20,6 @@ public interface UserInfoServiceAsync {
 	void setType(String type, UserInfoClient userInfo,
 			AsyncCallback<Void> callback);
 
+	void getAvgCriteria(AsyncCallback<Criteria> callback);
+
 }
