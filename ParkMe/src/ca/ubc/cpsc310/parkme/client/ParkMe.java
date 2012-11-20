@@ -1888,6 +1888,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		// buttons to load data & street info
 		// no option to filter
 		// whole page about statistics
+		Button viewAsDriver = new Button("View As Driver");
+		Button viewAsBusiness = new Button("View As Business Owner");
+		Button getMostFaved = new Button("Get Most Faved");
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		RootPanel.get("parkMe").add(mainPanel);
 		mainPanel.add(downloadData);
@@ -1895,13 +1898,67 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		mainPanel.add(getAddressesButton);
 		mainPanel.add(statsScroll);
 		mainPanel.add(signOutLink);
+		mainPanel.add(viewAsDriver);
+		mainPanel.add(viewAsBusiness);
+		mainPanel.add(getMostFaved);
+		
+		// number of registered users:
+		// number of parkings put to fave
+		// average search criteria
+		// most faved parking spots (get the top 10)
+		
+		getMostFaved.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				// TODO Auto-generated method stub
+				getMostFaved();
+			}
+		});
+		
+		viewAsDriver.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				RootPanel.get("parkMe").clear();
+				mainPanel.clear();
+				loadParkMe();
+			}
+		});
+		viewAsBusiness.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				RootPanel.get("parkMe").clear();
+				mainPanel.clear();
+				loadBusiness();
+			}
+		});
+		
 	}
 
+	private void getMostFaved() {
+		fave.getMostFaved(new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
+	
 	private void initBusinessLayout() {
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		RootPanel.get("parkMe").add(mainPanel);
 		mainPanel.add(new Label("Business Layout"));
 		mainPanel.add(signOutLink);
+		
+		// mostly the same as Driver but different viewable statistics
 
 	}
 

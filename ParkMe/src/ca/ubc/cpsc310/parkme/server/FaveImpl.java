@@ -1,13 +1,18 @@
 package ca.ubc.cpsc310.parkme.server;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
+
 
 import ca.ubc.cpsc310.parkme.client.Fave;
 import ca.ubc.cpsc310.parkme.client.NotLoggedInException;
@@ -32,7 +37,29 @@ public class FaveImpl extends RemoteServiceServlet implements Fave {
 		}
 	}
 
-
+	public void getMostFaved() {
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			Query q = pm.newQuery(ParkingFave.class);
+			
+			q.setGrouping("parkingID");
+			q.setResult("count(user) as count, parkingID");
+			q.setResultClass(HashMap.class); 
+			q.setOrdering("count");
+			Collection results = (Collection) q.execute();
+			Iterator iter = results.iterator();
+			while (iter.hasNext()) {
+				Map row = (Map) iter.next();
+			//	Object[] row = (Object[]) iter.next();
+			//	System.out.println(row.toString());
+				System.out.println(row.get("parkingID"));
+				System.out.println(row.get("count"));
+			}
+		} finally {
+			pm.close();
+		}
+	}
+	
 	public String[] getFaves() throws NotLoggedInException {
 
 		checkLoggedIn();
