@@ -1,6 +1,7 @@
 package ca.ubc.cpsc310.parkme.server;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -69,6 +70,28 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 	private void checkLoggedIn() throws NotLoggedInException {
 		if (getUser() == null) {
 			throw new NotLoggedInException("Not logged in.");
+		}
+	}
+
+	@Override
+	public void clear() throws Exception {
+		// TODO Auto-generated method stub
+		checkLoggedIn();
+		PersistenceManager pm = PMF.getPersistenceManager();
+		try {
+			Query q = pm.newQuery(SearchString.class);
+
+			List<SearchString> fullHistory = (List<SearchString>) q.execute();
+			for (SearchString histString : fullHistory) {
+					pm.deletePersistent(histString);
+					System.out.println("Deleted " + histString.getSearchString() + " from favorites.");
+			}
+		} 
+		catch(Exception exception) {
+			throw exception;
+		}
+		finally {
+			pm.close();
 		}
 	}
 

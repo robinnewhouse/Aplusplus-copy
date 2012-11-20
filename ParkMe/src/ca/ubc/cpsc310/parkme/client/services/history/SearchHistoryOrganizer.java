@@ -65,4 +65,18 @@ public class SearchHistoryOrganizer {
 		});
 	}	
 	
+	public void clearHistory(){
+		searchHistoryService.clear(new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Failed to clear search history: "+caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				histFlexTable.clear();
+				searchHistList.clear();
+			}
+		});
+	}
 }
