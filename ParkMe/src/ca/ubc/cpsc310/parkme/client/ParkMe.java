@@ -68,6 +68,8 @@ import com.google.maps.gwt.client.GoogleMap;
 import com.google.maps.gwt.client.LatLng;
 import com.google.maps.gwt.client.MapOptions;
 import com.google.maps.gwt.client.MapTypeId;
+import com.google.maps.gwt.client.Marker;
+import com.google.maps.gwt.client.MouseEvent;
 import com.google.maps.gwt.client.TravelMode;
 import com.kiouri.sliderbar.client.event.BarValueChangedEvent;
 import com.kiouri.sliderbar.client.event.BarValueChangedHandler;
@@ -272,6 +274,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		// displayData();
 
 		addListenersToSliders();
+		addListenerToMarker();
 
 	}
 
@@ -627,6 +630,19 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			}
 		});
 	}
+	
+	private void addListenerToMarker() {
+		// Make the popup appear when you click on the map marker
+		Marker.ClickHandler markerClickHandler = new Marker.ClickHandler() {
+			@Override
+			public void handle(MouseEvent event) {
+				infoWindow.setContent(createSearchLocationPopup());
+				infoWindow.setPosition(mapOperator.marker.getPosition());
+				infoWindow.open(theMap);
+			}
+		};
+		mapOperator.marker.addClickListener(markerClickHandler);
+	}
 
 	private void addListenerToSortBox() {
 		// Listen for events on the sortBox
@@ -668,13 +684,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			}
 		});
 
-		// Listen for events on the sortBox
-		sortBox.addChangeHandler(new ChangeHandler() {
-			public void onChange(ChangeEvent event) {
-				tabs.selectTab(0);
-				// displayParkings(idList);
-			}
-		});
+
 
 		// Listen for mouse events on the Load Data button.
 		// In the end, this should only be accessible by an admin
@@ -1446,84 +1456,11 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					GeocoderStatus status) {
 				if (status == GeocoderStatus.OK) {
 					searchHistoryOrganizer.addAndSaveSearch(address);
-					Button createEvent = new Button("Create Event");
-					Button getDirections = new Button("Directions to Here");
+
 					searchResult = results;
-					final LatLng latlong = searchResult.get(0).getGeometry()
-							.getLocation();
-					final String addr = searchResult.get(0)
-							.getFormattedAddress();
+					final LatLng latlong = searchResult.get(0).getGeometry().getLocation();
 					theMap.setCenter(latlong);
-					VerticalPanel main = new VerticalPanel();
-					HorizontalPanel buttons = new HorizontalPanel();
-					main.add(new Label(addr));
-					buttons.add(createEvent);
-					buttons.add(getDirections);
-					main.add(buttons);
-
-					createEvent.addClickHandler(new ClickHandler() {
-
-						@Override
-						public void onClick(ClickEvent event) {
-							buttonPanel.add(eventCancel);
-							buttonPanel.add(eventCreate);
-							eventName.setText("Event Name");
-							eventTime.setText("YYYY-MM-DD");
-							mainPan.add(eventName);
-							mainPan.add(eventTime);
-							mainPan.add(buttonPanel);
-							// popUp.add(mainPan);
-							// popUp.show();
-							infoWindow.setContent(mainPan);
-							infoWindow.open(theMap);
-							eventCancel.addClickHandler(new ClickHandler() {
-
-								@Override
-								public void onClick(ClickEvent event) {
-									// popUp.hide();
-									infoWindow.close();
-								}
-							});
-
-							eventCreate.addClickHandler(new ClickHandler() {
-
-								@Override
-								public void onClick(ClickEvent event) {
-									String title = eventName.getText();
-									String date = eventTime.getText();
-									createFBEvent(addr, title, date);
-								}
-							});
-
-							eventName.addClickHandler(new ClickHandler() {
-
-								@Override
-								public void onClick(ClickEvent event) {
-									eventName.setText("");
-								}
-							});
-							eventTime.addClickHandler(new ClickHandler() {
-
-								@Override
-								public void onClick(ClickEvent event) {
-									eventTime.setText("");
-								}
-							});
-
-						}
-					});
-
-					getDirections.addClickHandler(new ClickHandler() {
-
-						@Override
-						public void onClick(ClickEvent event) {
-							getDirections(latlong);
-						}
-					});
-
-					infoWindow.setContent(main);
-					infoWindow.setPosition(latlong);
-					infoWindow.open(theMap);
+					mapOperator.setMarker(latlong);
 					theMap.setZoom(17);
 					filterParkings();
 				}
@@ -1997,5 +1934,85 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			Window.alert("Can't figure out usertype");
 			loadSetUserType();
 		}
+	}
+	
+	private VerticalPanel createSearchLocationPopup() {
+		final LatLng latlong = searchResult.get(0).getGeometry().getLocation();
+		final String addr = searchResult.get(0).getFormattedAddress();
+		
+		Button createEvent = new Button("Create Event");
+		Button getDirections = new Button("Directions to Here");
+		VerticalPanel main = new VerticalPanel();
+		HorizontalPanel buttons = new HorizontalPanel();
+		main.add(new Label(addr));
+		buttons.add(createEvent);
+		buttons.add(getDirections);
+		main.add(buttons);
+		
+		createEvent.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				buttonPanel.add(eventCancel);
+				buttonPanel.add(eventCreate);
+				eventName.setText("Event Name");
+				eventTime.setText("YYYY-MM-DD");
+				mainPan.add(eventName);
+				mainPan.add(eventTime);
+				mainPan.add(buttonPanel);
+				// popUp.add(mainPan);
+				// popUp.show();
+				infoWindow.setContent(mainPan);
+				infoWindow.open(theMap);
+				eventCancel.addClickHandler(new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						// TODO Auto-generated method stub
+						// popUp.hide();
+						infoWindow.close();
+					}
+				});
+
+				eventCreate.addClickHandler(new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						// TODO Auto-generated method stub
+						String title = eventName.getText();
+						String date = eventTime.getText();
+						createFBEvent(addr, title, date);
+					}
+				});
+
+				eventName.addClickHandler(new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						// TODO Auto-generated method stub
+						eventName.setText("");
+					}
+				});
+				eventTime.addClickHandler(new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						// TODO Auto-generated method stub
+						eventTime.setText("");
+					}
+				});
+
+			}
+		});
+
+		getDirections.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				getDirections(latlong);
+			}
+		});
+		
+		return main;
 	}
 }
