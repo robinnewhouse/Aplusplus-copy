@@ -77,8 +77,10 @@ public class SearchHistoryOrganizer {
 
 			@Override
 			public void onSuccess(Void result) {
+				System.out.println("In Callback - Successfully Cleared History on Server");
 				histFlexTable.clear();
 				searchHistList.clear();
+				System.out.println("In Callback - Cleared History Locally");
 			}
 		});
 	}

@@ -38,21 +38,18 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 		checkLoggedIn();
 		PersistenceManager pm = PMF.getPersistenceManager();
 		ArrayList<String> searchStrings=new ArrayList<String>();;
-		//* TEMP FOR DEBUGGING
 		try {
 			Query q = pm.newQuery(SearchString.class, "user == u");
 			q.declareParameters("com.google.appengine.api.users.User u");
 			q.setOrdering("createDate");
-			//TEMP FOR DEBUGGING
-			ArrayList<SearchString> pHist = new ArrayList<SearchString>();
-			//pHist = (ArrayList<SearchString>) q.execute(getUser());
+			List<SearchString> pHist;
+			pHist = (List<SearchString>) q.execute(getUser());
 			for (int i = 0; i < pHist.size(); i++) {	
 				searchStrings.add(pHist.get(i).getSearchString());
 			}
 		} finally {
 			pm.close();
 		}
-		//*/
 		/**
 		//TEMP TO CHECK IF RPC IS WORKING
 		searchStrings.add("Robson and Georgia");
@@ -78,21 +75,32 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 
 	@Override
 	public void clear() throws Exception {
-		// TODO Auto-generated method stub
 		System.out.println("Starting SearchHistoryServiceImpl.clear()");
 		checkLoggedIn();
 		PersistenceManager pm = PMF.getPersistenceManager();
 		try {
-			Query q = pm.newQuery(SearchString.class);
-
-			List<SearchString> fullHistory = (List<SearchString>) q.execute();
+			System.out.println("At start of try");
+			Query q = pm.newQuery(SearchString.class, "user == u");
+			q.declareParameters("com.google.appengine.api.users.User u");
+			System.out.println("About to Query");
+			List<SearchString> fullHistory = (List<SearchString>) q.execute(getUser());
+			System.out.println("About to Loop");			
 			for (SearchString histString : fullHistory) {
-					pm.deletePersistent(histString);
-					System.out.println("Deleted " + histString.getSearchString() + " from favorites.");
+					String toDelete = histString.getSearchString();
+					System.out.println("About to delete " + histString.getSearchString() + " from favorites.");
+					if(histString==null){
+						System.out.println("Null Object Returned in SearchHistoryServiceImpl.clear()");
+					}
+					else{
+						pm.deletePersistent(histString);
+					}
+					System.out.println("Deleted " + toDelete + " from favorites.");
 			}
+			System.out.println("Finishing Try");
 		} 
 		catch(Exception exception) {
-			throw exception;
+			System.out.println("Exception in SearchHistoryServiceImpl.clear: " + exception.getMessage());
+			//throw exception;
 		}
 		finally {
 			pm.close();
