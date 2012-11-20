@@ -218,6 +218,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private Button searchButton = new Button("Search");
 
 	private List<ParkingLocation> allParkings = new ArrayList<ParkingLocation>();
+	private List<ParkingLocation> filteredParkings = new ArrayList<ParkingLocation>();
 	private int totalNum = 0;
 
 	// The most recent location searched for
@@ -626,6 +627,27 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		});
 	}
 
+	private void addListenerToSortBox() {
+		// Listen for events on the sortBox
+		sortBox.addChangeHandler(new ChangeHandler() {
+			public void onChange(ChangeEvent event) {
+				int selectedIndex = tabs.getTabBar().getSelectedTab();
+				switch (selectedIndex) {
+				case 0:
+					displayParkings(filteredParkings);
+					break;
+				case 1:
+					// displayFavourites(faveList);
+					break;
+				case 2:
+					// displayHist(histList);
+					break;
+				}
+			}
+		});
+
+	}
+	
 	private void addListenersToButtons() {
 
 		// Listen for key press on search box
@@ -1171,30 +1193,24 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void filterParkings() {
+		filteredParkings.clear();
 		LatLng searchPoint;
 
-		double maxPrice = ((double) priceFilterSlider.getValue() / 2); // Divide
-																		// by
-																		// two
-																		// to
-																		// get
-																		// non-integer
-																		// prices
+		double maxPrice = ((double)priceFilterSlider.getValue()/2); // Divide by two to get non-integer prices
 		System.out.println(maxPrice);
-		double minTime = (double) timeFilterSlider.getValue();
+		double minTime = (double)timeFilterSlider.getValue();
 		double maxRadius;
 
 		if (searchBox.getText().equals("")) {
 			System.out.println("Centering it to downtown");
-			searchPoint = LatLng.create(49.2814, -123.12);
+			searchPoint = LatLng.create(49.2814,-123.12);
 			maxRadius = 99999999;
 			mapOperator.clearCircle();
 
 		} else {
 			searchPoint = searchResult.get(0).getGeometry().getLocation();
-			System.out.println("Filtering for results around "
-					+ searchResult.get(0).getFormattedAddress());
-			maxRadius = (double) radiusFilterSlider.getValue();
+			System.out.println("Filtering for results around " + searchResult.get(0).getFormattedAddress());
+			maxRadius = (double)radiusFilterSlider.getValue();
 			mapOperator.drawCircle(searchPoint, maxRadius);
 
 		}
