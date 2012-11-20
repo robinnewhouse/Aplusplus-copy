@@ -96,39 +96,58 @@ public class ParkingLocation implements Serializable {
 
 		});
 
-		addTicket.addClickHandler(new ClickHandler() { // robin
-					@Override
-					public void onClick(ClickEvent event) {
+		addTicket.addClickHandler(new ClickHandler() {
 
-						String msg = "Please enter the amount of your paking fine";
-						Boolean correct = false;
-						NumberFormat formatter = NumberFormat
-								.getCurrencyFormat("CAD");
-						while (correct == false) {
-							String stringAmount;
-							Float floatAmount;
-							stringAmount = Window.prompt(msg,
-									"enter ticket amount");
-							try {
-								stringAmount = stringAmount.replaceAll(
-										"[^\\d.]", "");
-								floatAmount = Float.parseFloat(stringAmount);
-								correct = Window
-										.confirm("Upload the following data: \n you were fined "
-												+ formatter.format(floatAmount)
-												+ " is this correct?");
-							} catch (NullPointerException e) {
-								e.printStackTrace();
-								break;
-							} catch (Exception e) {
-								msg = "Please enter the amount of your paking fine. Format must be: 000.00";
-								e.printStackTrace();
-							}
+			// robin
 
-						}
-						Window.alert("you got here");
+			@Override
+			public void onClick(ClickEvent event) {
+
+				String msg = "Please enter the amount of your paking fine";
+				Boolean correct = false;
+				NumberFormat formatter = NumberFormat.getCurrencyFormat("CAD");
+				String stringAmount;
+				Double doubleAmount = null;
+				String formattedFine = null;
+				while (correct == false) {
+					stringAmount = Window.prompt(msg, "00.00");
+					try {
+						stringAmount = stringAmount.replaceAll("[^\\d.]", "");
+						doubleAmount = Double.parseDouble(stringAmount);
+						formattedFine = formatter.format(doubleAmount);
+						correct = Window
+								.confirm("Upload the following data: \n you were fined "
+										+ formattedFine + " is this correct?");
+					} catch (NullPointerException e) {
+						e.printStackTrace();
+						break;
+					} catch (Exception e) {
+						msg = "Please enter the amount of your paking fine. Format must be: 00.00";
+						e.printStackTrace();
 					}
-				});
+
+				}
+				if (correct) {
+
+					TicketServiceAsync ticket = GWT.create(TicketService.class);
+					ticket.addTicket(parkingID, doubleAmount,
+							new AsyncCallback<Void>() {
+								@Override
+								public void onSuccess(Void result) {
+									Window.alert("ticket was successfully uploaded to the server. Thank you");
+								}
+
+								@Override
+								public void onFailure(Throwable caught) {
+									Window.alert("There was an error uploading ticket");
+								}
+							});
+
+				} else
+					Window.alert("ticket not uploaded");
+			}
+
+		});
 
 		/**
 		 * addToFave.addClickHandler(new ClickHandler() {

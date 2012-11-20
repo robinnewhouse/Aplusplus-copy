@@ -567,11 +567,11 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 									Button addFaveButton = new Button(
 											"Add to Faves");
-									addHandler(addFaveButton, parking);
+									addFaveHandler(addFaveButton, parking);
 
 									Button addTicket = new Button(
 											"Add Parking Ticket");
-									addHandler(addFaveButton, parking);
+									addTicketHandler(addTicket, parking);
 
 									parking.displayPopup(theMap, infoWindow,
 											addFaveButton, addTicket);
@@ -612,11 +612,11 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 								Button addFaveButton = new Button(
 										"Add to Faves");
-								addHandler(addFaveButton, parking);
+								addFaveHandler(addFaveButton, parking);
 
 								Button addTicket = new Button(
 										"Add Parking Ticket");
-								addHandler(addFaveButton, parking);
+								addTicketHandler(addTicket, parking);
 
 								parking.displayPopup(theMap, infoWindow,
 										addFaveButton, addTicket);
@@ -1186,10 +1186,10 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		resultsFlexTable.setWidget(row, 0, info);
 
 		Button addFaveButton = new Button("Add to Faves");
-		addHandler(addFaveButton, parkingLoc);
+		addFaveHandler(addFaveButton, parkingLoc);
 
 		Button addTicket = new Button("Add Parking Ticket");
-		addHandler(addFaveButton, parkingLoc);
+		addTicketHandler(addTicket, parkingLoc);
 
 		mapOperator.drawOnMap(parkingLoc, infoWindow, addFaveButton, addTicket);
 		idList.add(parkingLoc.getParkingID());
@@ -1603,10 +1603,10 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		});
 		faveFlexTable.setWidget(row, 1, removeFaveButton);
 		final Button addFaveButton = new Button("Add to Faves");
-		addHandler(addFaveButton, parkingLoc);
+		addFaveHandler(addFaveButton, parkingLoc);
 
 		Button addTicket = new Button("Add Parking Ticket");
-		addHandler(addFaveButton, parkingLoc);
+		addTicketHandler(addTicket, parkingLoc);// TODO
 
 		mapOperator.drawOnMap(parkingLoc, infoWindow, addFaveButton, addTicket);
 		faveList.add(parkingLoc.getParkingID());
@@ -1614,7 +1614,67 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				+ parkingLoc.getParkingID());
 	}
 
-	private void addHandler(Button addFaveButton,
+	private void addTicketHandler(Button addTicket,
+			final ParkingLocation parkingLoc) {
+		// addTicket.addClickHandler(new ClickHandler() {
+		//
+		// @Override
+		// public void onClick(ClickEvent event) {
+		//
+		// String msg = "Please enter the amount of your paking fine";
+		// Boolean correct = false;
+		// NumberFormat formatter = NumberFormat.getCurrencyFormat("CAD");
+		// String stringAmount;
+		// Float floatAmount;
+		// String formattedFine = null;
+		// while (correct == false) {
+		// stringAmount = Window.prompt(msg, "00.00");
+		// try {
+		// stringAmount = stringAmount.replaceAll("[^\\d.]", "");
+		// floatAmount = Float.parseFloat(stringAmount);
+		// formattedFine = formatter.format(floatAmount);
+		// correct = Window
+		// .confirm("Upload the following data: \n you were fined "
+		// + formattedFine + " is this correct?");
+		// } catch (NullPointerException e) {
+		// e.printStackTrace();
+		// break;
+		// } catch (Exception e) {
+		// msg =
+		// "Please enter the amount of your paking fine. Format must be: 00.00";
+		// e.printStackTrace();
+		// }
+		//
+		// }
+		// if (correct) {
+		//
+		// Window.alert("ticket of "
+		// + formattedFine
+		// + " was successfully uploaded to the server. Thank you");
+		// } else
+		// Window.alert("ticket not uploaded");
+		// }
+		//
+		// // public void onClick(ClickEvent event) {
+		// //
+		// // FaveAsync fave = GWT.create(Fave.class);
+		// // fave.addFave(parkingLoc.getParkingID(),
+		// // new AsyncCallback<Void>() {
+		// //
+		// // @Override
+		// // public void onSuccess(Void result) {
+		// // addFaveToDisplay(parkingLoc);
+		// // }
+		// //
+		// // @Override
+		// // public void onFailure(Throwable caught) {
+		// // }
+		// // });
+		// // }
+		// });
+	}
+
+	private void addFaveHandler(Button addFaveButton,
 			final ParkingLocation parkingLoc) {
 		addFaveButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
@@ -1821,10 +1881,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 						Label eventTitle = new Label(
 								"Successfully created Facebook event " + title);
 						String url = "<a href=\"http://www.facebook.com/events/"
-								+ id.substring(1, id.length()-1)
+								+ id.substring(1, id.length() - 1)
 								+ "\" target=\"_blank\">Event Link</a>";
-						HTML link = new HTML(url
-								);
+						HTML link = new HTML(url);
 						System.out.println(url);
 						VerticalPanel fbE = new VerticalPanel();
 						fbE.add(eventTitle);
