@@ -545,35 +545,41 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				}
 				int row = resultsFlexTable.getCellForEvent(event).getRowIndex();
 				String parkingID = idList.get(row);
-				System.out.println("I have clicked on parking with ID: "
-						+ parkingID);
-				// get corresponding ParkingLocation with parkingID
-				parkService.getParking(parkingID,
-						new AsyncCallback<ParkingLocation>() {
 
-							@Override
-							public void onFailure(Throwable caught) {
+				if (parkingID.equals("noresults")) {
+					return;
+				} else {
+					System.out.println("I have clicked on parking with ID: "
+							+ parkingID);
+					// get corresponding ParkingLocation with parkingID
+					parkService.getParking(parkingID,
+							new AsyncCallback<ParkingLocation>() {
 
-							}
+								@Override
+								public void onFailure(Throwable caught) {
 
-							@Override
-							public void onSuccess(final ParkingLocation parking) {
-								if (zoom == false) {
-									zoom = true;
-									theMap.setZoom(17);
 								}
 
-								Button addFaveButton = new Button(
-										"Add to Faves");
-								addHandler(addFaveButton, parking);
+								@Override
+								public void onSuccess(
+										final ParkingLocation parking) {
+									if (zoom == false) {
+										zoom = true;
+										theMap.setZoom(17);
+									}
 
-								parking.displayPopup(theMap, infoWindow,
-										addFaveButton);
+									Button addFaveButton = new Button(
+											"Add to Faves");
+									addHandler(addFaveButton, parking);
 
-							}
+									parking.displayPopup(theMap, infoWindow,
+											addFaveButton);
 
-						});
+								}
 
+							});
+
+				}
 			}
 		});
 
@@ -923,6 +929,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		// testing - Robin//
 		mapOperator = new MapOperater(theMap);
+
 	}
 
 	private void initializeLayout() {
@@ -1100,6 +1107,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		if (parkingLocations.size() == 0) {
 			resultsFlexTable.setText(0, 0, "No results found.");
+			idList.add("noresults");
 		} else {
 
 			int index = sortBox.getSelectedIndex();
