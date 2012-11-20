@@ -98,6 +98,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private DirectionsRequest dr = DirectionsRequest.create();
 	private final DirectionsRenderer displayDir = DirectionsRenderer.create();
 
+	private VerticalPanel dummy = new VerticalPanel();
+	
 	// FACEBOOK EVENT STUFF
 
 	private String apiKey;
@@ -272,7 +274,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		// addListenerToTabs();
 
 		// initializeSliderValues();
-		downloadData();
+		// TODO: uncomment
+		//downloadData();
 		// displayData();
 
 		addListenersToSliders();
@@ -936,7 +939,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 
 		RootPanel.get("parkMe").add(mainPanel);
-
+		mainPanel.add(dummy);
 		// Set up filterPanel
 		filterPanel.setSize("450px", "100px");
 		filterPanel.addStyleName("filterPanel");
@@ -1052,7 +1055,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		mapPanel.setSize("100%", "100%");
 		mainPanel.setSpacing(0);
 		mainPanel.setSize("100%", "100%");
-
+		
 	}
 
 	private void loadData() {
@@ -1362,15 +1365,25 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private void searchLoc(final String address) {
 		displayDir.setMap(null);
 		displayDir.setPanel(null);
+		
+		/**
 		com.google.gwt.maps.client.base.LatLng location = com.google.gwt.maps.client.base.LatLng
 				.newInstance(theMap.getCenter().lat(), theMap.getCenter().lng());
 
 		// dummy map widget
 		com.google.gwt.maps.client.MapOptions options = com.google.gwt.maps.client.MapOptions
 				.newInstance();
+		options.setCenter(location);
+		options.setZoom(17);
+		options.setMapTypeId(com.google.gwt.maps.client.MapTypeId.ROADMAP);
+		options.setDraggable(true);
+		options.setMapTypeControl(true);
+		options.setScaleControl(true);
+		options.setScrollWheel(true);
 		MapImpl impl = MapImpl.newInstance(mapPanel.getElement(), options);
 		MapWidget mapWidget = MapWidget.newInstance(impl);
-		PlacesService ps = PlacesService.newInstance(mapWidget);
+		PlacesService ps = PlacesService.newInstance(mapPanel.getElement());
+		//PlacesService ps = PlacesService.newInstance(mapWidget.getElement());
 		// PlacesService.create(theMap);
 		PlaceSearchRequest psr = PlaceSearchRequest.newInstance();
 		psr.setName(address);
@@ -1389,13 +1402,14 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			}
 
 		});
-
+**/
 		GeocoderRequest request = GeocoderRequest.create();
-		request.setAddress(fAddress + " Vancouver");
+		request.setAddress(address + " Vancouver");
 		request.setRegion("ca");
 
 		// To remove places functionality, simply change all following instances
 		// of fAddress to address
+
 
 		geocoder.geocode(request, new Geocoder.Callback() {
 
@@ -1403,7 +1417,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			public void handle(JsArray<GeocoderResult> results,
 					GeocoderStatus status) {
 				if (status == GeocoderStatus.OK) {
-					searchHistoryOrganizer.addAndSaveSearch(fAddress);
+					searchHistoryOrganizer.addAndSaveSearch(address);
 					Button createEvent = new Button("Create Event");
 					Button getDirections = new Button("Directions to Here");
 					searchResult = results;

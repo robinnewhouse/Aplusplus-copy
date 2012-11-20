@@ -30,6 +30,9 @@
 	<entry-point class='ca.ubc.cpsc310.parkme.client.ParkMe' />
 
 	<inherits name="com.google.gwt.json.JSON" />
+	
+	<!--  Inherit Better Maps Api -->
+	<inherits name='com.google.gwt.maps.Apis_Google_Maps' />
 
 	<!--  Inherit Geolocation -->
 	<inherits name="com.google.code.gwt.geolocation.Html5Geolocation" />
