@@ -4,7 +4,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface TicketServiceAsync {
 
-	void addTicket(String parkingID, Double doubleAmount,
-			AsyncCallback<Void> asyncCallback);
+	void addTicket(String parkingID, Double fine, AsyncCallback<Void> callback);
+
+	void getTickets(AsyncCallback<TicketInfo[]> callback);
 
 }
