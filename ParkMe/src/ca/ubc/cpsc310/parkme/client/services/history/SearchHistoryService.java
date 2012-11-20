@@ -11,4 +11,5 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface SearchHistoryService extends RemoteService {
 	public void addSearchString(String str) throws NotLoggedInException;
 	public ArrayList<String> getHist() throws NotLoggedInException;
+	public void clear() throws Exception;
 }

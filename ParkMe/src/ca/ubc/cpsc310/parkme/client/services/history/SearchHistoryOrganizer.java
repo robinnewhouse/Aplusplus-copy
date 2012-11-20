@@ -1,6 +1,7 @@
 package ca.ubc.cpsc310.parkme.client.services.history;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
@@ -32,14 +33,18 @@ public class SearchHistoryOrganizer {
 			public void onSuccess(ArrayList<String> result) {
 				for(String search: result)
 					addSearch(search);
+				System.out.println("Finishing SearchHistoryOrganizer.loadAndShowSearchHistory-onSuccess: ");
 			}
 		});
-		
+		System.out.println("Finishing SearchHistoryOrganizer.loadAndShowSearchHistory");		
 	}
 
 	public void addAndSaveSearch(String search) {
-		addSearch(search);
-		saveSearch(search);
+		//Decided to have a good history it was good to include the multiplicity of searchs as well
+		//if(!searchHistList.contains(search)){
+			addSearch(search);
+			saveSearch(search);
+		//}
 	}
 	
 	private void addSearch(String search) {
@@ -63,4 +68,25 @@ public class SearchHistoryOrganizer {
 		});
 	}	
 	
+	public void clearHistory(){
+		searchHistoryService.clear(new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Failed to clear search history: "+caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				System.out.println("In Callback - Successfully Cleared History on Server");
+				int rows = histFlexTable.getRowCount();
+				for(int i=0;i<rows;++i){
+					histFlexTable.removeRow(0);
+				}
+				//histFlexTable.clear();
+				searchHistList.clear();
+				oracle.clear();
+				System.out.println("In Callback - Cleared History Locally: "+searchHistList.size());
+			}
+		});
+	}
 }

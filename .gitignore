@@ -9,6 +9,8 @@
 *.cache.html
 ParkMe/war/WEB-INF/deploy/parkme/rpcPolicyManifest/manifests/*.txt
 *rpcPolicyManifest/manifests*
+ParkMe/test-classes/ca/ubc/cpsc310/parkme/test/empty.txt
+*.orig
 
 .Spotlight-V100
 .Trashes
