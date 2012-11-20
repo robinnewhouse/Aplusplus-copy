@@ -33,13 +33,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
-import com.google.gwt.maps.client.MapImpl;
-import com.google.gwt.maps.client.MapWidget;
-import com.google.gwt.maps.client.placeslib.PlaceResult;
-import com.google.gwt.maps.client.placeslib.PlaceSearchHandler;
-import com.google.gwt.maps.client.placeslib.PlaceSearchRequest;
-import com.google.gwt.maps.client.placeslib.PlacesService;
-import com.google.gwt.maps.client.placeslib.PlacesServiceStatus;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -99,7 +92,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private final DirectionsRenderer displayDir = DirectionsRenderer.create();
 
 	private VerticalPanel dummy = new VerticalPanel();
-	
+
 	// FACEBOOK EVENT STUFF
 
 	private String apiKey;
@@ -276,7 +269,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		// initializeSliderValues();
 		// TODO: uncomment
-		//downloadData();
+		// downloadData();
 		// displayData();
 
 		addListenersToSliders();
@@ -576,8 +569,12 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 											"Add to Faves");
 									addHandler(addFaveButton, parking);
 
+									Button addTicket = new Button(
+											"Add Parking Ticket");
+									addHandler(addFaveButton, parking);
+
 									parking.displayPopup(theMap, infoWindow,
-											addFaveButton);
+											addFaveButton, addTicket);
 
 								}
 
@@ -616,8 +613,13 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 								Button addFaveButton = new Button(
 										"Add to Faves");
 								addHandler(addFaveButton, parking);
+
+								Button addTicket = new Button(
+										"Add Parking Ticket");
+								addHandler(addFaveButton, parking);
+
 								parking.displayPopup(theMap, infoWindow,
-										addFaveButton);
+										addFaveButton, addTicket);
 
 							}
 
@@ -647,7 +649,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		});
 
 	}
-	
+
 	private void addListenersToButtons() {
 
 		// Listen for key press on search box
@@ -990,7 +992,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		searchPanel.add(searchButton);
 		searchPanel.add(clearDataButton);
 		searchPanel.add(signOutLink);
-		// searchPanel.add(loadDataButton);
+		searchPanel.add(loadDataButton); // ROBIN
+		searchPanel.add(downloadData);
 
 		searchLabel
 				.setText("Enter Address (or leave blank to search whole Vancouver):");
@@ -1077,7 +1080,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		mapPanel.setSize("100%", "100%");
 		mainPanel.setSpacing(0);
 		mainPanel.setSize("100%", "100%");
-		
+
 	}
 
 	private void loadData() {
@@ -1183,10 +1186,12 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		resultsFlexTable.setWidget(row, 0, info);
 
 		Button addFaveButton = new Button("Add to Faves");
-
 		addHandler(addFaveButton, parkingLoc);
 
-		mapOperator.drawOnMap(parkingLoc, infoWindow, addFaveButton);
+		Button addTicket = new Button("Add Parking Ticket");
+		addHandler(addFaveButton, parkingLoc);
+
+		mapOperator.drawOnMap(parkingLoc, infoWindow, addFaveButton, addTicket);
 		idList.add(parkingLoc.getParkingID());
 		System.out.println("Currently printing parking "
 				+ parkingLoc.getParkingID());
@@ -1196,21 +1201,28 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		filteredParkings.clear();
 		LatLng searchPoint;
 
-		double maxPrice = ((double)priceFilterSlider.getValue()/2); // Divide by two to get non-integer prices
+		double maxPrice = ((double) priceFilterSlider.getValue() / 2); // Divide
+																		// by
+																		// two
+																		// to
+																		// get
+																		// non-integer
+																		// prices
 		System.out.println(maxPrice);
-		double minTime = (double)timeFilterSlider.getValue();
+		double minTime = (double) timeFilterSlider.getValue();
 		double maxRadius;
 
 		if (searchBox.getText().equals("")) {
 			System.out.println("Centering it to downtown");
-			searchPoint = LatLng.create(49.2814,-123.12);
+			searchPoint = LatLng.create(49.2814, -123.12);
 			maxRadius = 99999999;
 			mapOperator.clearCircle();
 
 		} else {
 			searchPoint = searchResult.get(0).getGeometry().getLocation();
-			System.out.println("Filtering for results around " + searchResult.get(0).getFormattedAddress());
-			maxRadius = (double)radiusFilterSlider.getValue();
+			System.out.println("Filtering for results around "
+					+ searchResult.get(0).getFormattedAddress());
+			maxRadius = (double) radiusFilterSlider.getValue();
 			mapOperator.drawCircle(searchPoint, maxRadius);
 
 		}
@@ -1381,51 +1393,42 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private void searchLoc(final String address) {
 		displayDir.setMap(null);
 		displayDir.setPanel(null);
-		
+
 		/**
-		com.google.gwt.maps.client.base.LatLng location = com.google.gwt.maps.client.base.LatLng
-				.newInstance(theMap.getCenter().lat(), theMap.getCenter().lng());
-
-		// dummy map widget
-		com.google.gwt.maps.client.MapOptions options = com.google.gwt.maps.client.MapOptions
-				.newInstance();
-		options.setCenter(location);
-		options.setZoom(17);
-		options.setMapTypeId(com.google.gwt.maps.client.MapTypeId.ROADMAP);
-		options.setDraggable(true);
-		options.setMapTypeControl(true);
-		options.setScaleControl(true);
-		options.setScrollWheel(true);
-		MapImpl impl = MapImpl.newInstance(mapPanel.getElement(), options);
-		MapWidget mapWidget = MapWidget.newInstance(impl);
-		PlacesService ps = PlacesService.newInstance(mapPanel.getElement());
-		//PlacesService ps = PlacesService.newInstance(mapWidget.getElement());
-		// PlacesService.create(theMap);
-		PlaceSearchRequest psr = PlaceSearchRequest.newInstance();
-		psr.setName(address);
-		psr.setLocation(location);
-
-		ps.search(psr, new PlaceSearchHandler() {
-
-			@Override
-			public void onCallback(JsArray<PlaceResult> results,
-					PlacesServiceStatus status) {
-				if (status == PlacesServiceStatus.OK) {
-					fAddress = results.get(0).getFormatted_Address();
-				} else {
-					fAddress = address;
-				}
-			}
-
-		});
-**/
+		 * com.google.gwt.maps.client.base.LatLng location =
+		 * com.google.gwt.maps.client.base.LatLng
+		 * .newInstance(theMap.getCenter().lat(), theMap.getCenter().lng());
+		 * 
+		 * // dummy map widget com.google.gwt.maps.client.MapOptions options =
+		 * com.google.gwt.maps.client.MapOptions .newInstance();
+		 * options.setCenter(location); options.setZoom(17);
+		 * options.setMapTypeId(com.google.gwt.maps.client.MapTypeId.ROADMAP);
+		 * options.setDraggable(true); options.setMapTypeControl(true);
+		 * options.setScaleControl(true); options.setScrollWheel(true); MapImpl
+		 * impl = MapImpl.newInstance(mapPanel.getElement(), options); MapWidget
+		 * mapWidget = MapWidget.newInstance(impl); PlacesService ps =
+		 * PlacesService.newInstance(mapPanel.getElement()); //PlacesService ps
+		 * = PlacesService.newInstance(mapWidget.getElement()); //
+		 * PlacesService.create(theMap); PlaceSearchRequest psr =
+		 * PlaceSearchRequest.newInstance(); psr.setName(address);
+		 * psr.setLocation(location);
+		 * 
+		 * ps.search(psr, new PlaceSearchHandler() {
+		 * 
+		 * @Override public void onCallback(JsArray<PlaceResult> results,
+		 *           PlacesServiceStatus status) { if (status ==
+		 *           PlacesServiceStatus.OK) { fAddress =
+		 *           results.get(0).getFormatted_Address(); } else { fAddress =
+		 *           address; } }
+		 * 
+		 *           });
+		 **/
 		GeocoderRequest request = GeocoderRequest.create();
 		request.setAddress(address + " Vancouver");
 		request.setRegion("ca");
 
 		// To remove places functionality, simply change all following instances
 		// of fAddress to address
-
 
 		geocoder.geocode(request, new Geocoder.Callback() {
 
@@ -1600,10 +1603,12 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		});
 		faveFlexTable.setWidget(row, 1, removeFaveButton);
 		final Button addFaveButton = new Button("Add to Faves");
-
 		addHandler(addFaveButton, parkingLoc);
 
-		mapOperator.drawOnMap(parkingLoc, infoWindow, addFaveButton);
+		Button addTicket = new Button("Add Parking Ticket");
+		addHandler(addFaveButton, parkingLoc);
+
+		mapOperator.drawOnMap(parkingLoc, infoWindow, addFaveButton, addTicket);
 		faveList.add(parkingLoc.getParkingID());
 		System.out.println("Currently printing parking "
 				+ parkingLoc.getParkingID());
@@ -1902,6 +1907,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		// whole page about statistics
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		RootPanel.get("parkMe").add(mainPanel);
+		mainPanel.add(downloadData);
 		mainPanel.add(loadDataButton);
 		mainPanel.add(getAddressesButton);
 		mainPanel.add(statsScroll);
