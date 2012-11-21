@@ -9,8 +9,8 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
 import ca.ubc.cpsc310.parkme.client.Criteria;
-import ca.ubc.cpsc310.parkme.client.FilterService;
-import ca.ubc.cpsc310.parkme.client.ParkingLocation;
+import ca.ubc.cpsc310.parkme.client.services.parking.FilterService;
+import ca.ubc.cpsc310.parkme.client.services.parking.ParkingLocation;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 

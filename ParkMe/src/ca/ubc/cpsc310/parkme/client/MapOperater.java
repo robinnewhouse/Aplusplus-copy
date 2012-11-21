@@ -3,6 +3,8 @@ package ca.ubc.cpsc310.parkme.client;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import ca.ubc.cpsc310.parkme.client.services.parking.ParkingLocation;
+
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.ui.Button;
 import com.google.maps.gwt.client.Circle;

@@ -1,8 +1,12 @@
-package ca.ubc.cpsc310.parkme.client;
+package ca.ubc.cpsc310.parkme.client.services.parking;
 
 import java.io.Serializable;
 
 import org.spacetimeresearch.gwt.addthis.client.AddThisWidget;
+
+import ca.ubc.cpsc310.parkme.client.MyInfoWindow;
+import ca.ubc.cpsc310.parkme.client.TicketService;
+import ca.ubc.cpsc310.parkme.client.TicketServiceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

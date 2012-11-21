@@ -1,7 +1,8 @@
-package ca.ubc.cpsc310.parkme.client;
+package ca.ubc.cpsc310.parkme.client.services.parking;
 
 import javax.jdo.PersistenceManager;
 
+import ca.ubc.cpsc310.parkme.client.NotLoggedInException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 

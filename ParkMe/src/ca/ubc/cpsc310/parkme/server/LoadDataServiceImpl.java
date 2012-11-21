@@ -15,8 +15,8 @@ import javax.jdo.Query;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import ca.ubc.cpsc310.parkme.client.LoadDataService;
-import ca.ubc.cpsc310.parkme.client.ParkingLocation;
+import ca.ubc.cpsc310.parkme.client.services.parking.LoadDataService;
+import ca.ubc.cpsc310.parkme.client.services.parking.ParkingLocation;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 

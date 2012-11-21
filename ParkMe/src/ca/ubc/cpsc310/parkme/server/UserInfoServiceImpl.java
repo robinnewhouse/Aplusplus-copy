@@ -9,9 +9,9 @@ import javax.jdo.Query;
 
 import ca.ubc.cpsc310.parkme.client.Criteria;
 import ca.ubc.cpsc310.parkme.client.NotLoggedInException;
-import ca.ubc.cpsc310.parkme.client.ParkingLocation;
-import ca.ubc.cpsc310.parkme.client.UserInfoClient;
-import ca.ubc.cpsc310.parkme.client.UserInfoService;
+import ca.ubc.cpsc310.parkme.client.services.parking.ParkingLocation;
+import ca.ubc.cpsc310.parkme.client.services.user.UserInfoClient;
+import ca.ubc.cpsc310.parkme.client.services.user.UserInfoService;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
