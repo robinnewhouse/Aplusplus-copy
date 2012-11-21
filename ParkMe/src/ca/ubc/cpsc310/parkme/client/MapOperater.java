@@ -81,7 +81,6 @@ public class MapOperater {
 			polyline.setMap(null);
 		}
 		System.out.println("There are " + polylines.size() + " polylines in the set");
-		polylines.clear();
 	}
 
 	public void drawCircle(LatLng searchPoint, double maxRadius) {
