@@ -45,6 +45,7 @@ public class SearchHistoryOrganizer {
 	}
 
 	public void addAndSaveSearch(String search) {
+		System.out.println("Starting SearchHistoryOrganizer.addAndSaveSearch");
 		// Decided to have a good history it was good to include the
 		// multiplicity of searchs as well
 		// if(!searchHistList.contains(search)){
