@@ -14,7 +14,7 @@ public interface FaveAsync {
 
 	void removeFave(String parkingID, AsyncCallback<Void> callback);
 
-	void getMostFaved(AsyncCallback<Void> callback);
+	void getMostFaved(AsyncCallback<FaveStats[]> callback);
 
 
 

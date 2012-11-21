@@ -145,6 +145,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private VerticalPanel mainStatsVP = new VerticalPanel();
 	private ScrollPanel dirScroll = new ScrollPanel();
 	private VerticalPanel avgCritVP = new VerticalPanel();
+	private FlexTable faveStatsFT = new FlexTable();
 
 	// average price
 	private VerticalPanel avgPriceVP = new VerticalPanel();
@@ -238,24 +239,24 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		LoginServiceAsync loginService = GWT.create(LoginService.class);
 		loginService.login(GWT.getHostPageBaseURL(),
 				new AsyncCallback<LoginInfo>() {
-					public void onFailure(Throwable error) {
-						handleError(error);
-					}
+			public void onFailure(Throwable error) {
+				handleError(error);
+			}
 
-					public void onSuccess(LoginInfo result) {
-						loginInfo = result;
-						if (!loginInfo.isLoggedIn()) {
-							loadLogin();
-							/**
-							 * } else if (true) { loadUserInfo();
-							 * //loadFacebook(); //loadSetUserType();
-							 **/
-						} else {
-							loadUserInfo();
-							// loadParkMe();
-						}
-					}
-				});
+			public void onSuccess(LoginInfo result) {
+				loginInfo = result;
+				if (!loginInfo.isLoggedIn()) {
+					loadLogin();
+					/**
+					 * } else if (true) { loadUserInfo();
+					 * //loadFacebook(); //loadSetUserType();
+					 **/
+				} else {
+					loadUserInfo();
+					// loadParkMe();
+				}
+			}
+		});
 	}
 
 	private void loadParkMe() {
@@ -346,7 +347,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				if (result == null) {
 					// no user info yet;
 					System.out
-							.println("Don't have a user info stored (result is null)");
+					.println("Don't have a user info stored (result is null)");
 					loadSetUserType();
 				} else {
 
@@ -357,23 +358,23 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					userInfoService.getType(userInfo,
 							new AsyncCallback<String>() {
 
-								@Override
-								public void onFailure(Throwable caught) {
-									// TODO Auto-generated method stub
+						@Override
+						public void onFailure(Throwable caught) {
+							// TODO Auto-generated method stub
 
-								}
+						}
 
-								@Override
-								public void onSuccess(String type) {
-									System.out.println(type);
-									if (type.equals(null)) {
-										loadSetUserType();
-									} else {
-										loadFacebook(type);
-										initializeSliderValues();
-									}
-								}
-							});
+						@Override
+						public void onSuccess(String type) {
+							System.out.println(type);
+							if (type.equals(null)) {
+								loadSetUserType();
+							} else {
+								loadFacebook(type);
+								initializeSliderValues();
+							}
+						}
+					});
 
 				}
 
@@ -383,28 +384,20 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	private void saveCriteria() {
 		double maxPrice = ((double) priceFilterSlider.getValue() / 2); // Divide
-																		// by
-																		// two
-																		// to
-																		// get
-																		// non-integer
-																		// prices
-		System.out.println(maxPrice);
 		double minTime = (double) timeFilterSlider.getValue();
 		double maxRadius = (double) radiusFilterSlider.getValue();
 
-		System.out.println("window is closing. price " + maxPrice);
 		userInfoService.setCriteria(maxRadius, maxPrice, minTime, userInfo,
 				new AsyncCallback<Void>() {
-					@Override
-					public void onFailure(Throwable caught) {
-					}
+			@Override
+			public void onFailure(Throwable caught) {
+			}
 
-					@Override
-					public void onSuccess(Void result) {
-						System.out.println("Saved info");
-					}
-				});
+			@Override
+			public void onSuccess(Void result) {
+				System.out.println("Saved info");
+			}
+		});
 	}
 
 	private void loadLogin() {
@@ -444,17 +437,17 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				userInfoService.setUserInfo(userInfo,
 						new AsyncCallback<Void>() {
 
-							@Override
-							public void onFailure(Throwable caught) {
-							}
+					@Override
+					public void onFailure(Throwable caught) {
+					}
 
-							@Override
-							public void onSuccess(Void result) {
-								// loadParkMe();
-								loadCorrectPage(usertype);
+					@Override
+					public void onSuccess(Void result) {
+						// loadParkMe();
+						loadCorrectPage(usertype);
 
-							}
-						});
+					}
+				});
 
 			}
 		});
@@ -464,27 +457,10 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		System.out.println("renderFB");
 
 		if (fbCore.getAuthResponse() != null) {
-			// fbPanel.setVisible(false);
-			// RootPanel.get("parkMe").add(fbPanel);
-			// FBXfbml.parse();
-
 			loadCorrectPage(type);
-			// loadParkMe();
-
 		} else {
-			// fbPanel.add( new HTML (
-			// "This demo uses Facebook Connect. Please click to login <fb:login-button autologoutlink='true' /> "
-			// ) );
-			// fbPanel.add ( new HTML (
-			// "This app uses Facebook Connect. Please click to login " ) );
-			// fbPanel.add ( new HTML (
-			// "<fb:login-button autologoutlink='true' scope='publish_stream,read_stream,create_event' /> "
-			// ) );
-			// //fbPanel.add ( new HTML ( "<hr/><fb:comments xid='gwtfb' />" )
-			// );
 			RootPanel.get("parkMe").add(fbPanel);
 			FBXfbml.parse();
-			// loadParkMe();
 		}
 
 	}
@@ -554,33 +530,33 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					parkService.getParking(parkingID,
 							new AsyncCallback<ParkingLocation>() {
 
-								@Override
-								public void onFailure(Throwable caught) {
+						@Override
+						public void onFailure(Throwable caught) {
 
-								}
+						}
 
-								@Override
-								public void onSuccess(
-										final ParkingLocation parking) {
-									if (zoom == false) {
-										zoom = true;
-										theMap.setZoom(17);
-									}
+						@Override
+						public void onSuccess(
+								final ParkingLocation parking) {
+							if (zoom == false) {
+								zoom = true;
+								theMap.setZoom(17);
+							}
 
-									Button addFaveButton = new Button(
-											"Add to Faves");
-									addFaveHandler(addFaveButton, parking);
+							Button addFaveButton = new Button(
+									"Add to Faves");
+							addFaveHandler(addFaveButton, parking);
 
-									Button addTicket = new Button(
-											"Add Parking Ticket");
-									addTicketHandler(addTicket, parking);
+							Button addTicket = new Button(
+									"Add Parking Ticket");
+							addTicketHandler(addTicket, parking);
 
-									parking.displayPopup(theMap, infoWindow,
-											addFaveButton, addTicket);
+							parking.displayPopup(theMap, infoWindow,
+									addFaveButton, addTicket);
 
-								}
+						}
 
-							});
+					});
 
 				}
 			}
@@ -600,32 +576,32 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				parkService.getParking(parkingID,
 						new AsyncCallback<ParkingLocation>() {
 
-							@Override
-							public void onFailure(Throwable caught) {
+					@Override
+					public void onFailure(Throwable caught) {
 
-							}
+					}
 
-							@Override
-							public void onSuccess(final ParkingLocation parking) {
-								if (zoom == false) {
-									zoom = true;
-									theMap.setZoom(17);
-								}
+					@Override
+					public void onSuccess(final ParkingLocation parking) {
+						if (zoom == false) {
+							zoom = true;
+							theMap.setZoom(17);
+						}
 
-								Button addFaveButton = new Button(
-										"Add to Faves");
-								addFaveHandler(addFaveButton, parking);
+						Button addFaveButton = new Button(
+								"Add to Faves");
+						addFaveHandler(addFaveButton, parking);
 
-								Button addTicket = new Button(
-										"Add Parking Ticket");
-								addTicketHandler(addTicket, parking);
+						Button addTicket = new Button(
+								"Add Parking Ticket");
+						addTicketHandler(addTicket, parking);
 
-								parking.displayPopup(theMap, infoWindow,
-										addFaveButton, addTicket);
+						parking.displayPopup(theMap, infoWindow,
+								addFaveButton, addTicket);
 
-							}
+					}
 
-						});
+				});
 
 			}
 		});
@@ -669,7 +645,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		// Listen for key press on search box
 
-		searchBox.addKeyPressHandler(new KeyPressHandler() {
+
+		searchBox.getTextBox().addKeyPressHandler(new KeyPressHandler() {
 			public void onKeyPress(KeyPressEvent event) {
 				if (event.getCharCode() == KeyCodes.KEY_ENTER) {
 					String address = searchBox.getText();
@@ -762,60 +739,60 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			@Override
 			public void onClick(ClickEvent event) {
 				loadDataService
-						.getParking(new AsyncCallback<ParkingLocation[]>() {
+				.getParking(new AsyncCallback<ParkingLocation[]>() {
 
-							@Override
-							public void onFailure(Throwable caught) {
-								Window.alert("Error getting parking");
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert("Error getting parking");
+					}
+
+					@Override
+					public void onSuccess(ParkingLocation[] result) {
+						for (ParkingLocation p : result) {
+							double rate = p.getPrice();
+							String color = "black";
+							if (rate <= 1) {
+								color = "#66CD00";
+							} else if (rate <= 1.5 && rate > 1) {
+								color = "#9BD500";
+							} else if (rate <= 2 && rate > 1.5) {
+								color = "#B7D900";
+							} else if (rate <= 2.5 && rate > 2) {
+								color = "#E0CF00";
+							} else if (rate <= 3 && rate > 2.5) {
+								color = "#E8A100";
+							} else if (rate <= 3.5 && rate > 3) {
+								color = "#EC8800";
+							} else if (rate <= 4 && rate > 3.5) {
+								color = "#F35400";
+							} else if (rate <= 4.5 && rate > 4) {
+								color = "#FB1D00";
+							} else if (rate > 4.5) {
+								color = "#FF0000";
 							}
 
-							@Override
-							public void onSuccess(ParkingLocation[] result) {
-								for (ParkingLocation p : result) {
-									double rate = p.getPrice();
-									String color = "black";
-									if (rate <= 1) {
-										color = "#66CD00";
-									} else if (rate <= 1.5 && rate > 1) {
-										color = "#9BD500";
-									} else if (rate <= 2 && rate > 1.5) {
-										color = "#B7D900";
-									} else if (rate <= 2.5 && rate > 2) {
-										color = "#E0CF00";
-									} else if (rate <= 3 && rate > 2.5) {
-										color = "#E8A100";
-									} else if (rate <= 3.5 && rate > 3) {
-										color = "#EC8800";
-									} else if (rate <= 4 && rate > 3.5) {
-										color = "#F35400";
-									} else if (rate <= 4.5 && rate > 4) {
-										color = "#FB1D00";
-									} else if (rate > 4.5) {
-										color = "#FF0000";
-									}
-
-									loadDataService.setColor(color,
-											p.getParkingID(),
-											new AsyncCallback<Void>() {
-												@Override
-												public void onFailure(
-														Throwable caught) {
-												}
-
-												@Override
-												public void onSuccess(
-														Void result) {
-												}
-											});
+							loadDataService.setColor(color,
+									p.getParkingID(),
+									new AsyncCallback<Void>() {
+								@Override
+								public void onFailure(
+										Throwable caught) {
 								}
-							}
-						});
+
+								@Override
+								public void onSuccess(
+										Void result) {
+								}
+							});
+						}
+					}
+				});
 			}
 		});
 
 	}
 
-	protected void calculateAverage() {
+	private void calculateAverage() {
 
 		if (totalNum == 0) {
 			avgPrice.setText("Please click on Download Data above first.");
@@ -907,7 +884,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				avgCritVP.add(radiusLabel);
 				avgCritVP.add(priceLabel);
 				avgCritVP.add(timeLabel);
-
 			}
 		});
 	}
@@ -922,8 +898,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		double endlong = p.getEndLong();
 		return (distance(startlat, startlong, ctrLat, ctrLng) <= radius
 				|| distance(endlat, endlong, ctrLat, ctrLng) <= radius || distance(
-				(startlat + endlat) / 2, (startlong + endlong) / 2, ctrLat,
-				ctrLng) <= radius);
+						(startlat + endlat) / 2, (startlong + endlong) / 2, ctrLat,
+						ctrLng) <= radius);
 	}
 
 	// Returns the distance between two points in metres, given their lats and
@@ -947,43 +923,38 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		// Update max price value label when slider moves
 		priceFilterSlider
-				.addBarValueChangedHandler(new BarValueChangedHandler() {
-					public void onBarValueChanged(BarValueChangedEvent event) {
+		.addBarValueChangedHandler(new BarValueChangedHandler() {
+			public void onBarValueChanged(BarValueChangedEvent event) {
 
-						double maxPrice = ((double) event.getValue()) / 2; // Divide
-																			// by
-																			// two
-																			// to
-																			// get
-																			// non-integer
-																			// prices
-						String formatted = NumberFormat.getFormat("#0.00")
-								.format(maxPrice);
-						maxPriceValueLabel.setText("$" + formatted + " / hr");
-						filterParkings();
-						saveCriteria();
-					}
-				});
+				double maxPrice = ((double) event.getValue()) / 2; 
+				// Divide by two to get non-integer prices
+				String formatted = NumberFormat.getFormat("#0.00")
+						.format(maxPrice);
+				maxPriceValueLabel.setText("$" + formatted + " / hr");
+				filterParkings();
+				saveCriteria();
+			}
+		});
 
 		// Update min time value label when slider moves
 		timeFilterSlider
-				.addBarValueChangedHandler(new BarValueChangedHandler() {
-					public void onBarValueChanged(BarValueChangedEvent event) {
-						minTimeValueLabel.setText(event.getValue() + " hrs");
-						filterParkings();
-						saveCriteria();
-					}
-				});
+		.addBarValueChangedHandler(new BarValueChangedHandler() {
+			public void onBarValueChanged(BarValueChangedEvent event) {
+				minTimeValueLabel.setText(event.getValue() + " hrs");
+				filterParkings();
+				saveCriteria();
+			}
+		});
 
 		// Update max radius value label when slider moves
 		radiusFilterSlider
-				.addBarValueChangedHandler(new BarValueChangedHandler() {
-					public void onBarValueChanged(BarValueChangedEvent event) {
-						maxRadiusValueLabel.setText(event.getValue() + " m");
-						filterParkings();
-						saveCriteria();
-					}
-				});
+		.addBarValueChangedHandler(new BarValueChangedHandler() {
+			public void onBarValueChanged(BarValueChangedEvent event) {
+				maxRadiusValueLabel.setText(event.getValue() + " m");
+				filterParkings();
+				saveCriteria();
+			}
+		});
 	}
 
 	private void createMap() {
@@ -1043,7 +1014,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		// searchPanel.add(downloadData);
 
 		searchLabel
-				.setText("Enter Address (or leave blank to search whole Vancouver):");
+		.setText("Enter Address (or leave blank to search whole Vancouver):");
 
 		// ADMIN CONTROLS:
 		// tabPanel.add(loadDataButton);
@@ -1256,13 +1227,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		filteredParkings.clear();
 		LatLng searchPoint;
 
-		double maxPrice = ((double) priceFilterSlider.getValue() / 2); // Divide
-																		// by
-																		// two
-																		// to
-																		// get
-																		// non-integer
-																		// prices
+		double maxPrice = ((double) priceFilterSlider.getValue() / 2); 
 		System.out.println(maxPrice);
 		double minTime = (double) timeFilterSlider.getValue();
 		double maxRadius;
@@ -1287,9 +1252,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		 * 
 		 **/
 		System.out
-				.println("Filtering with maxPrice = " + maxPrice
-						+ " and minTime = " + minTime + " and maxRadius = "
-						+ maxRadius);
+		.println("Filtering with maxPrice = " + maxPrice
+				+ " and minTime = " + minTime + " and maxRadius = "
+				+ maxRadius);
 
 		List<ParkingLocation> filtered = new ArrayList<ParkingLocation>();
 		for (int i = 0; i < totalNum; i++) {
@@ -1381,15 +1346,15 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 										parkingLoc.getParkingID(),
 										new AsyncCallback<Void>() {
 
-											@Override
-											public void onFailure(
-													Throwable caught) {
-											}
+									@Override
+									public void onFailure(
+											Throwable caught) {
+									}
 
-											@Override
-											public void onSuccess(Void result) {
-											}
-										});
+									@Override
+									public void onSuccess(Void result) {
+									}
+								});
 								return;
 							}
 						}
@@ -1403,14 +1368,14 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 								parkingLoc.getParkingID(),
 								new AsyncCallback<Void>() {
 
-									@Override
-									public void onFailure(Throwable caught) {
-									}
+							@Override
+							public void onFailure(Throwable caught) {
+							}
 
-									@Override
-									public void onSuccess(Void result) {
-									}
-								});
+							@Override
+							public void onSuccess(Void result) {
+							}
+						});
 					} else {
 						Window.alert("ERROR " + status.getValue()
 								+ "\n please wait");
@@ -1429,20 +1394,20 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	private void getAllLocations() {
 		loadDataService
-				.getUnknownStreets(new AsyncCallback<ParkingLocation[]>() {
+		.getUnknownStreets(new AsyncCallback<ParkingLocation[]>() {
 
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert("Error getting parking");
-					}
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Error getting parking");
+			}
 
-					@Override
-					public void onSuccess(ParkingLocation[] result) {
-						Window.alert("Loading Parking Streets. Please Wait.");
-						getLocations(result);
-					}
+			@Override
+			public void onSuccess(ParkingLocation[] result) {
+				Window.alert("Loading Parking Streets. Please Wait.");
+				getLocations(result);
+			}
 
-				});
+		});
 	}
 
 	private void searchLoc(final String address) {
@@ -1492,12 +1457,93 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					GeocoderStatus status) {
 				if (status == GeocoderStatus.OK) {
 					searchHistoryOrganizer.addAndSaveSearch(address);
-
+					Button createEvent = new Button("Create Event");
+					Button getDirections = new Button("Directions to Here");
 					searchResult = results;
-					final LatLng latlong = searchResult.get(0).getGeometry()
-							.getLocation();
+					final LatLng latlong = searchResult.get(0).getGeometry().getLocation();
+					final String addr = searchResult.get(0).getFormattedAddress();
 					theMap.setCenter(latlong);
-					mapOperator.setMarker(latlong);
+					VerticalPanel main = new VerticalPanel();
+					HorizontalPanel buttons = new HorizontalPanel();
+					main.add(new Label(addr));
+					buttons.add(createEvent);
+					buttons.add(getDirections);
+					main.add(buttons);
+
+					createEvent.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							buttonPanel.add(eventCreate);
+							buttonPanel.add(eventCancel);
+							eventName.setText("Event Name");
+							eventTime.setText("YYYY-MM-DD");
+							mainPan.add(eventName);
+							mainPan.add(eventTime);
+							mainPan.add(buttonPanel);
+							infoWindow.setContent(mainPan);
+							infoWindow.open(theMap);
+							eventCancel.addClickHandler(new ClickHandler() {
+
+								@Override
+								public void onClick(ClickEvent event) {
+									// TODO Auto-generated method stub
+									//popUp.hide();
+									infoWindow.close();
+								}
+							});
+							eventCreate.addClickHandler(new ClickHandler() {
+
+								@Override
+								public void onClick(ClickEvent event) {
+									createFBEvent(addr);
+
+								}
+							});
+							eventName.addClickHandler(new ClickHandler() {
+
+								@Override
+								public void onClick(ClickEvent event) {
+									// TODO Auto-generated method stub
+									eventName.setText("");
+								}
+							});
+							eventTime.addClickHandler(new ClickHandler() {
+
+								@Override
+								public void onClick(ClickEvent event) {
+									// TODO Auto-generated method stub
+									eventTime.setText("");
+								}
+							});
+							eventName.addKeyPressHandler(new KeyPressHandler() {
+								public void onKeyPress(KeyPressEvent event) {
+									if (event.getCharCode() == KeyCodes.KEY_ENTER) {
+										eventTime.setFocus(true);
+									}
+								}
+							});
+							eventTime.addKeyPressHandler(new KeyPressHandler() {
+								public void onKeyPress(KeyPressEvent event) {
+									if (event.getCharCode() == KeyCodes.KEY_ENTER) {
+										createFBEvent(addr);
+										
+									}
+								}
+							});
+
+						}
+					});
+
+					getDirections.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							getDirections(latlong);
+						}
+					});
+
+					infoWindow.setContent(main);
+					infoWindow.setPosition(latlong);
+					infoWindow.open(theMap);
 					theMap.setZoom(17);
 					filterParkings();
 				}
@@ -1607,15 +1653,15 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				fave.addFave(parkingLoc.getParkingID(),
 						new AsyncCallback<Void>() {
 
-							@Override
-							public void onSuccess(Void result) {
-								addFaveToDisplay(parkingLoc);
-							}
+					@Override
+					public void onSuccess(Void result) {
+						addFaveToDisplay(parkingLoc);
+					}
 
-							@Override
-							public void onFailure(Throwable caught) {
-							}
-						});
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+				});
 			}
 		});
 	}
@@ -1750,7 +1796,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 						distance2 = distanceEnd2;
 					}
 					return new Double(distance1)
-							.compareTo(new Double(distance2));
+					.compareTo(new Double(distance2));
 				}
 			};
 		} else {
@@ -1780,42 +1826,50 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		renderApp(event.getValue(), usertype);
 	}
 
-	private void createFBEvent(final String addr, final String title,
-			String date) {
+	private void createFBEvent(final String addr) {
 		// TODO: popup asking for event name & start time
-		JSONObject param = new JSONObject();
-		param.put("name", new JSONString(title));
-		param.put("start_time", new JSONString(date));
-		param.put("location", new JSONString(addr));
-		param.put("description", new JSONString(
-				"This event was automatically generated by the ParkMe app."));
-		fbCore.api("/me/events", "post", param.getJavaScriptObject(),
-				new AsyncCallback<JavaScriptObject>() {
-					@Override
-					public void onFailure(Throwable caught) {
-					}
 
-					@Override
-					public void onSuccess(JavaScriptObject result) {
-						// change info window to link to FB event
-						JSONObject res = new JSONObject(result);
-						String id = res.get("id").toString();
-						// Window.alert("Created new Facebook Event with id " +
-						// id);
-						Label eventTitle = new Label(
-								"Successfully created Facebook event " + title);
-						String url = "<a href=\"http://www.facebook.com/events/"
-								+ id.substring(1, id.length() - 1)
-								+ "\" target=\"_blank\">Event Link</a>";
-						HTML link = new HTML(url);
-						System.out.println(url);
-						VerticalPanel fbE = new VerticalPanel();
-						fbE.add(eventTitle);
-						fbE.add(link);
-						infoWindow.setContent(fbE);
-						infoWindow.open(theMap);
-					}
-				});
+		final String title = eventName.getText();
+		String date = eventTime.getText();
+		if (!date.matches("^\\d{4}-(1[1-2]|0\\d)-[1-3]\\d")){
+			Window.alert("Date is not of the correct form");
+		}
+		else {
+			System.out.println("Creating FB Event");
+			JSONObject param = new JSONObject();
+			param.put("name", new JSONString(title));
+			param.put("start_time", new JSONString(date));
+			param.put("location", new JSONString(addr));
+			param.put("description", new JSONString(
+					"This event was automatically generated by the ParkMe app."));
+			fbCore.api("/me/events", "post", param.getJavaScriptObject(),
+					new AsyncCallback<JavaScriptObject>() {
+				@Override
+				public void onFailure(Throwable caught) {
+				}
+
+				@Override
+				public void onSuccess(JavaScriptObject result) {
+					// change info window to link to FB event
+					JSONObject res = new JSONObject(result);
+					String id = res.get("id").toString();
+					// Window.alert("Created new Facebook Event with id " +
+					// id);
+					Label eventTitle = new Label(
+							"Successfully created Facebook event " + title);
+					String url = "<a href=\"http://www.facebook.com/events/"
+							+ id.substring(1, id.length() - 1)
+							+ "\" target=\"_blank\">Event Link</a>";
+					HTML link = new HTML(url);
+					System.out.println(url);
+					VerticalPanel fbE = new VerticalPanel();
+					fbE.add(eventTitle);
+					fbE.add(link);
+					infoWindow.setContent(fbE);
+					infoWindow.open(theMap);
+				}
+			});
+		}
 	}
 
 	private void getDirections(final LatLng latlong) {
@@ -1901,21 +1955,22 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		mainPanel.add(viewAsDriver);
 		mainPanel.add(viewAsBusiness);
 		mainPanel.add(getMostFaved);
-		
+		mainPanel.add(faveStatsFT);
+
 		// number of registered users:
 		// number of parkings put to fave
 		// average search criteria
 		// most faved parking spots (get the top 10)
-		
+
 		getMostFaved.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				// TODO Auto-generated method stub
 				getMostFaved();
 			}
 		});
-		
+
 		viewAsDriver.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -1932,11 +1987,22 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				loadBusiness();
 			}
 		});
-		
+
 	}
 
 	private void getMostFaved() {
-		fave.getMostFaved(new AsyncCallback<Void>() {
+		faveStatsFT.setText(0, 0, "Parking ID");
+		faveStatsFT.setText(0, 1, "Count");
+		final Comparator comp = new Comparator<FaveStats>() {
+
+			@Override
+			public int compare(FaveStats o1, FaveStats o2) {
+				// TODO Auto-generated method stub
+				return o2.count.compareTo(o1.count);
+			}
+			
+		};
+		fave.getMostFaved(new AsyncCallback<FaveStats[]>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -1945,19 +2011,31 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			}
 
 			@Override
-			public void onSuccess(Void result) {
-				// TODO Auto-generated method stub
+			public void onSuccess(FaveStats[] result) {
+				List<FaveStats> fs = new ArrayList<FaveStats>();
 				
+				for (FaveStats f : result) {
+					//String count = ""+f.getCount()+"";
+					fs.add(f);
+				}
+				Collections.sort(fs, comp);
+				
+				for (int i = 0; i < fs.size(); i++ ) {
+				int row = faveStatsFT.getRowCount();
+				faveStatsFT.setText(row, 0, fs.get(i).getParkingID());
+			
+				faveStatsFT.setText(row, 1, fs.get(i).getCount().toString());
+				}
 			}
 		});
 	}
-	
+
 	private void initBusinessLayout() {
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		RootPanel.get("parkMe").add(mainPanel);
 		mainPanel.add(new Label("Business Layout"));
 		mainPanel.add(signOutLink);
-		
+
 		// mostly the same as Driver but different viewable statistics
 
 	}
@@ -2018,9 +2096,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					@Override
 					public void onClick(ClickEvent event) {
 						// TODO Auto-generated method stub
-						String title = eventName.getText();
-						String date = eventTime.getText();
-						createFBEvent(addr, title, date);
+						createFBEvent(addr);
 					}
 				});
 

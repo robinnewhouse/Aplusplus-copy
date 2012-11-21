@@ -1,12 +1,10 @@
 package ca.ubc.cpsc310.parkme.server;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -15,6 +13,7 @@ import javax.jdo.Query;
 
 
 import ca.ubc.cpsc310.parkme.client.Fave;
+import ca.ubc.cpsc310.parkme.client.FaveStats;
 import ca.ubc.cpsc310.parkme.client.NotLoggedInException;
 
 import com.google.appengine.api.users.User;
@@ -37,27 +36,39 @@ public class FaveImpl extends RemoteServiceServlet implements Fave {
 		}
 	}
 
-	public void getMostFaved() {
+	public FaveStats[] getMostFaved() {
 		PersistenceManager pm = getPersistenceManager();
+		FaveStats[] faves;
 		try {
 			Query q = pm.newQuery(ParkingFave.class);
 			
 			q.setGrouping("parkingID");
+			//q.setOrdering("count(user) desc");
 			q.setResult("count(user) as count, parkingID");
 			q.setResultClass(HashMap.class); 
-			q.setOrdering("count");
 			Collection results = (Collection) q.execute();
+			//List<HashMap> results = (List<HashMap>) q.execute();
+			int size = results.size();
+			int i = 0;
+			faves = new FaveStats[size];
+			
+			//for (int i = 0; i < size; i++) {
 			Iterator iter = results.iterator();
 			while (iter.hasNext()) {
 				Map row = (Map) iter.next();
-			//	Object[] row = (Object[]) iter.next();
-			//	System.out.println(row.toString());
-				System.out.println(row.get("parkingID"));
-				System.out.println(row.get("count"));
+				//Map row = (Map) results.get(i);
+				String parkingID = (String) row.get("parkingID");
+				String street = (String) row.get("street");
+				Long count = (Long) row.get("count");
+				faves[i] = new FaveStats(parkingID, count);
+				i++;
+				
 			}
 		} finally {
 			pm.close();
 		}
+		
+		return faves;
 	}
 	
 	public String[] getFaves() throws NotLoggedInException {

@@ -11,5 +11,5 @@ public interface Fave extends RemoteService{
 	public String[] getFaves() throws NotLoggedInException;
 	public boolean checkFave(String parkingID) throws NotLoggedInException;
 	public void removeFave(String parkingID) throws  NotLoggedInException;
-	void getMostFaved();
+	FaveStats[] getMostFaved();
 }
