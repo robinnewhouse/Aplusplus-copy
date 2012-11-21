@@ -59,6 +59,7 @@ public class MapOperater {
 		Polyline.ClickHandler clickHandler = new Polyline.ClickHandler() {
 			@Override
 			public void handle(MouseEvent event) {
+				System.out.println("Polyline clicked");
 				parkingLocation.displayPopup(theMap, infoWindow, addToFave,
 						addTicket);
 
@@ -79,6 +80,8 @@ public class MapOperater {
 			Polyline polyline = (Polyline) polyit.next();
 			polyline.setMap(null);
 		}
+		System.out.println("There are " + polylines.size() + " polylines in the set");
+		polylines.clear();
 	}
 
 	public void drawCircle(LatLng searchPoint, double maxRadius) {
