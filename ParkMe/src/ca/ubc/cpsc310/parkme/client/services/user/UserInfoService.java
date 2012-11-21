@@ -1,7 +1,5 @@
 package ca.ubc.cpsc310.parkme.client.services.user;
 
-import ca.ubc.cpsc310.parkme.client.Criteria;
-import ca.ubc.cpsc310.parkme.client.NotLoggedInException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 

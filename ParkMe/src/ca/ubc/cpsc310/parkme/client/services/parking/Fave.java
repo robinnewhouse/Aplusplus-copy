@@ -2,7 +2,8 @@ package ca.ubc.cpsc310.parkme.client.services.parking;
 
 import javax.jdo.PersistenceManager;
 
-import ca.ubc.cpsc310.parkme.client.NotLoggedInException;
+import ca.ubc.cpsc310.parkme.client.services.user.NotLoggedInException;
+
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -12,5 +13,5 @@ public interface Fave extends RemoteService{
 	public String[] getFaves() throws NotLoggedInException;
 	public boolean checkFave(String parkingID) throws NotLoggedInException;
 	public void removeFave(String parkingID) throws  NotLoggedInException;
-	FaveStats[] getMostFaved();
+	ParkingStats[] getMostFaved();
 }

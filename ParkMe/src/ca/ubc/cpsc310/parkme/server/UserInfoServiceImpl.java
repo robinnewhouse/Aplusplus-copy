@@ -7,9 +7,9 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
-import ca.ubc.cpsc310.parkme.client.Criteria;
-import ca.ubc.cpsc310.parkme.client.NotLoggedInException;
 import ca.ubc.cpsc310.parkme.client.services.parking.ParkingLocation;
+import ca.ubc.cpsc310.parkme.client.services.user.Criteria;
+import ca.ubc.cpsc310.parkme.client.services.user.NotLoggedInException;
 import ca.ubc.cpsc310.parkme.client.services.user.UserInfoClient;
 import ca.ubc.cpsc310.parkme.client.services.user.UserInfoService;
 

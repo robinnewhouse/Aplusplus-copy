@@ -12,9 +12,9 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
 
-import ca.ubc.cpsc310.parkme.client.NotLoggedInException;
 import ca.ubc.cpsc310.parkme.client.services.parking.Fave;
-import ca.ubc.cpsc310.parkme.client.services.parking.FaveStats;
+import ca.ubc.cpsc310.parkme.client.services.parking.ParkingStats;
+import ca.ubc.cpsc310.parkme.client.services.user.NotLoggedInException;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
@@ -36,9 +36,9 @@ public class FaveImpl extends RemoteServiceServlet implements Fave {
 		}
 	}
 
-	public FaveStats[] getMostFaved() {
+	public ParkingStats[] getMostFaved() {
 		PersistenceManager pm = getPersistenceManager();
-		FaveStats[] faves;
+		ParkingStats[] faves;
 		try {
 			Query q = pm.newQuery(ParkingFave.class);
 			
@@ -50,7 +50,7 @@ public class FaveImpl extends RemoteServiceServlet implements Fave {
 			//List<HashMap> results = (List<HashMap>) q.execute();
 			int size = results.size();
 			int i = 0;
-			faves = new FaveStats[size];
+			faves = new ParkingStats[size];
 			
 			//for (int i = 0; i < size; i++) {
 			Iterator iter = results.iterator();
@@ -58,9 +58,8 @@ public class FaveImpl extends RemoteServiceServlet implements Fave {
 				Map row = (Map) iter.next();
 				//Map row = (Map) results.get(i);
 				String parkingID = (String) row.get("parkingID");
-				String street = (String) row.get("street");
 				Long count = (Long) row.get("count");
-				faves[i] = new FaveStats(parkingID, count);
+				faves[i] = new ParkingStats(parkingID, count);
 				i++;
 				
 			}

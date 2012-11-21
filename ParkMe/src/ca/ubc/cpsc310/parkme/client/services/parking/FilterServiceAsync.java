@@ -1,6 +1,6 @@
 package ca.ubc.cpsc310.parkme.client.services.parking;
 
-import ca.ubc.cpsc310.parkme.client.Criteria;
+import ca.ubc.cpsc310.parkme.client.services.user.Criteria;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
