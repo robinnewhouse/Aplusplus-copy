@@ -291,6 +291,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		initializeFlexTables();
 		initializeLayout();
 		createMap();
+		
 		addListenersToButtons();
 		addListenerToResults();
 		addListenerToSortBox();
@@ -1095,6 +1096,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 
 		RootPanel.get("parkMe").add(mainPanel);
+		System.out.println("added main panel to root panel");
 		mainPanel.add(dummy);
 		// Set up filterPanel
 		filterPanel.setSize("450px", "100px");
@@ -2029,17 +2031,17 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		mainStatsVP.add(ticketscroll);
 		faveStatsFT.setCellPadding(5);
 		ticketStatsFT.setCellPadding(5);
-		favescroll.setHeight("180px");
-		ticketscroll.setHeight("180px");
+		favescroll.setHeight("170px");
+		ticketscroll.setHeight("170px");
 
 		getMostFaved();
 		getMostTicketed();
 		mainStatsVP.add(new HTML("<br><br><b>Number of registered users:</b>"));
 		mainStatsVP.add(new HTML("<b>Number of parkings added to fave:</b>"));
 		mainStatsVP.add(new HTML("<b>Number of parkings that have tickets:</b>"));
-		statsScroll.add(mainStatsVP);
-		vp2.add(statsScroll);
-
+		//statsScroll.add(mainStatsVP);
+		//vp2.add(statsScroll);
+		vp2.add(mainStatsVP);
 
 
 		// number of registered users:
@@ -2052,7 +2054,17 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			public void onClick(ClickEvent event) {
 				RootPanel.get("parkMe").clear();
 				mainPanel.clear();
+//				statsScroll.clear();
 				loadParkMe();
+				initializeSliderValues();
+//				initializeFlexTables();
+//				initializeLayout();
+//				addListenerToSortBox();
+//				initializeSliderValues();
+//				downloadData();
+//				addListenersToSliders();
+//				addListenerToMarker();
+				System.out.println("finished click handler");
 			}
 		});
 		viewAsBusiness.addClickHandler(new ClickHandler() {
@@ -2060,6 +2072,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			public void onClick(ClickEvent event) {
 				RootPanel.get("parkMe").clear();
 				mainPanel.clear();
+				//statsScroll.clear();
 				loadBusiness();
 			}
 		});
