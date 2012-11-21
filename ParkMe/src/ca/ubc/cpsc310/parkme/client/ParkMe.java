@@ -773,8 +773,10 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 
 		searchBox.getTextBox().addKeyPressHandler(new KeyPressHandler() {
+			
 			public void onKeyPress(KeyPressEvent event) {
 				if (event.getCharCode() == KeyCodes.KEY_ENTER) {
+					mapOperator.clearMarker();
 					String address = searchBox.getText();
 					if (address.equals("")) {
 						infoWindow.close();
@@ -827,6 +829,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		// Listen for mouse events on the search button.
 		searchButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
+				mapOperator.clearMarker();
 				String address = searchBox.getText();
 				if (address.equals("")) {
 					infoWindow.close();
