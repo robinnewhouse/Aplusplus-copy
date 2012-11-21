@@ -98,11 +98,13 @@ public class MapOperater {
 	}
 	
 	public void setMarker(LatLng latlong) {
+		System.out.println("Setting marker");
 		marker.setPosition(latlong);
 		marker.setVisible(true);
 	}
 	
 	public void clearMarker() {
+		System.out.println("Clearing marker");
 		marker.setVisible(false);
 	}
 

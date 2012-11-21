@@ -613,6 +613,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		Marker.ClickHandler markerClickHandler = new Marker.ClickHandler() {
 			@Override
 			public void handle(MouseEvent event) {
+				System.out.println("Marker has been clicked");
 				infoWindow.setContent(createSearchLocationPopup());
 				infoWindow.setPosition(mapOperator.marker.getPosition());
 				infoWindow.open(theMap);
@@ -655,6 +656,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 						infoWindow.close();
 						filterParkings();
 					} else {
+						System.out.println("About to call searchLoc");
 						searchLoc(address);
 					}
 					tabs.selectTab(0);
@@ -1415,6 +1417,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private void searchLoc(final String address) {
 		displayDir.setMap(null);
 		displayDir.setPanel(null);
+		System.out.println("In searchLoc");
 
 		/**
 		 * com.google.gwt.maps.client.base.LatLng location =
@@ -1457,96 +1460,18 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			@Override
 			public void handle(JsArray<GeocoderResult> results,
 					GeocoderStatus status) {
+				System.out.println("Handling geocoder results");
 				if (status == GeocoderStatus.OK) {
+					System.out.println("results are okay");
 					searchHistoryOrganizer.addAndSaveSearch(address);
-					Button createEvent = new Button("Create Event");
-					Button getDirections = new Button("Directions to Here");
 					searchResult = results;
 					final LatLng latlong = searchResult.get(0).getGeometry().getLocation();
-					final String addr = searchResult.get(0).getFormattedAddress();
+
+					System.out.println("About to call setMarker");
+					mapOperator.setMarker(latlong);
 					theMap.setCenter(latlong);
-					VerticalPanel main = new VerticalPanel();
-					HorizontalPanel buttons = new HorizontalPanel();
-					main.add(new Label(addr));
-					buttons.add(createEvent);
-					buttons.add(getDirections);
-					main.add(buttons);
-
-					createEvent.addClickHandler(new ClickHandler() {
-						@Override
-						public void onClick(ClickEvent event) {
-							buttonPanel.add(eventCreate);
-							buttonPanel.add(eventCancel);
-							eventName.setText("Event Name");
-							eventTime.setText("YYYY-MM-DD");
-							mainPan.add(eventName);
-							mainPan.add(eventTime);
-							mainPan.add(buttonPanel);
-							infoWindow.setContent(mainPan);
-							infoWindow.open(theMap);
-							eventCancel.addClickHandler(new ClickHandler() {
-
-								@Override
-								public void onClick(ClickEvent event) {
-									// TODO Auto-generated method stub
-									//popUp.hide();
-									infoWindow.close();
-								}
-							});
-							eventCreate.addClickHandler(new ClickHandler() {
-
-								@Override
-								public void onClick(ClickEvent event) {
-									createFBEvent(addr);
-
-								}
-							});
-							eventName.addClickHandler(new ClickHandler() {
-
-								@Override
-								public void onClick(ClickEvent event) {
-									// TODO Auto-generated method stub
-									eventName.setText("");
-								}
-							});
-							eventTime.addClickHandler(new ClickHandler() {
-
-								@Override
-								public void onClick(ClickEvent event) {
-									// TODO Auto-generated method stub
-									eventTime.setText("");
-								}
-							});
-							eventName.addKeyPressHandler(new KeyPressHandler() {
-								public void onKeyPress(KeyPressEvent event) {
-									if (event.getCharCode() == KeyCodes.KEY_ENTER) {
-										eventTime.setFocus(true);
-									}
-								}
-							});
-							eventTime.addKeyPressHandler(new KeyPressHandler() {
-								public void onKeyPress(KeyPressEvent event) {
-									if (event.getCharCode() == KeyCodes.KEY_ENTER) {
-										createFBEvent(addr);
-										
-									}
-								}
-							});
-
-						}
-					});
-
-					getDirections.addClickHandler(new ClickHandler() {
-						@Override
-						public void onClick(ClickEvent event) {
-							getDirections(latlong);
-						}
-					});
-
-					infoWindow.setContent(main);
-					infoWindow.setPosition(latlong);
-					infoWindow.open(theMap);
 					theMap.setZoom(17);
+					System.out.println("About to filter parking locations");
 					filterParkings();
 				}
 			}
