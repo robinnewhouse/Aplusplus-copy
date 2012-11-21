@@ -372,7 +372,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 								loadSetUserType();
 							} else {
 								loadFacebook(type);
-								initializeSliderValues();
+								//initializeSliderValues();
 							}
 						}
 					});
@@ -445,8 +445,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					@Override
 					public void onSuccess(Void result) {
 						// loadParkMe();
-						loadCorrectPage(usertype);
-
+						//loadCorrectPage(usertype);
+						loadFacebook(usertype);
 					}
 				});
 
@@ -458,6 +458,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		System.out.println("renderFB");
 
 		if (fbCore.getAuthResponse() != null) {
+			initializeSliderValues();
 			loadCorrectPage(type);
 		} else {
 			RootPanel.get("parkMe").add(fbPanel);
