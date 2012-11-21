@@ -94,6 +94,7 @@ public class MapOperater {
 				parkingLocation.getEndLong()));
 
 		currentPolyLine.setMap(theMap);
+		polyoptions.setStrokeWeight(5);
 		polyoptions.setClickable(true);
 		polyoptions.setStrokeColor(parkingLocation.getColor());
 		// polylineoptions set color from an enumeration of color/price

@@ -69,6 +69,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -106,6 +107,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private Button eventCreate = new Button("Create Event");
 	private Button eventCancel = new Button("Cancel");
 	private HorizontalPanel buttonPanel = new HorizontalPanel();
+	private PopupPanel loadingPage = new PopupPanel();
 
 	// DIRECTIONS
 	private DirectionsService ds = DirectionsService.create();
@@ -287,7 +289,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void loadParkMe() {
-
 		initializeFlexTables();
 		initializeLayout();
 		createMap();
@@ -299,6 +300,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		// initializeSliderValues();
 		// TODO: uncomment
+		initializeLoadingPage();
 		downloadData();
 		// displayData();
 
@@ -306,7 +308,18 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		addListenerToMarker();
 
 	}
-
+	private void initializeLoadingPage() {
+		Double dleft = 0.2*Window.getClientWidth();
+		int left = dleft.intValue();
+		Double dtop = 0.15*Window.getClientHeight();
+		int top = dtop.intValue();
+		loadingPage.setSize(Window.getClientWidth()*0.6 + "px", Window.getClientHeight()*0.5 + "px");
+		loadingPage.setPopupPosition(left, top);
+		loadingPage.setStyleName("loading");
+		HTML page = new HTML("<br><br><center>Please wait while ParkMe is loading<br><br><img src=\"http://i.imgur.com/NXS4H.gif\"></center>");
+		loadingPage.add(page);
+		
+	}
 	private void loadFacebook(final String type) {
 
 		if (GWT.isProdMode()) {
@@ -765,6 +778,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					String address = searchBox.getText();
 					if (address.equals("")) {
 						infoWindow.close();
+						displayDir.setMap(null);
+						displayDir.setPanel(null);
 						filterParkings();
 					} else {
 						System.out.println("About to call searchLoc");
@@ -815,6 +830,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				String address = searchBox.getText();
 				if (address.equals("")) {
 					infoWindow.close();
+					displayDir.setMap(null);
+					displayDir.setPanel(null);
 					filterParkings();
 				} else {
 					searchLoc(address);
@@ -1597,7 +1614,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void downloadData() {
-		Window.alert("Please wait while data is loading");
+		//Window.alert("Please wait while data is loading");
 		loadDataService.getParking(new AsyncCallback<ParkingLocation[]>() {
 
 			@Override
@@ -1611,10 +1628,14 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					allParkings.add(p);
 				}
 				totalNum = allParkings.size();
-				Window.alert("Data has been downloaded to client successfully.");
+				loadingPage.hide();
+				//Window.alert("Data has been downloaded to client successfully.");
 				filterParkings();
+				
 			}
 		});
+		loadingPage.show();
+		
 	}
 
 	private void displayFavorites(ParkingLocation[] parkingLocs) {
