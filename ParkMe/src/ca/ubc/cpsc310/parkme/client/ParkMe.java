@@ -750,17 +750,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		sortBox.addChangeHandler(new ChangeHandler() {
 			public void onChange(ChangeEvent event) {
 				int selectedIndex = tabs.getTabBar().getSelectedTab();
-				switch (selectedIndex) {
-				case 0:
+				if (selectedIndex == 0) {
 					System.out.println("Changed sorting");
 					displayParkings(filteredParkings);
-					break;
-				case 1:
-					// displayFavourites(faveList);
-					break;
-				case 2:
-					// displayHist(histList);
-					break;
 				}
 			}
 		});
@@ -1408,29 +1400,10 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			}
 			// System.out.println("Found " + filtered.size() + " locations");
 		}
+		
+		filteredParkings = filtered;
 
 		displayParkings(filtered);
-
-		/**
-		 * 
-		 * server side filtering
-		 * 
-		 * Criteria crit = new Criteria(maxRadius, maxPrice, minTime,
-		 * searchPoint.lat(), searchPoint.lng()); filterService.getParking(crit,
-		 * new AsyncCallback<ParkingLocation[]>() {
-		 * 
-		 * @Override public void onFailure(Throwable caught) {
-		 *           Window.alert("Error getting parking"); }
-		 * @Override public void onSuccess(ParkingLocation[] result) { //
-		 *           Window.alert("Successfully displayed filtered data");
-		 * 
-		 *           int length = result.length; System.out.println("Found " +
-		 *           length + " results matching criteria");
-		 *           mapOperator.clearMap(); resultsFlexTable.removeAllRows();
-		 *           idList.clear(); if (length == 0) {
-		 *           resultsFlexTable.setText(0, 0, "No results found."); } else
-		 *           { displayParkings(result); } } });
-		 **/
 	}
 
 	private void getLocations(final ParkingLocation[] parkingLocs) {
