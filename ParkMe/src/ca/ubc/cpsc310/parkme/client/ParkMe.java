@@ -40,6 +40,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -958,6 +959,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void createMap() {
+		System.out.println("Map created");
 		// Set up map options
 		MapOptions options = MapOptions.create();
 		options.setCenter(LatLng.create(49.251, -123.119));
@@ -1062,7 +1064,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		mainStatsVP.add(avgPriceVP);
 		mainStatsVP.add(avgCritVP);
 
-		calculateAvgCriteria();
+		//calculateAvgCriteria();
 		statsScroll.add(mainStatsVP);
 		flowpanel = new FlowPanel();
 		flowpanel.add(statsScroll);
@@ -1935,41 +1937,64 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private void loadAdmin() {
 		// stub
 		addListenersToButtons();
+		createMap();
 		initAdminLayout();
+		
 	}
 
 	private void initAdminLayout() {
 		// buttons to load data & street info
 		// no option to filter
 		// whole page about statistics
+		ScrollPanel favescroll = new ScrollPanel();
+		VerticalPanel vp1 = new VerticalPanel();
+		VerticalPanel vp2 = new VerticalPanel();
 		Button viewAsDriver = new Button("View As Driver");
 		Button viewAsBusiness = new Button("View As Business Owner");
-		Button getMostFaved = new Button("Get Most Faved");
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		RootPanel.get("parkMe").add(mainPanel);
-		mainPanel.add(downloadData);
-		mainPanel.add(loadDataButton);
-		mainPanel.add(getAddressesButton);
-		mainPanel.add(statsScroll);
-		mainPanel.add(signOutLink);
-		mainPanel.add(viewAsDriver);
-		mainPanel.add(viewAsBusiness);
-		mainPanel.add(getMostFaved);
-		mainPanel.add(faveStatsFT);
+		
+		mainPanel.add(vp1);
+		mainPanel.add(vp2);
+		mainPanel.add(rightVertPanel);
+		mapPanel.setSize("100%", "100%");
+		rightVertPanel.setSize(Window.getClientWidth()-540 + "px", "100%");
+		vp1.setSize("200px", "100%");
+		vp2.setSize("300px", "100%");
+		vp1.add(new HTML("<center><b>ParkMe<br>Administrator</b></center>"));
+		signOutLink.setSize("200px", "3em");
+		signOutLink.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		vp1.add(signOutLink);
+		loadDataButton.setSize("200px", "3em");
+		getAddressesButton.setSize("200px", "3em");
+		viewAsDriver.setSize("200px", "3em");
+		viewAsBusiness.setSize("200px", "3em");
+		vp1.add(loadDataButton);
+		vp1.add(getAddressesButton);
+		mainPanel.setSpacing(10);
+		vp1.add(viewAsDriver);
+		vp1.add(viewAsBusiness);
+		
+		avgCritVP.add(new HTML("<b>Average User Criterias:</b>"));
+		mainStatsVP.add(avgCritVP);
+		calculateAvgCriteria();
+		mainStatsVP.add(new HTML("<br><br><b>Most Favorited Locations:</b>"));
+		favescroll.add(faveStatsFT);
+		mainStatsVP.add(favescroll);
+		faveStatsFT.setCellPadding(5);
+		favescroll.setHeight("300px");
+		getMostFaved();
+		mainStatsVP.add(new HTML("<br><br><b>Number of registered users:</b>"));
+		mainStatsVP.add(new HTML("<b>Number of parkings added to fave:</b>"));
+		statsScroll.add(mainStatsVP);
+		vp2.add(statsScroll);
+		
+		
 
 		// number of registered users:
 		// number of parkings put to fave
-		// average search criteria
-		// most faved parking spots (get the top 10)
 
-		getMostFaved.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				// TODO Auto-generated method stub
-				getMostFaved();
-			}
-		});
+		
 
 		viewAsDriver.addClickHandler(new ClickHandler() {
 			@Override
@@ -1991,8 +2016,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void getMostFaved() {
-		faveStatsFT.setText(0, 0, "Parking ID");
-		faveStatsFT.setText(0, 1, "Count");
+		faveStatsFT.setWidget(0, 0, new HTML("<b>Parking ID</b>"));
+		faveStatsFT.setWidget(0, 1, new HTML("<b>Count</b>"));
 		final Comparator comp = new Comparator<FaveStats>() {
 
 			@Override
