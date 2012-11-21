@@ -9,10 +9,10 @@ import javax.jdo.Query;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import ca.ubc.cpsc310.parkme.client.Criteria;
-import ca.ubc.cpsc310.parkme.client.LoadDataService;
-import ca.ubc.cpsc310.parkme.client.ParkingLocService;
-import ca.ubc.cpsc310.parkme.client.ParkingLocation;
+import ca.ubc.cpsc310.parkme.client.services.parking.LoadDataService;
+import ca.ubc.cpsc310.parkme.client.services.parking.ParkingLocService;
+import ca.ubc.cpsc310.parkme.client.services.parking.ParkingLocation;
+import ca.ubc.cpsc310.parkme.client.services.user.Criteria;
 
 public class ParkingLocServiceImpl extends RemoteServiceServlet implements ParkingLocService {
 
