@@ -98,6 +98,8 @@ import com.kiouri.sliderbar.client.event.BarValueChangedHandler;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
+	
+	List<String> adminEmails = new ArrayList<String>();
 
 	// FB EVENT POPUP
 	private PopupPanel popUp = new PopupPanel();
@@ -264,7 +266,10 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-
+		adminEmails.add("alyanna@alyannauy.com");
+		adminEmails.add("franceskrussell@gmail.com");
+		adminEmails.add("robinnewhouse@gmail.com");
+		adminEmails.add("wbkdef@gmail.com");
 		LoginServiceAsync loginService = GWT.create(LoginService.class);
 		loginService.login(GWT.getHostPageBaseURL(),
 				new AsyncCallback<LoginInfo>() {
@@ -309,11 +314,11 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	}
 	private void initializeLoadingPage() {
-		Double dleft = 0.2*Window.getClientWidth();
+		Double dleft = 0.24*Window.getClientWidth();
 		int left = dleft.intValue();
-		Double dtop = 0.15*Window.getClientHeight();
+		Double dtop = 0.25*Window.getClientHeight();
 		int top = dtop.intValue();
-		loadingPage.setSize(Window.getClientWidth()*0.6 + "px", Window.getClientHeight()*0.5 + "px");
+		loadingPage.setSize(Window.getClientWidth()*0.5 + "px", Window.getClientHeight()*0.4 + "px");
 		loadingPage.setPopupPosition(left, top);
 		loadingPage.setStyleName("loading");
 		HTML page = new HTML("<br><br><center>Please wait while ParkMe is loading<br><br><img src=\"http://i.imgur.com/NXS4H.gif\"></center>");
@@ -465,16 +470,18 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					usertype = "driver";
 				} else if (busOwnButton.getValue()) {
 					usertype = "business";
-				} else if (adminButton.getValue()) {
+				} else if (adminButton.getValue() && adminEmails.contains(loginInfo.getEmailAddress())) {
 					usertype = "admin";
+				} else if (adminButton.getValue()) {
+					Window.alert("Only specified users can be admin.");
 				} else {
 					Window.alert("Please select one of the choices above.");
 					return;
 				}
 				setUserPanel.setVisible(false);
-
+				if (userInfo == null) {
 				userInfo = new UserInfoClient(loginInfo.getNickname(),
-						usertype, 5.00, 0, 0);
+						usertype, 5.00, 0, 0);}
 				userInfoService.setUserInfo(userInfo,
 						new AsyncCallback<Void>() {
 
@@ -1117,7 +1124,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		RootPanel.get("parkMe").add(mainPanel);
 		System.out.println("added main panel to root panel");
-		mainPanel.add(dummy);
+		//mainPanel.add(dummy);
+		mainPanel.setStyleName("main");
+		tabs.setStyleName("tab");
 		// Set up filterPanel
 		filterPanel.setSize("450px", "100px");
 		filterPanel.addStyleName("filterPanel");
