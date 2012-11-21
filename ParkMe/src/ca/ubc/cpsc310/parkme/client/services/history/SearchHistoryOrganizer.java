@@ -11,6 +11,9 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 //The intention of this class is to put most of the code 
 //related to the search history in one class
 public class SearchHistoryOrganizer {
+	//Constants
+	public static final int MAX_HISTORY = 30;  //The maximum number of past search strings that are kept *on the server*
+	
 	// Variables to get through constructor
 	private final FlexTable histFlexTable;
 	private final MultiWordSuggestOracle oracle;
