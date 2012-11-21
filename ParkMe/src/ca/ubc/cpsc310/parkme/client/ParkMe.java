@@ -1469,8 +1469,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					
 					System.out.println("About to call setMarker");
 					mapOperator.setMarker(latlong);
-					infoWindow.setContent(createSearchLocationPopup());
-					infoWindow.open(theMap);
 					theMap.setCenter(latlong);
 					theMap.setZoom(17);
 					System.out.println("About to filter parking locations");
