@@ -1242,11 +1242,16 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			maxRadius = 99999999;
 			mapOperator.clearCircle();
 
-		} else {
+		} 
+		
+		else {
 			searchPoint = searchResult.get(0).getGeometry().getLocation();
 			System.out.println("Filtering for results around "
 					+ searchResult.get(0).getFormattedAddress());
 			maxRadius = (double) radiusFilterSlider.getValue();
+			if (maxRadius == 0) {
+				maxRadius = 99999999;
+			}
 			mapOperator.drawCircle(searchPoint, maxRadius);
 
 		}
