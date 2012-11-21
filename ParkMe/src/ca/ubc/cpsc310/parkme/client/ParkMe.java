@@ -1466,9 +1466,11 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					searchHistoryOrganizer.addAndSaveSearch(address);
 					searchResult = results;
 					final LatLng latlong = searchResult.get(0).getGeometry().getLocation();
-
+					
 					System.out.println("About to call setMarker");
 					mapOperator.setMarker(latlong);
+					infoWindow.setContent(createSearchLocationPopup());
+					infoWindow.open(theMap);
 					theMap.setCenter(latlong);
 					theMap.setZoom(17);
 					System.out.println("About to filter parking locations");
@@ -2017,66 +2019,75 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		main.add(buttons);
 
 		createEvent.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							buttonPanel.add(eventCreate);
+							buttonPanel.add(eventCancel);
+							eventName.setText("Event Name");
+							eventTime.setText("YYYY-MM-DD");
+							mainPan.add(eventName);
+							mainPan.add(eventTime);
+							mainPan.add(buttonPanel);
+							infoWindow.setContent(mainPan);
+							infoWindow.open(theMap);
+							eventCancel.addClickHandler(new ClickHandler() {
 
-			@Override
-			public void onClick(ClickEvent event) {
-				buttonPanel.add(eventCancel);
-				buttonPanel.add(eventCreate);
-				eventName.setText("Event Name");
-				eventTime.setText("YYYY-MM-DD");
-				mainPan.add(eventName);
-				mainPan.add(eventTime);
-				mainPan.add(buttonPanel);
-				// popUp.add(mainPan);
-				// popUp.show();
-				infoWindow.setContent(mainPan);
-				infoWindow.open(theMap);
-				eventCancel.addClickHandler(new ClickHandler() {
+								@Override
+								public void onClick(ClickEvent event) {
+									// TODO Auto-generated method stub
+									//popUp.hide();
+									infoWindow.close();
+								}
+							});
+							eventCreate.addClickHandler(new ClickHandler() {
 
-					@Override
-					public void onClick(ClickEvent event) {
-						// TODO Auto-generated method stub
-						// popUp.hide();
-						infoWindow.close();
-					}
-				});
+								@Override
+								public void onClick(ClickEvent event) {
+									createFBEvent(addr);
 
-				eventCreate.addClickHandler(new ClickHandler() {
+								}
+							});
+							eventName.addClickHandler(new ClickHandler() {
 
-					@Override
-					public void onClick(ClickEvent event) {
-						// TODO Auto-generated method stub
-						createFBEvent(addr);
-					}
-				});
+								@Override
+								public void onClick(ClickEvent event) {
+									// TODO Auto-generated method stub
+									eventName.setText("");
+								}
+							});
+							eventTime.addClickHandler(new ClickHandler() {
 
-				eventName.addClickHandler(new ClickHandler() {
+								@Override
+								public void onClick(ClickEvent event) {
+									// TODO Auto-generated method stub
+									eventTime.setText("");
+								}
+							});
+							eventName.addKeyPressHandler(new KeyPressHandler() {
+								public void onKeyPress(KeyPressEvent event) {
+									if (event.getCharCode() == KeyCodes.KEY_ENTER) {
+										eventTime.setFocus(true);
+									}
+								}
+							});
+							eventTime.addKeyPressHandler(new KeyPressHandler() {
+								public void onKeyPress(KeyPressEvent event) {
+									if (event.getCharCode() == KeyCodes.KEY_ENTER) {
+										createFBEvent(addr);
+										
+									}
+								}
+							});
 
-					@Override
-					public void onClick(ClickEvent event) {
-						// TODO Auto-generated method stub
-						eventName.setText("");
-					}
-				});
-				eventTime.addClickHandler(new ClickHandler() {
+						}
+					});
 
-					@Override
-					public void onClick(ClickEvent event) {
-						// TODO Auto-generated method stub
-						eventTime.setText("");
-					}
-				});
-
-			}
-		});
-
-		getDirections.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				getDirections(latlong);
-			}
-		});
+					getDirections.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							getDirections(latlong);
+						}
+					});
 
 		return main;
 	}

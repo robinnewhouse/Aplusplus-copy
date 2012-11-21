@@ -101,6 +101,7 @@ public class MapOperater {
 		System.out.println("Setting marker");
 		marker.setPosition(latlong);
 		marker.setVisible(true);
+		marker.setMap(theMap);
 	}
 	
 	public void clearMarker() {
