@@ -458,7 +458,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		System.out.println("renderFB");
 
 		if (fbCore.getAuthResponse() != null) {
-			initializeSliderValues();
 			loadCorrectPage(type);
 		} else {
 			RootPanel.get("parkMe").add(fbPanel);
@@ -1997,6 +1996,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void loadCorrectPage(String usertype) {
+		initializeSliderValues();
 		if (usertype.equals("driver")) {
 			loadDriver();
 		} else if (usertype.equals("admin")) {
