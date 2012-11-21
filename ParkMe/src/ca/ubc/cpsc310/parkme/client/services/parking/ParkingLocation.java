@@ -1,8 +1,12 @@
-package ca.ubc.cpsc310.parkme.client;
+package ca.ubc.cpsc310.parkme.client.services.parking;
 
 import java.io.Serializable;
 
 import org.spacetimeresearch.gwt.addthis.client.AddThisWidget;
+
+import ca.ubc.cpsc310.parkme.client.MyInfoWindow;
+import ca.ubc.cpsc310.parkme.client.TicketService;
+import ca.ubc.cpsc310.parkme.client.TicketServiceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -80,7 +84,7 @@ public class ParkingLocation implements Serializable {
 		main.add(addTicket); // robin
 		AddThisWidget addThisWidget = new AddThisWidget("ra-5094b7074b51725f",
 				"There is a nice parking spot at " + getStreet()
-						+ " with a rate of $" + getPrice() + "/hr!", 300);
+				+ " with a rate of $" + getPrice() + "/hr!", 300);
 		main.add(addThisWidget);
 		infoWindow.setContent(main);
 		infoWindow.setPosition(latlong);
@@ -132,16 +136,16 @@ public class ParkingLocation implements Serializable {
 					TicketServiceAsync ticket = GWT.create(TicketService.class);
 					ticket.addTicket(parkingID, doubleAmount,
 							new AsyncCallback<Void>() {
-								@Override
-								public void onSuccess(Void result) {
-									Window.alert("ticket was successfully uploaded to the server. Thank you");
-								}
+						@Override
+						public void onSuccess(Void result) {
+							Window.alert("ticket was successfully uploaded to the server. Thank you");
+						}
 
-								@Override
-								public void onFailure(Throwable caught) {
-									Window.alert("There was an error uploading ticket");
-								}
-							});
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert("There was an error uploading ticket");
+						}
+					});
 
 				} else
 					Window.alert("ticket not uploaded");
@@ -254,6 +258,18 @@ public class ParkingLocation implements Serializable {
 
 	public void setStreet(String street) {
 		this.street = street;
+	}
+
+	public void displayPopup(GoogleMap theMap, MyInfoWindow infoWindow) {
+		LatLng latlong = LatLng.create((getStartLat() + getEndLat()) / 2,
+				(getStartLong() + getEndLong()) / 2);
+		HTML info = new HTML("<b>" + getParkingID() + "<br>" + getStreet() + "</b><br><u>Rate:</u> $"
+				+ getPrice() + "/hr<br><u>Limit:</u> " + getLimit() + "hr/s");
+		infoWindow.setContent(info);
+		infoWindow.setPosition(latlong);
+		infoWindow.open(theMap);
+
+
 	}
 
 	/**

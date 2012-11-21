@@ -1,4 +1,4 @@
-package ca.ubc.cpsc310.parkme.client;
+package ca.ubc.cpsc310.parkme.client.services.parking;
 
 import javax.jdo.PersistenceManager;
 
@@ -14,7 +14,7 @@ public interface FaveAsync {
 
 	void removeFave(String parkingID, AsyncCallback<Void> callback);
 
-	void getMostFaved(AsyncCallback<FaveStats[]> callback);
+	void getMostFaved(AsyncCallback<ParkingStats[]> callback);
 
 
 

@@ -5,10 +5,30 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.spacetimeresearch.gwt.addthis.client.AddThisWidget;
+
 import ca.ubc.cpsc310.parkme.client.sdk.FBCore;
 import ca.ubc.cpsc310.parkme.client.sdk.FBEvent;
 import ca.ubc.cpsc310.parkme.client.sdk.FBXfbml;
 import ca.ubc.cpsc310.parkme.client.services.history.SearchHistoryOrganizer;
+import ca.ubc.cpsc310.parkme.client.services.parking.Fave;
+import ca.ubc.cpsc310.parkme.client.services.parking.FaveAsync;
+import ca.ubc.cpsc310.parkme.client.services.parking.ParkingStats;
+import ca.ubc.cpsc310.parkme.client.services.parking.FilterService;
+import ca.ubc.cpsc310.parkme.client.services.parking.FilterServiceAsync;
+import ca.ubc.cpsc310.parkme.client.services.parking.LoadDataService;
+import ca.ubc.cpsc310.parkme.client.services.parking.LoadDataServiceAsync;
+import ca.ubc.cpsc310.parkme.client.services.parking.ParkingLocService;
+import ca.ubc.cpsc310.parkme.client.services.parking.ParkingLocServiceAsync;
+import ca.ubc.cpsc310.parkme.client.services.parking.ParkingLocation;
+import ca.ubc.cpsc310.parkme.client.services.user.Criteria;
+import ca.ubc.cpsc310.parkme.client.services.user.LoginInfo;
+import ca.ubc.cpsc310.parkme.client.services.user.LoginService;
+import ca.ubc.cpsc310.parkme.client.services.user.LoginServiceAsync;
+import ca.ubc.cpsc310.parkme.client.services.user.NotLoggedInException;
+import ca.ubc.cpsc310.parkme.client.services.user.UserInfoClient;
+import ca.ubc.cpsc310.parkme.client.services.user.UserInfoService;
+import ca.ubc.cpsc310.parkme.client.services.user.UserInfoServiceAsync;
 
 import com.google.code.gwt.geolocation.client.Coordinates;
 import com.google.code.gwt.geolocation.client.Geolocation;
@@ -49,6 +69,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -86,6 +107,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private Button eventCreate = new Button("Create Event");
 	private Button eventCancel = new Button("Cancel");
 	private HorizontalPanel buttonPanel = new HorizontalPanel();
+	private PopupPanel loadingPage = new PopupPanel();
 
 	// DIRECTIONS
 	private DirectionsService ds = DirectionsService.create();
@@ -147,6 +169,11 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private ScrollPanel dirScroll = new ScrollPanel();
 	private VerticalPanel avgCritVP = new VerticalPanel();
 	private FlexTable faveStatsFT = new FlexTable();
+	private FlexTable ticketStatsFT = new FlexTable();
+	private ScrollPanel ticketscroll = new ScrollPanel();
+	private List<String> faveStatsList = new ArrayList<String>();
+	private List<String> ticketStatsList = new ArrayList<String>();
+
 
 	// average price
 	private VerticalPanel avgPriceVP = new VerticalPanel();
@@ -231,6 +258,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private final FaveAsync fave = GWT.create(Fave.class);
 	private final UserInfoServiceAsync userInfoService = GWT
 			.create(UserInfoService.class);
+	private final TicketServiceAsync ticket = GWT.create(TicketService.class);
 
 	/**
 	 * This is the entry point method.
@@ -261,10 +289,10 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void loadParkMe() {
-
 		initializeFlexTables();
 		initializeLayout();
 		createMap();
+		
 		addListenersToButtons();
 		addListenerToResults();
 		addListenerToSortBox();
@@ -272,6 +300,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		// initializeSliderValues();
 		// TODO: uncomment
+		initializeLoadingPage();
 		downloadData();
 		// displayData();
 
@@ -279,7 +308,18 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		addListenerToMarker();
 
 	}
-
+	private void initializeLoadingPage() {
+		Double dleft = 0.2*Window.getClientWidth();
+		int left = dleft.intValue();
+		Double dtop = 0.15*Window.getClientHeight();
+		int top = dtop.intValue();
+		loadingPage.setSize(Window.getClientWidth()*0.6 + "px", Window.getClientHeight()*0.5 + "px");
+		loadingPage.setPopupPosition(left, top);
+		loadingPage.setStyleName("loading");
+		HTML page = new HTML("<br><br><center>Please wait while ParkMe is loading<br><br><img src=\"http://i.imgur.com/NXS4H.gif\"></center>");
+		loadingPage.add(page);
+		
+	}
 	private void loadFacebook(final String type) {
 
 		if (GWT.isProdMode()) {
@@ -606,6 +646,89 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 			}
 		});
+
+
+
+	}
+
+	private void addListenerToStatsResults() {
+		faveStatsFT.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+
+				int row = faveStatsFT.getCellForEvent(event).getRowIndex()-1;
+				if (row == -1) {
+					return;
+				}
+				
+				String parkingID = faveStatsList.get(row);
+
+				if (parkingID.equals("header")) {
+					return;
+				} else {
+					System.out.println("I have clicked on parking with ID: "
+							+ parkingID);
+					// get corresponding ParkingLocation with parkingID
+					parkService.getParking(parkingID,
+							new AsyncCallback<ParkingLocation>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+						}
+
+						@Override
+						public void onSuccess(
+								final ParkingLocation parking) {
+							if (zoom == false) {
+								zoom = true;
+								theMap.setZoom(17);
+							}
+							parking.displayPopup(theMap, infoWindow);
+						}
+
+					});
+
+				}
+			}
+		});
+		
+		ticketStatsFT.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+
+				int row = ticketStatsFT.getCellForEvent(event).getRowIndex()-1;
+				if (row == -1) {
+					return;
+				}
+				
+				String parkingID = ticketStatsList.get(row);
+
+				if (parkingID.equals("header")) {
+					return;
+				} else {
+					System.out.println("I have clicked on parking with ID: "
+							+ parkingID);
+					// get corresponding ParkingLocation with parkingID
+					parkService.getParking(parkingID,
+							new AsyncCallback<ParkingLocation>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+						}
+
+						@Override
+						public void onSuccess(
+								final ParkingLocation parking) {
+							if (zoom == false) {
+								zoom = true;
+								theMap.setZoom(17);
+							}
+							parking.displayPopup(theMap, infoWindow);
+						}
+
+					});
+
+				}
+			}
+		});
 	}
 
 	private void addListenerToMarker() {
@@ -655,6 +778,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					String address = searchBox.getText();
 					if (address.equals("")) {
 						infoWindow.close();
+						displayDir.setMap(null);
+						displayDir.setPanel(null);
 						filterParkings();
 					} else {
 						System.out.println("About to call searchLoc");
@@ -705,6 +830,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				String address = searchBox.getText();
 				if (address.equals("")) {
 					infoWindow.close();
+					displayDir.setMap(null);
+					displayDir.setPanel(null);
 					filterParkings();
 				} else {
 					searchLoc(address);
@@ -986,6 +1113,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 
 		RootPanel.get("parkMe").add(mainPanel);
+		System.out.println("added main panel to root panel");
 		mainPanel.add(dummy);
 		// Set up filterPanel
 		filterPanel.setSize("450px", "100px");
@@ -1244,7 +1372,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			mapOperator.clearCircle();
 
 		} 
-		
+
 		else {
 			searchPoint = searchResult.get(0).getGeometry().getLocation();
 			System.out.println("Filtering for results around "
@@ -1472,7 +1600,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					searchHistoryOrganizer.addAndSaveSearch(address);
 					searchResult = results;
 					final LatLng latlong = searchResult.get(0).getGeometry().getLocation();
-					
+
 					System.out.println("About to call setMarker");
 					mapOperator.setMarker(latlong);
 					theMap.setCenter(latlong);
@@ -1486,7 +1614,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void downloadData() {
-		Window.alert("Please wait while data is loading");
+		//Window.alert("Please wait while data is loading");
 		loadDataService.getParking(new AsyncCallback<ParkingLocation[]>() {
 
 			@Override
@@ -1500,10 +1628,14 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					allParkings.add(p);
 				}
 				totalNum = allParkings.size();
-				Window.alert("Data has been downloaded to client successfully.");
+				loadingPage.hide();
+				//Window.alert("Data has been downloaded to client successfully.");
 				filterParkings();
+				
 			}
 		});
+		loadingPage.show();
+		
 	}
 
 	private void displayFavorites(ParkingLocation[] parkingLocs) {
@@ -1868,15 +2000,16 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private void loadAdmin() {
 		// stub
 		addListenersToButtons();
-		createMap();
+		addListenerToStatsResults();
 		initAdminLayout();
-		
+		createMap();
 	}
 
 	private void initAdminLayout() {
 		// buttons to load data & street info
 		// no option to filter
 		// whole page about statistics
+
 		ScrollPanel favescroll = new ScrollPanel();
 		VerticalPanel vp1 = new VerticalPanel();
 		VerticalPanel vp2 = new VerticalPanel();
@@ -1884,12 +2017,13 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		Button viewAsBusiness = new Button("View As Business Owner");
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		RootPanel.get("parkMe").add(mainPanel);
-		
+
 		mainPanel.add(vp1);
 		mainPanel.add(vp2);
 		mainPanel.add(rightVertPanel);
+
 		mapPanel.setSize("100%", "100%");
-		rightVertPanel.setSize(Window.getClientWidth()-540 + "px", "100%");
+		rightVertPanel.setSize(Window.getClientWidth()-550 + "px", Window.getClientHeight()-30 + "px");
 		vp1.setSize("200px", "100%");
 		vp2.setSize("300px", "100%");
 		vp1.add(new HTML("<center><b>ParkMe<br>Administrator</b></center>"));
@@ -1905,34 +2039,53 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		mainPanel.setSpacing(10);
 		vp1.add(viewAsDriver);
 		vp1.add(viewAsBusiness);
-		
+
 		avgCritVP.add(new HTML("<b>Average User Criterias:</b>"));
 		mainStatsVP.add(avgCritVP);
 		calculateAvgCriteria();
-		mainStatsVP.add(new HTML("<br><br><b>Most Favorited Locations:</b>"));
+
 		favescroll.add(faveStatsFT);
+		mainStatsVP.add(new HTML("<br><br><b>Most Favorited Locations:</b>"));
 		mainStatsVP.add(favescroll);
+		mainStatsVP.add(new HTML("<br><br><b>Most Ticketed Locations:</b>"));
+		ticketscroll.add(ticketStatsFT);
+		mainStatsVP.add(ticketscroll);
 		faveStatsFT.setCellPadding(5);
-		favescroll.setHeight("300px");
+		ticketStatsFT.setCellPadding(5);
+		favescroll.setHeight("170px");
+		ticketscroll.setHeight("170px");
+
 		getMostFaved();
+		getMostTicketed();
 		mainStatsVP.add(new HTML("<br><br><b>Number of registered users:</b>"));
 		mainStatsVP.add(new HTML("<b>Number of parkings added to fave:</b>"));
-		statsScroll.add(mainStatsVP);
-		vp2.add(statsScroll);
-		
-		
+		mainStatsVP.add(new HTML("<b>Number of parkings that have tickets:</b>"));
+		//statsScroll.add(mainStatsVP);
+		//vp2.add(statsScroll);
+		vp2.add(mainStatsVP);
+
 
 		// number of registered users:
 		// number of parkings put to fave
 
-		
+
 
 		viewAsDriver.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				RootPanel.get("parkMe").clear();
 				mainPanel.clear();
+//				statsScroll.clear();
 				loadParkMe();
+				initializeSliderValues();
+//				initializeFlexTables();
+//				initializeLayout();
+//				addListenerToSortBox();
+//				initializeSliderValues();
+//				downloadData();
+//				addListenersToSliders();
+//				addListenerToMarker();
+				System.out.println("finished click handler");
 			}
 		});
 		viewAsBusiness.addClickHandler(new ClickHandler() {
@@ -1940,6 +2093,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			public void onClick(ClickEvent event) {
 				RootPanel.get("parkMe").clear();
 				mainPanel.clear();
+				//statsScroll.clear();
 				loadBusiness();
 			}
 		});
@@ -1947,41 +2101,131 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void getMostFaved() {
+		System.out.println("Getting most faved");
 		faveStatsFT.setWidget(0, 0, new HTML("<b>Parking ID</b>"));
 		faveStatsFT.setWidget(0, 1, new HTML("<b>Count</b>"));
-		final Comparator comp = new Comparator<FaveStats>() {
+		//faveStatsList.add("header");
+		final Comparator comp = new Comparator<ParkingStats>() {
 
 			@Override
-			public int compare(FaveStats o1, FaveStats o2) {
+			public int compare(ParkingStats o1, ParkingStats o2) {
 				// TODO Auto-generated method stub
-				return o2.count.compareTo(o1.count);
+				return o2.getCount().compareTo(o1.getCount());
 			}
-			
+
 		};
-		fave.getMostFaved(new AsyncCallback<FaveStats[]>() {
+		fave.getMostFaved(new AsyncCallback<ParkingStats[]>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
-			public void onSuccess(FaveStats[] result) {
-				List<FaveStats> fs = new ArrayList<FaveStats>();
-				
-				for (FaveStats f : result) {
+			public void onSuccess(ParkingStats[] result) {
+				List<ParkingStats> fs = new ArrayList<ParkingStats>();
+
+				for (ParkingStats f : result) {
 					//String count = ""+f.getCount()+"";
 					fs.add(f);
 				}
 				Collections.sort(fs, comp);
-				
+
 				for (int i = 0; i < fs.size(); i++ ) {
-				int row = faveStatsFT.getRowCount();
-				faveStatsFT.setText(row, 0, fs.get(i).getParkingID());
-			
-				faveStatsFT.setText(row, 1, fs.get(i).getCount().toString());
+					int row = faveStatsFT.getRowCount();
+					faveStatsFT.setText(row, 0, fs.get(i).getParkingID());
+					faveStatsFT.setText(row, 1, fs.get(i).getCount().toString());
+					faveStatsList.add(fs.get(i).getParkingID());				
 				}
+				String[] faveStatsArray = faveStatsList.toArray(new String[faveStatsList.size()]);
+				System.out.println(faveStatsList.get(0));
+				parkService.getParkings(faveStatsArray,
+						new AsyncCallback<ParkingLocation[]>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+							}
+
+							@Override
+							public void onSuccess(ParkingLocation[] result) {
+								mapOperator.drawLocs(result, infoWindow);
+							}
+
+						});
+			}
+		});
+
+	}
+
+	private void getMostTicketed() {
+		System.out.println("Getting most ticketed");
+		//ticketStatsList.add("header");				
+
+		ticketStatsFT.setWidget(0, 0, new HTML("<b>Parking ID</b>"));
+		ticketStatsFT.setWidget(0, 1, new HTML("<b>Count</b>"));
+		ticketStatsFT.setWidget(0, 2, new HTML("<b>Total Fine</b>"));
+
+		final Comparator byCount = new Comparator<ParkingStats>() {
+
+			@Override
+			public int compare(ParkingStats o1, ParkingStats o2) {
+				// TODO Auto-generated method stub
+				return o2.getCount().compareTo(o1.getCount());
+			}
+
+		};
+
+		final Comparator byFine = new Comparator<ParkingStats>() {
+
+			@Override
+			public int compare(ParkingStats o1, ParkingStats o2) {
+				// TODO Auto-generated method stub
+				return o2.getFine().compareTo(o1.getFine());
+			}
+
+		};
+
+		ticket.getMostTicketed(new AsyncCallback<ParkingStats[]>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onSuccess(ParkingStats[] result) {
+				List<ParkingStats> fs = new ArrayList<ParkingStats>();
+
+				for (ParkingStats f : result) {
+					fs.add(f);
+				}
+				Collections.sort(fs, byFine);
+
+				for (int i = 0; i < fs.size(); i++ ) {
+					int row = ticketStatsFT.getRowCount();
+					ticketStatsFT.setText(row, 0, fs.get(i).getParkingID());
+					ticketStatsFT.setText(row, 1, fs.get(i).getCount().toString());
+					ticketStatsFT.setText(row, 2, fs.get(i).getFine().toString());
+					ticketStatsList.add(fs.get(i).getParkingID());				
+
+				}
+				String[] ticketStatsArray = ticketStatsList.toArray(new String[ticketStatsList.size()]);
+				System.out.println(ticketStatsList.get(0));
+				parkService.getParkings(ticketStatsArray,
+						new AsyncCallback<ParkingLocation[]>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+							}
+
+							@Override
+							public void onSuccess(ParkingLocation[] result) {
+								mapOperator.drawLocs(result, infoWindow);
+							}
+
+						});
 			}
 		});
 	}
@@ -2024,75 +2268,75 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		main.add(buttons);
 
 		createEvent.addClickHandler(new ClickHandler() {
-						@Override
-						public void onClick(ClickEvent event) {
-							buttonPanel.add(eventCreate);
-							buttonPanel.add(eventCancel);
-							eventName.setText("Event Name");
-							eventTime.setText("YYYY-MM-DD");
-							mainPan.add(eventName);
-							mainPan.add(eventTime);
-							mainPan.add(buttonPanel);
-							infoWindow.setContent(mainPan);
-							infoWindow.open(theMap);
-							eventCancel.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				buttonPanel.add(eventCreate);
+				buttonPanel.add(eventCancel);
+				eventName.setText("Event Name");
+				eventTime.setText("YYYY-MM-DD");
+				mainPan.add(eventName);
+				mainPan.add(eventTime);
+				mainPan.add(buttonPanel);
+				infoWindow.setContent(mainPan);
+				infoWindow.open(theMap);
+				eventCancel.addClickHandler(new ClickHandler() {
 
-								@Override
-								public void onClick(ClickEvent event) {
-									// TODO Auto-generated method stub
-									//popUp.hide();
-									infoWindow.close();
-								}
-							});
-							eventCreate.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						// TODO Auto-generated method stub
+						//popUp.hide();
+						infoWindow.close();
+					}
+				});
+				eventCreate.addClickHandler(new ClickHandler() {
 
-								@Override
-								public void onClick(ClickEvent event) {
-									createFBEvent(addr);
+					@Override
+					public void onClick(ClickEvent event) {
+						createFBEvent(addr);
 
-								}
-							});
-							eventName.addClickHandler(new ClickHandler() {
+					}
+				});
+				eventName.addClickHandler(new ClickHandler() {
 
-								@Override
-								public void onClick(ClickEvent event) {
-									// TODO Auto-generated method stub
-									eventName.setText("");
-								}
-							});
-							eventTime.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						// TODO Auto-generated method stub
+						eventName.setText("");
+					}
+				});
+				eventTime.addClickHandler(new ClickHandler() {
 
-								@Override
-								public void onClick(ClickEvent event) {
-									// TODO Auto-generated method stub
-									eventTime.setText("");
-								}
-							});
-							eventName.addKeyPressHandler(new KeyPressHandler() {
-								public void onKeyPress(KeyPressEvent event) {
-									if (event.getCharCode() == KeyCodes.KEY_ENTER) {
-										eventTime.setFocus(true);
-									}
-								}
-							});
-							eventTime.addKeyPressHandler(new KeyPressHandler() {
-								public void onKeyPress(KeyPressEvent event) {
-									if (event.getCharCode() == KeyCodes.KEY_ENTER) {
-										createFBEvent(addr);
-										
-									}
-								}
-							});
+					@Override
+					public void onClick(ClickEvent event) {
+						// TODO Auto-generated method stub
+						eventTime.setText("");
+					}
+				});
+				eventName.addKeyPressHandler(new KeyPressHandler() {
+					public void onKeyPress(KeyPressEvent event) {
+						if (event.getCharCode() == KeyCodes.KEY_ENTER) {
+							eventTime.setFocus(true);
+						}
+					}
+				});
+				eventTime.addKeyPressHandler(new KeyPressHandler() {
+					public void onKeyPress(KeyPressEvent event) {
+						if (event.getCharCode() == KeyCodes.KEY_ENTER) {
+							createFBEvent(addr);
 
 						}
-					});
+					}
+				});
 
-					getDirections.addClickHandler(new ClickHandler() {
-						@Override
-						public void onClick(ClickEvent event) {
-							getDirections(latlong);
-						}
-					});
+			}
+		});
+
+		getDirections.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				getDirections(latlong);
+			}
+		});
 
 		return main;
 	}

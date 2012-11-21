@@ -5,7 +5,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import ca.ubc.cpsc310.parkme.client.ParkingLocation;
+import ca.ubc.cpsc310.parkme.client.services.parking.ParkingLocation;
 
 /**
  * 

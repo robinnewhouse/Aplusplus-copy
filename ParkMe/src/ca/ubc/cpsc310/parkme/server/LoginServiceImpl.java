@@ -1,7 +1,7 @@
 package ca.ubc.cpsc310.parkme.server;
 
-import ca.ubc.cpsc310.parkme.client.LoginInfo;
-import ca.ubc.cpsc310.parkme.client.LoginService;
+import ca.ubc.cpsc310.parkme.client.services.user.LoginInfo;
+import ca.ubc.cpsc310.parkme.client.services.user.LoginService;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;

@@ -81,3 +81,11 @@ h1 {
 .street {
 	font-style: bold;
 }
+.loading {
+	background: rgba(0, 0, 0, 0.8);
+	color: #fff;
+	font-size: 200%;
+	font-style: bold;
+	-moz-border-radius: 15px;
+border-radius: 15px;
+}
