@@ -267,7 +267,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		createMap();
 		addListenersToButtons();
 		addListenerToResults();
-
+		addListenerToSortBox();
 		// addListenerToTabs();
 
 		// initializeSliderValues();
@@ -629,6 +629,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				int selectedIndex = tabs.getTabBar().getSelectedTab();
 				switch (selectedIndex) {
 				case 0:
+					System.out.println("Changed sorting");
 					displayParkings(filteredParkings);
 					break;
 				case 1:
