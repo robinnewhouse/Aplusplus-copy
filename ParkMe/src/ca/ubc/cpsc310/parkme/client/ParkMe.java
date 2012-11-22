@@ -69,6 +69,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -98,6 +99,8 @@ import com.kiouri.sliderbar.client.event.BarValueChangedHandler;
  */
 public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
+	List<String> adminEmails = new ArrayList<String>();
+
 	// FB EVENT POPUP
 	private PopupPanel popUp = new PopupPanel();
 	private VerticalPanel mainPan = new VerticalPanel();
@@ -106,6 +109,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private Button eventCreate = new Button("Create Event");
 	private Button eventCancel = new Button("Cancel");
 	private HorizontalPanel buttonPanel = new HorizontalPanel();
+	private PopupPanel loadingPage = new PopupPanel();
 
 	// DIRECTIONS
 	private DirectionsService ds = DirectionsService.create();
@@ -192,7 +196,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	// SORTING
 	private Label sortLabel = new Label("Sort by:");
 	private ListBox sortBox = new ListBox();
-	private HorizontalPanel sortPanel = new HorizontalPanel();
+	private AbsolutePanel sortPanel = new AbsolutePanel();
 
 	// FILTER UI STUFF
 	private Button setColor = new Button("Set Colors");
@@ -262,7 +266,10 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-
+		adminEmails.add("alyanna@alyannauy.com");
+		adminEmails.add("franceskrussell@gmail.com");
+		adminEmails.add("robinnewhouse@gmail.com");
+		adminEmails.add("wbkdef@gmail.com");
 		LoginServiceAsync loginService = GWT.create(LoginService.class);
 		loginService.login(GWT.getHostPageBaseURL(),
 				new AsyncCallback<LoginInfo>() {
@@ -287,11 +294,10 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void loadParkMe() {
-
 		initializeFlexTables();
 		initializeLayout();
 		createMap();
-		
+
 		addListenersToButtons();
 		addListenerToResults();
 		addListenerToSortBox();
@@ -299,6 +305,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		// initializeSliderValues();
 		// TODO: uncomment
+		initializeLoadingPage();
 		downloadData();
 		// displayData();
 
@@ -306,7 +313,18 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		addListenerToMarker();
 
 	}
+	private void initializeLoadingPage() {
+		Double dleft = 0.24*Window.getClientWidth();
+		int left = dleft.intValue();
+		Double dtop = 0.25*Window.getClientHeight();
+		int top = dtop.intValue();
+		loadingPage.setSize(Window.getClientWidth()*0.5 + "px", Window.getClientHeight()*0.4 + "px");
+		loadingPage.setPopupPosition(left, top);
+		loadingPage.setStyleName("loading");
+		HTML page = new HTML("<br><br><center>Please wait while ParkMe is loading<br><br><img src=\"http://i.imgur.com/NXS4H.gif\"></center>");
+		loadingPage.add(page);
 
+	}
 	private void loadFacebook(final String type) {
 
 		if (GWT.isProdMode()) {
@@ -452,16 +470,23 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					usertype = "driver";
 				} else if (busOwnButton.getValue()) {
 					usertype = "business";
-				} else if (adminButton.getValue()) {
+				} else if (adminButton.getValue() && adminEmails.contains(loginInfo.getEmailAddress())) {
 					usertype = "admin";
+				} else if (adminButton.getValue()) {
+					Window.alert("Only specified users can be admin.");
+					return;
 				} else {
 					Window.alert("Please select one of the choices above.");
 					return;
 				}
 				setUserPanel.setVisible(false);
-
-				userInfo = new UserInfoClient(loginInfo.getNickname(),
-						usertype, 5.00, 0, 0);
+				if (userInfo == null) {
+					userInfo = new UserInfoClient(loginInfo.getNickname(),
+							usertype, 5.00, 0, 0);
+				}
+				else {
+					userInfo.setUserType(usertype);
+				}
 				userInfoService.setUserInfo(userInfo,
 						new AsyncCallback<Void>() {
 
@@ -519,24 +544,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		showFaves();
 		searchHistoryOrganizer.loadAndShowSearchHistory();
 	}
-
-	// private void addListenerToTabs() {
-	// tabs.addSelectionHandler(new SelectionHandler<Integer>() {
-	// public void onSelection(SelectionEvent<Integer> event) {
-	// switch (event.getSelectedItem()) {
-	// case 0: case 3:
-	// // display search results on map
-	// break;
-	// case 1:
-	// // display favourites on map
-	// break;
-	// case 2:
-	// // display parking history on map
-	// break;
-	// }
-	// }
-	// });
-	// }
 
 	private void addListenerToResults() {
 		resultsFlexTable.addClickHandler(new ClickHandler() {
@@ -646,7 +653,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				if (row == -1) {
 					return;
 				}
-				
+
 				String parkingID = faveStatsList.get(row);
 
 				if (parkingID.equals("header")) {
@@ -677,7 +684,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				}
 			}
 		});
-		
+
 		ticketStatsFT.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 
@@ -685,7 +692,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				if (row == -1) {
 					return;
 				}
-				
+
 				String parkingID = ticketStatsList.get(row);
 
 				if (parkingID.equals("header")) {
@@ -737,17 +744,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		sortBox.addChangeHandler(new ChangeHandler() {
 			public void onChange(ChangeEvent event) {
 				int selectedIndex = tabs.getTabBar().getSelectedTab();
-				switch (selectedIndex) {
-				case 0:
+				if (selectedIndex == 0) {
 					System.out.println("Changed sorting");
 					displayParkings(filteredParkings);
-					break;
-				case 1:
-					// displayFavourites(faveList);
-					break;
-				case 2:
-					// displayHist(histList);
-					break;
 				}
 			}
 		});
@@ -760,11 +759,15 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 
 		searchBox.getTextBox().addKeyPressHandler(new KeyPressHandler() {
+
 			public void onKeyPress(KeyPressEvent event) {
 				if (event.getCharCode() == KeyCodes.KEY_ENTER) {
+					mapOperator.clearMarker();
 					String address = searchBox.getText();
 					if (address.equals("")) {
 						infoWindow.close();
+						displayDir.setMap(null);
+						displayDir.setPanel(null);
 						filterParkings();
 					} else {
 						System.out.println("About to call searchLoc");
@@ -812,9 +815,12 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		// Listen for mouse events on the search button.
 		searchButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
+				mapOperator.clearMarker();
 				String address = searchBox.getText();
 				if (address.equals("")) {
 					infoWindow.close();
+					displayDir.setMap(null);
+					displayDir.setPanel(null);
 					filterParkings();
 				} else {
 					searchLoc(address);
@@ -1097,7 +1103,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		RootPanel.get("parkMe").add(mainPanel);
 		System.out.println("added main panel to root panel");
-		mainPanel.add(dummy);
+		//mainPanel.add(dummy);
+		mainPanel.setStyleName("main");
+		tabs.setStyleName("tab");
 		// Set up filterPanel
 		filterPanel.setSize("450px", "100px");
 		filterPanel.addStyleName("filterPanel");
@@ -1116,8 +1124,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		sortBox.addItem("Time Limit");
 		sortBox.addItem("Distance");
 		sortBox.setVisibleItemCount(1);
-		sortPanel.add(sortLabel);
-		sortPanel.add(sortBox);
+		sortPanel.add(sortLabel, 1, 5);
+		sortPanel.add(sortBox, 50, 1);
 
 		// Set up searchPanel
 		searchBox.setHeight("1em");
@@ -1156,6 +1164,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		// mainHorzPanel.add(resultsScroll);
 
 		flowpanel = new FlowPanel();
+		flowpanel.add(sortPanel);
 		flowpanel.add(resultsScroll);
 		tabs.add(flowpanel, "Results");
 
@@ -1196,7 +1205,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		leftVertPanel.add(searchLabel);
 		leftVertPanel.add(searchPanel);
 		leftVertPanel.add(filterPanel);
-		leftVertPanel.add(sortPanel);
 		leftVertPanel.add(tabs);
 		mainPanel.add(leftVertPanel);
 		mainPanel.add(rightVertPanel);
@@ -1389,28 +1397,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			// System.out.println("Found " + filtered.size() + " locations");
 		}
 
-		displayParkings(filtered);
+		filteredParkings = filtered;
 
-		/**
-		 * 
-		 * server side filtering
-		 * 
-		 * Criteria crit = new Criteria(maxRadius, maxPrice, minTime,
-		 * searchPoint.lat(), searchPoint.lng()); filterService.getParking(crit,
-		 * new AsyncCallback<ParkingLocation[]>() {
-		 * 
-		 * @Override public void onFailure(Throwable caught) {
-		 *           Window.alert("Error getting parking"); }
-		 * @Override public void onSuccess(ParkingLocation[] result) { //
-		 *           Window.alert("Successfully displayed filtered data");
-		 * 
-		 *           int length = result.length; System.out.println("Found " +
-		 *           length + " results matching criteria");
-		 *           mapOperator.clearMap(); resultsFlexTable.removeAllRows();
-		 *           idList.clear(); if (length == 0) {
-		 *           resultsFlexTable.setText(0, 0, "No results found."); } else
-		 *           { displayParkings(result); } } });
-		 **/
+		displayParkings(filtered);
 	}
 
 	private void getLocations(final ParkingLocation[] parkingLocs) {
@@ -1597,7 +1586,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void downloadData() {
-		Window.alert("Please wait while data is loading");
+		//Window.alert("Please wait while data is loading");
 		loadDataService.getParking(new AsyncCallback<ParkingLocation[]>() {
 
 			@Override
@@ -1611,10 +1600,14 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					allParkings.add(p);
 				}
 				totalNum = allParkings.size();
-				Window.alert("Data has been downloaded to client successfully.");
+				loadingPage.hide();
+				//Window.alert("Data has been downloaded to client successfully.");
 				filterParkings();
+
 			}
 		});
+		loadingPage.show();
+
 	}
 
 	private void displayFavorites(ParkingLocation[] parkingLocs) {
@@ -2054,16 +2047,16 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			public void onClick(ClickEvent event) {
 				RootPanel.get("parkMe").clear();
 				mainPanel.clear();
-//				statsScroll.clear();
+				//				statsScroll.clear();
 				loadParkMe();
 				initializeSliderValues();
-//				initializeFlexTables();
-//				initializeLayout();
-//				addListenerToSortBox();
-//				initializeSliderValues();
-//				downloadData();
-//				addListenersToSliders();
-//				addListenerToMarker();
+				//				initializeFlexTables();
+				//				initializeLayout();
+				//				addListenerToSortBox();
+				//				initializeSliderValues();
+				//				downloadData();
+				//				addListenersToSliders();
+				//				addListenerToMarker();
 				System.out.println("finished click handler");
 			}
 		});
@@ -2228,7 +2221,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		} else if (usertype.equals("business")) {
 			loadBusiness();
 		} else {
-			Window.alert("Can't figure out usertype");
+		//	Window.alert("Can't figure out usertype");
 			loadSetUserType();
 		}
 	}
