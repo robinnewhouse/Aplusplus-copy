@@ -1007,12 +1007,15 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 				Double radius = result.getRadius();
 				Double price = result.getMaxPrice();
-				Double time = (double) (Math.round(result.getMinTime()*100)/100);
-				
-				Label radiusLabel = new Label("Average Radius: " + radius + "m");
-				Label priceLabel = new Label("Average Max Price: $" + price
-						+ "/hr");
+
+				NumberFormat formatter = NumberFormat.getCurrencyFormat("CAD");
+				String formattedPrice = formatter.format(price);
+
+				Label priceLabel = new Label("Average Max Price: "
+						+ formattedPrice + "/hr");
+				Double time = (double) (Math.round(result.getMinTime() * 100) / 100);
 				Label timeLabel = new Label("Average Min Time: " + time + "hrs");
+				Label radiusLabel = new Label("Average Radius: " + radius + "m");
 
 				avgCritVP.add(radiusLabel);
 				avgCritVP.add(priceLabel);
