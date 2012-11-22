@@ -140,7 +140,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private TabPanel tabs = new TabPanel();
 	private FlowPanel flowpanel;
 
-
+	private TextBox fine = new TextBox();
 
 	// SET USER TYPE
 	private VerticalPanel setUserPanel = new VerticalPanel();
@@ -298,13 +298,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	private void loadParkMe() {
 
-		initializeDriverLayout();
-
 		createMap();
-
 		addListenersToButtons();
 		addListenersToFlexTables(); // replaces addListenerToResults();
-
 		addListenerToSortBox();
 		// addListenerToTabs();
 
@@ -312,6 +308,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		// TODO: uncomment
 
 		initializeLoadingPage();
+		initializeDriverLayout();
 		downloadData(); // initializeFlexTables(); is called on success
 
 		// displayData();
@@ -488,7 +485,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		setUserPanel.add(setUserLabel);
 		setUserPanel.add(driverButton);
-		setUserPanel.add(busOwnButton);
+	
 		setUserPanel.add(adminButton);
 		setUserPanel.add(setUserButton);
 		setUserPanel.add(signOutLink);
@@ -499,8 +496,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			public void onClick(ClickEvent event) {
 				if (driverButton.getValue()) {
 					usertype = "driver";
-				} else if (busOwnButton.getValue()) {
-					usertype = "business";
 				} else if (adminButton.getValue()
 						&& adminEmails.contains(loginInfo.getEmailAddress())) {
 					usertype = "admin";
@@ -795,11 +790,14 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		// Listen for mouse events on the Clear Data button.
 		clearDataButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
+				searchBox.getTextBox().setText("");
 				infoWindow.close();
 				mapOperator.clearCircle();
 				mapOperator.clearMap();
+				mapOperator.clearMarker();
 				resultsFlexTable.removeAllRows();
 				idList.clear();
+				
 			}
 		});
 
@@ -1096,13 +1094,19 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void initializeDriverLayout() {
+		VerticalPanel signoutPanel = new VerticalPanel();
 		signOutLink.setHref(loginInfo.getLogoutUrl());
-
+		mainStatsVP.clear();
 		RootPanel.get("parkMe").add(mainPanel);
+		mainPanel.setSpacing(10);
 		System.out.println("added main panel to root panel");
-		// mainPanel.add(dummy);
-		mainPanel.setStyleName("main");
-		tabs.setStyleName("tab");
+
+		
+		signoutPanel.setSize("100px", "30px");
+		signoutPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		signoutPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		signoutPanel.add(signOutLink);
+		
 		// Set up filterPanel
 		filterPanel.setSize("450px", "100px");
 		filterPanel.addStyleName("filterPanel");
@@ -1121,21 +1125,16 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		sortBox.addItem("Time Limit");
 		sortBox.addItem("Distance");
 		sortBox.setVisibleItemCount(1);
+		sortPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		sortPanel.add(sortLabel);
 		sortPanel.add(sortBox);
-		// sortPanel.add(sortLabel, 1, 5);
-		// sortPanel.add(sortBox, 50, 1);
 
 		// Set up searchPanel
-		searchBox.setHeight("1em");
-		// searchPanel.add(searchLabel);
+		searchPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		searchPanel.add(searchBox);
 		searchPanel.add(searchButton);
 		searchPanel.add(clearDataButton);
-		searchPanel.add(signOutLink);
-		// searchPanel.add(loadDataButton); // ROBIN
-		// searchPanel.add(downloadData);
-
+		searchPanel.add(signoutPanel);
 		searchLabel
 				.setText("Enter Address (or leave blank to search whole Vancouver):");
 
@@ -1163,6 +1162,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		histPanel.add(histFlexTable);
 		VerticalPanel rtabPanel = new VerticalPanel();
 		rtabPanel.add(sortPanel);
+		sortPanel.setHeight("30px");
 		rtabPanel.add(resultsScroll);
 
 		// TICKETS
@@ -1221,12 +1221,15 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		leftVertPanel.add(tabs);
 		mainPanel.add(leftVertPanel);
 		mainPanel.add(rightVertPanel);
+		mainPanel.setSpacing(10);
 
 		// Set sizes for elements
 
-		String scrollHeight = Window.getClientHeight() - 295 + "px";
+		String scrollHeight = Window.getClientHeight() - 295 + 5 + "px";
 		String scrollWidth = 0.4 * Window.getClientWidth() - 60 + "px";
-		resultsScroll.setSize(scrollWidth, scrollHeight);
+	//	resultsScroll.setSize("100%", "100%");
+		resultsScroll.setSize(scrollWidth, Window.getClientHeight() - 335 + 15 + "px");
+		rtabPanel.setSize(scrollWidth, scrollHeight);
 		faveScroll.setSize(scrollWidth, scrollHeight);
 		histScroll.setSize(scrollWidth, scrollHeight);
 		statsScroll.setSize(scrollWidth, scrollHeight);
@@ -1238,13 +1241,13 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		faveFlexTable.setSize(scrollWidth, "100%");
 		histFlexTable.setSize(scrollWidth, "100%");
 		ticketFlexTable.setSize(scrollWidth, "100%");
-		leftVertPanel.setSize(0.3 * Window.getClientWidth() + "px", "100%");
+		leftVertPanel.setSize(0.3 * Window.getClientWidth() + "px", Window.getClientHeight() - 35 + "px");
 		rightVertPanel.setSize(0.7 * Window.getClientWidth() - 120 + "px",
 				Window.getClientHeight() - 50 + "px");
 
 		mapPanel.setSize("100%", "100%");
-		mainPanel.setSpacing(0);
-		mainPanel.setSize("100%", "100%");
+		//mainPanel.setSpacing(0);
+		//mainPanel.setSize("100%", "100%");
 
 	}
 
@@ -1714,7 +1717,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		addFaveHandler(addFaveButton, parkingLoc);
 
 		Button addTicket = new Button("Add Parking Ticket");
-		addTicketHandler(addTicket, parkingLoc);// TODO
+		addTicketHandler(addTicket, parkingLoc);
 
 		mapOperator.drawOnMap(parkingLoc, infoWindow, addFaveButton, addTicket);
 		ticketList.add(parkingLoc.getParkingID());
@@ -1724,6 +1727,59 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	private void addTicketHandler(Button addTicket,
 			final ParkingLocation parkingLoc) {
+		
+		addTicket.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				VerticalPanel ticketPan = new VerticalPanel();
+				
+				Label ticketLabel = new Label("Enter Fine: ");
+				fine.setText("0.00");
+				Button addFine = new Button("Submit Fine");
+				
+				ticketPan.add(ticketLabel);
+				ticketPan.add(fine);
+				ticketPan.add(addFine);
+				infoWindow.setContent(ticketPan);
+				infoWindow.open(theMap);
+				addFine.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						// TODO Auto-generated method stub
+						final String fineString = fine.getText();
+						if (!fineString.matches("^\\d*(\\.\\d{0,2})?$")) {
+							Window.alert("Fine is not of the correct form");
+						} else {
+							final Double doubleAmount = Double.parseDouble(fineString);
+							TicketServiceAsync ticket = GWT.create(TicketService.class);
+							ticket.addTicket(parkingLoc.getParkingID(), doubleAmount,
+									new AsyncCallback<Void>() {
+								@Override
+								public void onSuccess(Void result) {
+									NumberFormat formatter = NumberFormat.getCurrencyFormat("CAD");
+									VerticalPanel success = new VerticalPanel();
+									String formattedFine = formatter.format(doubleAmount);
+									success.add(new Label("Successfully uploaded " + formattedFine + " fine on to server."));
+									infoWindow.setContent(success);
+									infoWindow.open(theMap);
+									//Window.alert("ticket was successfully uploaded to the server. Thank you");
+								}
+
+								@Override
+								public void onFailure(Throwable caught) {
+									//Window.alert("There was an error uploading ticket");
+								}
+							});
+
+						}
+					}
+				
+				});
+			}
+			});
+		
 	}
 
 	private void addFaveHandler(Button addFaveButton,
@@ -2059,30 +2115,24 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		VerticalPanel vp1 = new VerticalPanel();
 		VerticalPanel vp2 = new VerticalPanel();
 		Button viewAsDriver = new Button("View As Driver");
-		Button viewAsBusiness = new Button("View As Business Owner");
 		signOutLink.setHref(loginInfo.getLogoutUrl());
-		//signOutLink.setStyleName("signout");
 		signoutPanel.setSize("200px", "50px");
 		signoutPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		signoutPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		signoutPanel.add(signOutLink);
 		RootPanel.get("parkMe").add(mainPanel);
-	//	RootPanel.get("righttext").add(signOutLink);
-	//	signOutLink.setTabIndex(10);
-	//	HTMLPanel htmlPanel = HTMLPanel.wrap(RootPanel.get("righttext").getElement());
-	//	htmlPanel.add(signOutLink);
-	//	mainPanel.add(htmlPanel);
+
 		mainPanel.add(vp1);
 		mainPanel.add(vp2);
 		mainPanel.add(rightVertPanel);
 
 		mapPanel.setSize("100%", "100%");
 
-		rightVertPanel.setSize(Window.getClientWidth()-500 + "px", Window.getClientHeight()-60 + "px");
+		rightVertPanel.setSize(Window.getClientWidth()-500 + "px", Window.getClientHeight()-50 + "px");
 
 		
 		vp1.setSize("200px", "100%");
-		vp2.setSize("250px", "100%");
+		vp2.setSize("260px", "100%");
 		vp1.add(new HTML("<center><b>ParkMe<br>Administrator</b></center>"));
 		signOutLink.setSize("200px", "3em");
 		signOutLink.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -2091,13 +2141,11 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		loadDataButton.setSize("200px", "3em");
 		getAddressesButton.setSize("200px", "3em");
 		viewAsDriver.setSize("200px", "3em");
-		viewAsBusiness.setSize("200px", "3em");
 		vp1.add(dummyPanel);
 		vp1.add(loadDataButton);
 		vp1.add(getAddressesButton);
 		mainPanel.setSpacing(10);
 		vp1.add(viewAsDriver);
-		vp1.add(viewAsBusiness);
 		vp1.add(signoutPanel);
 		avgCritVP.add(new HTML("<b>Average User Criterias:</b>"));
 		mainStatsVP.add(avgCritVP);
@@ -2161,18 +2209,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		});
 
-		vp2.add(mainStatsVP);
 
-		mainStatsVP.add(new HTML("<br><br><b>Number of registered users:</b>"));
-		mainStatsVP.add(new HTML("<b>Number of parkings added to fave:</b>"));
-		mainStatsVP
-				.add(new HTML("<b>Number of parkings that have tickets:</b>"));
-		// statsScroll.add(mainStatsVP);
-		// vp2.add(statsScroll);
 		vp2.add(mainStatsVP);
-
-		// number of registered users:
-		// number of parkings put to fave
 
 		viewAsDriver.addClickHandler(new ClickHandler() {
 			@Override
@@ -2180,28 +2218,13 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				RootPanel.get("parkMe").clear();
 				mainPanel.clear();
 
-				// statsScroll.clear();
 				loadParkMe();
 				initializeSliderValues();
-				// initializeFlexTables();
-				// initializeLayout();
-				// addListenerToSortBox();
-				// initializeSliderValues();
-				// downloadData();
-				// addListenersToSliders();
-				// addListenerToMarker();
+			
 				System.out.println("finished click handler");
 			}
 		});
-		viewAsBusiness.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				RootPanel.get("parkMe").clear();
-				mainPanel.clear();
-
-				loadBusiness();
-			}
-		});
+		
 
 	}
 
@@ -2363,8 +2386,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			loadDriver();
 		} else if (usertype.equals("admin")) {
 			loadAdmin();
-		} else if (usertype.equals("business")) {
-			loadBusiness();
 		} else {
 			// Window.alert("Can't figure out usertype");
 			loadSetUserType();
