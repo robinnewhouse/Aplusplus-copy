@@ -14,6 +14,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -75,8 +76,10 @@ public class ParkingLocation implements Serializable {
 				+ getPrice() + "/hr<br><u>Limit:</u> " + getLimit() + "hr/s");
 		VerticalPanel main = new VerticalPanel();
 		main.add(info);
-		main.add(addToFave);
-		main.add(addTicket); // robin
+		HorizontalPanel buttonPan = new HorizontalPanel();
+		buttonPan.add(addToFave);
+		buttonPan.add(addTicket); 
+		main.add(buttonPan);
 		AddThisWidget addThisWidget = new AddThisWidget("ra-5094b7074b51725f",
 				"There is a nice parking spot at " + getStreet()
 				+ " with a rate of $" + getPrice() + "/hr!", 300);
@@ -94,101 +97,7 @@ public class ParkingLocation implements Serializable {
 			}
 
 		});
-/**
-		addTicket.addClickHandler(new ClickHandler() {*
 
-			@Override
-			public void onClick(ClickEvent event) {
-				VerticalPanel ticketPan = new VerticalPanel();
-				TextBox fine = new TextBox();
-				Label ticketLabel = new Label("Enter Fine: ");
-				fine.setText("0.00");
-				Button addFine = new Button("Submit Fine");
-				
-				ticketPan.add(ticketLabel);
-				ticketPan.add(fine);
-				ticketPan.add(addFine);
-				infoWindow.setContent(ticketPan);
-				infoWindow.open(theMap);
-				addFine.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						// TODO Auto-generated method stub
-						final String fineString = fine.getText();
-						if (!fineString.matches("^\\d*(\\.\\d{0,2})?$")) {
-							Window.alert("Fine is not of the correct form");
-						} else {
-							final Double doubleAmount = Double.parseDouble(fineString);
-							TicketServiceAsync ticket = GWT.create(TicketService.class);
-							ticket.addTicket(parkingID, doubleAmount,
-									new AsyncCallback<Void>() {
-								@Override
-								public void onSuccess(Void result) {
-									NumberFormat formatter = NumberFormat.getCurrencyFormat("CAD");
-									VerticalPanel success = new VerticalPanel();
-									String formattedFine = formatter.format(doubleAmount);
-									success.add(new Label("Successfully uploaded " + formattedFine + " fine on to server."));
-									infoWindow.setContent(success);
-									infoWindow.open(theMap);
-									//Window.alert("ticket was successfully uploaded to the server. Thank you");
-								}
-
-								@Override
-								public void onFailure(Throwable caught) {
-									//Window.alert("There was an error uploading ticket");
-								}
-							});
-
-						}
-					}
-				});
-				
-//				String msg = "Please enter the amount of your paking fine";
-//				Boolean correct = false;
-//				NumberFormat formatter = NumberFormat.getCurrencyFormat("CAD");
-//				String stringAmount;
-//				Double doubleAmount = null;
-//				String formattedFine = null;
-//				while (correct == false) {
-//					stringAmount = Window.prompt(msg, "00.00");
-//					try {
-//						stringAmount = stringAmount.replaceAll("[^\\d.]", "");
-//						doubleAmount = Double.parseDouble(stringAmount);
-//						formattedFine = formatter.format(doubleAmount);
-//						correct = Window
-//								.confirm("Upload the following data: \n you were fined "
-//										+ formattedFine + " is this correct?");
-//					} catch (NullPointerException e) {
-//						e.printStackTrace();
-//						break;
-//					} catch (Exception e) {
-//						msg = "Please enter the amount of your paking fine. Format must be: 00.00";
-//						e.printStackTrace();
-//					}
-//
-//				}
-//				if (correct) {
-//
-//					TicketServiceAsync ticket = GWT.create(TicketService.class);
-//					ticket.addTicket(parkingID, doubleAmount,
-//							new AsyncCallback<Void>() {
-//						@Override
-//						public void onSuccess(Void result) {
-//							Window.alert("ticket was successfully uploaded to the server. Thank you");
-//						}
-//
-//						@Override
-//						public void onFailure(Throwable caught) {
-//							Window.alert("There was an error uploading ticket");
-//						}
-//					});
-//
-//				} else
-//					Window.alert("ticket not uploaded");
-//			}
-			}
-		});**/
 	}
 
 	public String getColor() {

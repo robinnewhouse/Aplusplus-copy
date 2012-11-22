@@ -1007,13 +1007,13 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 				Double radius = result.getRadius();
 				Double price = result.getMaxPrice();
-
+				Double time = result.getMinTime();
 				NumberFormat formatter = NumberFormat.getCurrencyFormat("CAD");
 				String formattedPrice = formatter.format(price);
 
 				Label priceLabel = new Label("Average Max Price: "
 						+ formattedPrice + "/hr");
-				Double time = (double) (Math.round(result.getMinTime() * 100) / 100);
+			//	Double time = (double) (Math.round(result.getMinTime() * 100) / 100);
 				Label timeLabel = new Label("Average Min Time: " + time + "hrs");
 				Label radiusLabel = new Label("Average Radius: " + radius + "m");
 
@@ -1764,39 +1764,23 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				ticketPan.add(addFine);
 				infoWindow.setContent(ticketPan);
 				infoWindow.open(theMap);
+				
+				fine.setFocus(true);
 				addFine.addClickHandler(new ClickHandler() {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						// TODO Auto-generated method stub
-						final String fineString = fine.getText();
-						if (!fineString.matches("^\\d*(\\.\\d{0,2})?$")) {
-							Window.alert("Fine is not of the correct form");
-						} else {
-							final Double doubleAmount = Double.parseDouble(fineString);
-							TicketServiceAsync ticket = GWT.create(TicketService.class);
-							ticket.addTicket(parkingLoc.getParkingID(), doubleAmount,
-									new AsyncCallback<Void>() {
-								@Override
-								public void onSuccess(Void result) {
-									NumberFormat formatter = NumberFormat.getCurrencyFormat("CAD");
-									VerticalPanel success = new VerticalPanel();
-									String formattedFine = formatter.format(doubleAmount);
-									success.add(new Label("Successfully uploaded " + formattedFine + " fine on to server."));
-									infoWindow.setContent(success);
-									infoWindow.open(theMap);
-									//Window.alert("ticket was successfully uploaded to the server. Thank you");
-								}
-
-								@Override
-								public void onFailure(Throwable caught) {
-									//Window.alert("There was an error uploading ticket");
-								}
-							});
-
-						}
+						addFineToServer(parkingLoc);
 					}
 				
+				});
+				
+				fine.addKeyPressHandler(new KeyPressHandler() {
+					public void onKeyPress(KeyPressEvent event) {
+						if (event.getCharCode() == KeyCodes.KEY_ENTER) {
+							addFineToServer(parkingLoc);
+						}
+					}
 				});
 			}
 			});
@@ -2146,11 +2130,11 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		mapPanel.setSize("100%", "100%");
 
-		rightVertPanel.setSize(Window.getClientWidth()-490 + "px", Window.getClientHeight()-50 + "px");
+		rightVertPanel.setSize(Window.getClientWidth()-470 + "px", Window.getClientHeight()-50 + "px");
 
 		
 		vp1.setSize("200px", "100%");
-		vp2.setSize("250px", "100%");
+		vp2.setSize("230px", "100%");
 		vp1.add(new HTML("<center><b>ParkMe<br>Administrator</b></center>"));
 		signOutLink.setSize("200px", "3em");
 		signOutLink.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -2495,5 +2479,35 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		});
 
 		return main;
+	}
+
+	private void addFineToServer(final ParkingLocation parkingLoc) {
+		// TODO Auto-generated method stub
+		final String fineString = fine.getText();
+		if (!fineString.matches("^\\d*(\\.\\d{0,2})?$")) {
+			Window.alert("Fine is not of the correct form");
+		} else {
+			final Double doubleAmount = Double.parseDouble(fineString);
+			TicketServiceAsync ticket = GWT.create(TicketService.class);
+			ticket.addTicket(parkingLoc.getParkingID(), doubleAmount,
+					new AsyncCallback<Void>() {
+				@Override
+				public void onSuccess(Void result) {
+					NumberFormat formatter = NumberFormat.getCurrencyFormat("CAD");
+					VerticalPanel success = new VerticalPanel();
+					String formattedFine = formatter.format(doubleAmount);
+					success.add(new Label("Successfully uploaded " + formattedFine + " fine on to server."));
+					infoWindow.setContent(success);
+					infoWindow.open(theMap);
+					//Window.alert("ticket was successfully uploaded to the server. Thank you");
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					//Window.alert("There was an error uploading ticket");
+				}
+			});
+
+		}
 	}
 }
