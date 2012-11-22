@@ -21,8 +21,8 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class SearchHistoryServiceImpl extends RemoteServiceServlet implements SearchHistoryService {
 
 	int MAX_HISTORY = SearchHistoryOrganizer.MAX_HISTORY;
-	
-	
+
+
 	private static final PersistenceManagerFactory PMF =
 			JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
@@ -47,18 +47,32 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 			Query q = pm.newQuery(SearchString.class, "user == u");
 			q.declareParameters("com.google.appengine.api.users.User u");
 			q.setOrdering("createDate");
-			List<SearchString> pHist;
+			//		List<SearchString> pHist;
 			List<SearchString> pHistResults = (List<SearchString>) q.execute(getUser());
-			List<SearchString> pHistToDelete=pHistResults.subList(0, pHistResults.size()-MAX_HISTORY);
-			List<SearchString> pHistToReturn=pHistResults.subList(pHistResults.size()-MAX_HISTORY, pHistResults.size());
-			
-			System.out.println(" in SearchHistoryServiceImpl.getHist() delete extras loop.  Max History is: "+MAX_HISTORY+
-					", pHistResults.size() is: "+pHistResults.size()+", pHistToDelete.size() is: "+pHistToDelete.size()+", pHistToReturn.size() is: "+pHistToReturn.size());
-			
-			for(SearchString str: pHistToDelete){
-				pm.deletePersistent(str);				
+
+			if (pHistResults.size() > MAX_HISTORY) {
+
+				List<SearchString> pHistToDelete=pHistResults.subList(0, pHistResults.size()-MAX_HISTORY);
+				List<SearchString> pHistToReturn=pHistResults.subList(pHistResults.size()-MAX_HISTORY, pHistResults.size());
+				System.out.println(" in SearchHistoryServiceImpl.getHist() delete extras loop.  Max History is: "+MAX_HISTORY+
+						", pHistResults.size() is: "+pHistResults.size()+", pHistToDelete.size() is: "+pHistToDelete.size()+", pHistToReturn.size() is: "+pHistToReturn.size());
+
+				for(SearchString str: pHistToDelete){
+					pm.deletePersistent(str);	
+
+				}
+				for (int i = 0; i < pHistToReturn.size(); i++) {	
+					searchStrings.add(pHistToReturn.get(i).getSearchString());
+				}
 			}
-			
+			else {
+				for (int i = 0; i < pHistResults.size(); i++) {	
+					searchStrings.add(pHistResults.get(i).getSearchString());
+				}
+			}
+
+
+
 			/*/THIS DOESN'T WORK - WILL HAVE TO DELETE
 			while (pHist.size()>MAX_HISTORY) { //Delete excess History
 				System.out.println(" in SearchHistoryServiceImpl.getHist() delete extras loop.  Max History is: "+MAX_HISTORY+
@@ -70,9 +84,7 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 				pm.deletePersistent(histString);
 				pHist.remove(0);				
 			}*/
-			for (int i = 0; i < pHistToReturn.size(); i++) {	
-				searchStrings.add(pHistToReturn.get(i).getSearchString());
-			}
+
 		} 
 		catch(Exception exception) {
 			System.out.println("Exception in SearchHistoryServiceImpl.getHist: " + exception.getMessage());
@@ -86,18 +98,18 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 		searchStrings.add("Robson and Georgia");
 		searchStrings.add("Macdonald and Broadway");
 		searchStrings.add("V6E 1V9");
-		**/
+		 **/
 		System.out.println("Finishing SearchHistoryServiceImpl.getHist()");
 		return searchStrings;
 	}
-	
+
 
 	private User getUser() {
 		UserService userService = UserServiceFactory.getUserService();
 		return userService.getCurrentUser();
 	}
 
-	
+
 	private void checkLoggedIn() throws NotLoggedInException {
 		if (getUser() == null) {
 			throw new NotLoggedInException("Not logged in.");
@@ -117,15 +129,15 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 			List<SearchString> fullHistory = (List<SearchString>) q.execute(getUser());
 			//System.out.println("About to Loop");			
 			for (SearchString histString : fullHistory) {
-					String toDelete = histString.getSearchString();
-					//System.out.println("About to delete " + histString.getSearchString() + " from favorites.");
-					if(histString==null){
-						System.out.println("Null Object Returned in SearchHistoryServiceImpl.clear()");
-					}
-					else{
-						pm.deletePersistent(histString);
-					}
-					//System.out.println("Deleted " + toDelete + " from favorites.");
+				String toDelete = histString.getSearchString();
+				//System.out.println("About to delete " + histString.getSearchString() + " from favorites.");
+				if(histString==null){
+					System.out.println("Null Object Returned in SearchHistoryServiceImpl.clear()");
+				}
+				else{
+					pm.deletePersistent(histString);
+				}
+				//System.out.println("Deleted " + toDelete + " from favorites.");
 			}
 			//System.out.println("Finishing Try");
 		} 
