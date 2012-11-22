@@ -1,14 +1,13 @@
 package ca.ubc.cpsc310.parkme.test;
 
-import static com.google.appengine.api.datastore.FetchOptions.Builder.withLimit;
-
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
-import javax.jdo.JDOHelper;
-import javax.jdo.PersistenceManager;
-import javax.jdo.PersistenceManagerFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -20,27 +19,16 @@ import org.xml.sax.SAXException;
 
 import ca.ubc.cpsc310.parkme.server.ParkingLoc;
 import ca.ubc.cpsc310.parkme.server.ParkingLocHandler;
-
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Query;
 //import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 //import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
 public class ParsingTest extends TestCase {
-
-	// private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
-	// new LocalDatastoreServiceTestConfig());
 
 	InputStream inputStream;
 	ParkingLocHandler kmlParser;
 	SAXParserFactory factory;
 	SAXParser saxParser;
 	List<ParkingLoc> pll;
-	private static final PersistenceManagerFactory PMF = JDOHelper
-			.getPersistenceManagerFactory("transactions-optional");
-	PersistenceManager pm = PMF.getPersistenceManager();
 
 	// QUESTION: this will not run before my tests. to not have to parse the
 	// data
@@ -163,48 +151,38 @@ public class ParsingTest extends TestCase {
 		assertTrue(true);
 	}
 
-	// TODO and returned in a correct format. QUESTION HOW?
-	// TODO test that kml is retrievable from kmz
+	/**
+	 * test that kml is retrievable from kmz code is taken from
+	 * LoadDataServiceImpl loadData() except for using a local kmz
+	 */
 	public void testRetrievalOfKmlFromKmz() {
-
-	}
-
-	// and also that persisted objects can be retrieved
-
-	// run this test twice to prove we're not leaking any state across tests
-	private void doTest() throws Exception {
-		setUp();
-		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-		assertEquals(0,
-				ds.prepare(new Query("yam")).countEntities(withLimit(10)));
-
-		ds.put(new Entity("yam"));
-		ds.put(new Entity("yam"));
-
-		assertEquals(2,
-				ds.prepare(new Query("yam")).countEntities(withLimit(10)));
-		tearDown();
-	}
-
-	@Test
-	public void testInsert1() {
+		InputStream is = null;
 		try {
-			doTest();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+			URL linkURL = new URL(
+					"http://data.vancouver.ca/download/kml/parking_meter_rates_and_time_limits.kmz");
+			URLConnection urlConn = linkURL.openConnection();
 
-	@Test
-	public void testInsert2() {
-		try {
-			doTest();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+			is = urlConn.getInputStream();
 
-	// and have the same attributes as before.
+			ZipInputStream zis = new ZipInputStream(is);
+			ZipEntry entry = zis.getNextEntry();
+			while (entry != null && !entry.getName().endsWith("kml")) {
+				entry = zis.getNextEntry();
+			}
+			if (entry == null) {
+				throw new Exception("No KML file found in the KMZ package");
+			}
+			is = zis;
+
+			// what is returned from the particular data we're using
+			assertEquals(is.read(), 60);
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+			assertTrue(false);
+		}
+
+	}
 
 	// A helper method to traverse the list of parking locs
 	public ParkingLoc findParkingLocByPrice(List<ParkingLoc> pll, double price) {
