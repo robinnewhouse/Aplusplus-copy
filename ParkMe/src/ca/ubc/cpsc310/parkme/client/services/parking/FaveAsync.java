@@ -16,6 +16,8 @@ public interface FaveAsync {
 
 	void getMostFaved(AsyncCallback<ParkingStats[]> callback);
 
+	void getNumFaves(AsyncCallback<Long> callback);
+
 
 
 }

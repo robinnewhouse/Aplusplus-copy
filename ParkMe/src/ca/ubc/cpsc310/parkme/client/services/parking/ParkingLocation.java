@@ -60,18 +60,13 @@ public class ParkingLocation implements Serializable {
 	public void displayPopup2(GoogleMap theMap, MyInfoWindow infoWindow,
 			boolean enabled, final Button addToFave, Button addTicket) {
 
-		// center map on midpoint of the lat/longs & zoom in
+		// center map on midpoint of the lat/longs
 		LatLng latlong = LatLng.create((getStartLat() + getEndLat()) / 2,
 				(getStartLong() + getEndLong()) / 2);
-		// theMap.setCenter(latlong);
-		// theMap.setZoom(17);
 
-		// final Button addToFave;
 		if (enabled) {
-			// addToFave = new Button("Add to Fave");
 			addToFave.setText("Add to Fave");
 		} else {
-			// addToFave = new Button("Already Faved");
 			addToFave.setText("Already Faved");
 		}
 
@@ -152,23 +147,6 @@ public class ParkingLocation implements Serializable {
 			}
 
 		});
-
-		/**
-		 * addToFave.addClickHandler(new ClickHandler() {
-		 * 
-		 * @Override public void onClick(ClickEvent event) {
-		 * 
-		 *           FaveAsync fave = GWT.create(Fave.class);
-		 *           fave.addFave(getParkingID(), new AsyncCallback<Void>() {
-		 * @Override public void onSuccess(Void result) { }
-		 * @Override public void onFailure(Throwable caught) { // refresh
-		 *           favorites
-		 * 
-		 *           } }); addToFave.setEnabled(false);
-		 *           addToFave.setText("FAVED!"); }
-		 * 
-		 *           });
-		 **/
 	}
 
 	public String getColor() {
@@ -271,18 +249,4 @@ public class ParkingLocation implements Serializable {
 
 
 	}
-
-	/**
-	 * private void checkIfAlreadyFave() { FaveAsync fave =
-	 * GWT.create(Fave.class); boolean faved; fave.checkFave(getParkingID(), new
-	 * AsyncCallback<Boolean>() {
-	 * 
-	 * @Override public void onFailure(Throwable caught) {
-	 * 
-	 *           }
-	 * @Override public void onSuccess(Boolean result) { if (result) {
-	 *           displayFavePopup(); } else {
-	 * 
-	 *           } } }); }
-	 **/
 }
