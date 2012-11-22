@@ -19,4 +19,5 @@ public interface UserInfoService extends RemoteService {
 			UserInfoClient userInfo) throws NotLoggedInException;
 
 	Criteria getAvgCriteria();
+	Long getNumUsers();
 }

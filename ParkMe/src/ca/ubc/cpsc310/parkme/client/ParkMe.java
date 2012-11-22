@@ -196,7 +196,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	// SORTING
 	private Label sortLabel = new Label("Sort by:");
 	private ListBox sortBox = new ListBox();
-	private AbsolutePanel sortPanel = new AbsolutePanel();
+	private HorizontalPanel sortPanel = new HorizontalPanel();
 
 	// FILTER UI STUFF
 	private Button setColor = new Button("Set Colors");
@@ -227,7 +227,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	// MAP
 	private MapOperater mapOperator;
 	private GoogleMap theMap;
-	private double defaultZoom = 10;
+	private double defaultZoom = 14;
 
 	// MAIN PANELS
 	private VerticalPanel leftVertPanel = new VerticalPanel();
@@ -743,11 +743,11 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		// Listen for events on the sortBox
 		sortBox.addChangeHandler(new ChangeHandler() {
 			public void onChange(ChangeEvent event) {
-				int selectedIndex = tabs.getTabBar().getSelectedTab();
-				if (selectedIndex == 0) {
+				//int selectedIndex = tabs.getTabBar().getSelectedTab();
+				//if (selectedIndex == 0) {
 					System.out.println("Changed sorting");
 					displayParkings(filteredParkings);
-				}
+				//}
 			}
 		});
 
@@ -1124,8 +1124,10 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		sortBox.addItem("Time Limit");
 		sortBox.addItem("Distance");
 		sortBox.setVisibleItemCount(1);
-		sortPanel.add(sortLabel, 1, 5);
-		sortPanel.add(sortBox, 50, 1);
+		sortPanel.add(sortLabel);
+		sortPanel.add(sortBox);
+		//sortPanel.add(sortLabel, 1, 5);
+		//sortPanel.add(sortBox, 50, 1);
 
 		// Set up searchPanel
 		searchBox.setHeight("1em");
@@ -1160,12 +1162,15 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		histScroll.add(histPanel);
 		histPanel.add(clearHistoryButton);
 		histPanel.add(histFlexTable);
-
+		VerticalPanel rtabPanel = new VerticalPanel();
+		rtabPanel.add(sortPanel);
+		rtabPanel.add(resultsScroll);
 		// mainHorzPanel.add(resultsScroll);
 
 		flowpanel = new FlowPanel();
-		flowpanel.add(sortPanel);
-		flowpanel.add(resultsScroll);
+		//	flowpanel.add(sortPanel);
+		//	flowpanel.add(resultsScroll);
+		flowpanel.add(rtabPanel);
 		tabs.add(flowpanel, "Results");
 
 		flowpanel = new FlowPanel();
@@ -1780,9 +1785,16 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	// Sort the list of parking locations by price, time limit, or distance
 	private List<ParkingLocation> sortBy(String sortMode,
 			List<ParkingLocation> parkingLocations) {
-		Comparator<ParkingLocation> c = getComparator(sortMode);
-		Collections.sort(parkingLocations, c);
-		return parkingLocations;
+		System.out.println(sortMode);
+		if (searchBox.getText().equals("") && sortMode.equals("Distance")) {
+			System.out.println("it was equal to distance");
+			return parkingLocations;
+		}
+		else {
+			Comparator<ParkingLocation> c = getComparator(sortMode);
+			Collections.sort(parkingLocations, c);
+			return parkingLocations;
+		}
 	}
 
 	private Comparator<ParkingLocation> getComparator(String sortParam) {
@@ -2029,9 +2041,21 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		getMostFaved();
 		getMostTicketed();
-		mainStatsVP.add(new HTML("<br><br><b>Number of registered users:</b>"));
-		mainStatsVP.add(new HTML("<b>Number of parkings added to fave:</b>"));
-		mainStatsVP.add(new HTML("<b>Number of parkings that have tickets:</b>"));
+		userInfoService.getNumUsers(new AsyncCallback<Long>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onSuccess(Long result) {
+				mainStatsVP.add(new HTML("<br><br><b>Number of registered users:</b> " + result));
+				mainStatsVP.add(new HTML("<b>Number of parkings added to fave:</b>"));
+				mainStatsVP.add(new HTML("<b>Number of parkings that have tickets:</b>"));
+			}
+		});
 		//statsScroll.add(mainStatsVP);
 		//vp2.add(statsScroll);
 		vp2.add(mainStatsVP);
@@ -2221,7 +2245,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		} else if (usertype.equals("business")) {
 			loadBusiness();
 		} else {
-		//	Window.alert("Can't figure out usertype");
+			//	Window.alert("Can't figure out usertype");
 			loadSetUserType();
 		}
 	}
