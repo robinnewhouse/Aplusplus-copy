@@ -2499,12 +2499,11 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					success.add(new Label("Successfully uploaded " + formattedFine + " fine on to server."));
 					infoWindow.setContent(success);
 					infoWindow.open(theMap);
-					//Window.alert("ticket was successfully uploaded to the server. Thank you");
+					displayTicket(parkingLoc, new TicketInfo(parkingLoc.getParkingID(), doubleAmount));
 				}
 
 				@Override
 				public void onFailure(Throwable caught) {
-					//Window.alert("There was an error uploading ticket");
 				}
 			});
 
