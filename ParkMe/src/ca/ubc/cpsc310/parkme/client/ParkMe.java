@@ -100,7 +100,9 @@ import com.kiouri.sliderbar.client.event.BarValueChangedHandler;
 public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	List<String> adminEmails = new ArrayList<String>();
-
+	Anchor signOutLink = new Anchor("Sign Out");
+	UserInfoClient userInfo = new UserInfoClient();
+	
 	// FB EVENT POPUP
 	private PopupPanel popUp = new PopupPanel();
 	private VerticalPanel mainPan = new VerticalPanel();
@@ -135,13 +137,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private TabPanel tabs = new TabPanel();
 	private FlowPanel flowpanel;
 
-	// LOGIN
-	private Anchor signInLink = new Anchor("Sign In");
-	private Anchor signOutLink = new Anchor("Sign Out");
-	private VerticalPanel loginPanel = new VerticalPanel();
-	private Label loginLabel = new Label(
-			"Please sign in to your Google Account to access the ParkMe application.");
-	private UserInfoClient userInfo = new UserInfoClient();
+
 
 	// SET USER TYPE
 	private VerticalPanel setUserPanel = new VerticalPanel();
@@ -447,6 +443,11 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void loadLogin() {
+		// LOGIN
+		Anchor signInLink = new Anchor("Sign In");
+		VerticalPanel loginPanel = new VerticalPanel();
+		Label loginLabel = new Label(
+				"Please sign in to your Google Account to access the ParkMe application.");
 		// Assemble login panel.
 		signInLink.setHref(loginInfo.getLoginUrl());
 		loginPanel.add(loginLabel);
