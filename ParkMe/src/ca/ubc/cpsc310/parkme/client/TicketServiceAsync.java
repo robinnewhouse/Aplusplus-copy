@@ -12,4 +12,6 @@ public interface TicketServiceAsync {
 
 	void getMostTicketed(AsyncCallback<ParkingStats[]> callback);
 
+	void getNumTickets(AsyncCallback<Long> callback);
+
 }

@@ -394,6 +394,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					// no user info yet;
 					System.out
 					.println("Don't have a user info stored (result is null)");
+					userInfo = result;
 					loadSetUserType();
 				} else {
 
@@ -455,12 +456,14 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void loadSetUserType() {
+		signOutLink.setHref(loginInfo.getLogoutUrl());
 
 		setUserPanel.add(setUserLabel);
 		setUserPanel.add(driverButton);
 		setUserPanel.add(busOwnButton);
 		setUserPanel.add(adminButton);
 		setUserPanel.add(setUserButton);
+		setUserPanel.add(signOutLink);
 		RootPanel.get("parkMe").add(setUserPanel);
 
 		// Listen for mouse events on the Set User Type button.
@@ -687,40 +690,45 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		ticketStatsFT.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-
+				int col = ticketStatsFT.getCellForEvent(event).getCellIndex();
 				int row = ticketStatsFT.getCellForEvent(event).getRowIndex()-1;
-				if (row == -1) {
+				if (col == 1 && row == -1) {
+					getMostTicketed("count");
+					return;
+				}
+				else if (col == 2 && row == -1) {
+					getMostTicketed("fine");
+					return;
+				}
+				else if (row == -1) {
 					return;
 				}
 
 				String parkingID = ticketStatsList.get(row);
 
-				if (parkingID.equals("header")) {
-					return;
-				} else {
-					System.out.println("I have clicked on parking with ID: "
-							+ parkingID);
-					// get corresponding ParkingLocation with parkingID
-					parkService.getParking(parkingID,
-							new AsyncCallback<ParkingLocation>() {
+				System.out.println("I have clicked on parking with ID: "
+						+ parkingID);
+				// get corresponding ParkingLocation with parkingID
+				parkService.getParking(parkingID,
+						new AsyncCallback<ParkingLocation>() {
 
-						@Override
-						public void onFailure(Throwable caught) {
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+
+					@Override
+					public void onSuccess(
+							final ParkingLocation parking) {
+						if (zoom == false) {
+							zoom = true;
+							theMap.setZoom(17);
 						}
+						parking.displayPopup(theMap, infoWindow);
+					}
 
-						@Override
-						public void onSuccess(
-								final ParkingLocation parking) {
-							if (zoom == false) {
-								zoom = true;
-								theMap.setZoom(17);
-							}
-							parking.displayPopup(theMap, infoWindow);
-						}
+				});
 
-					});
 
-				}
 			}
 		});
 	}
@@ -743,11 +751,10 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		// Listen for events on the sortBox
 		sortBox.addChangeHandler(new ChangeHandler() {
 			public void onChange(ChangeEvent event) {
-				//int selectedIndex = tabs.getTabBar().getSelectedTab();
-				//if (selectedIndex == 0) {
-					System.out.println("Changed sorting");
-					displayParkings(filteredParkings);
-				//}
+
+				System.out.println("Changed sorting");
+				displayParkings(filteredParkings);
+
 			}
 		});
 
@@ -756,8 +763,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private void addListenersToButtons() {
 
 		// Listen for key press on search box
-
-
 		searchBox.getTextBox().addKeyPressHandler(new KeyPressHandler() {
 
 			public void onKeyPress(KeyPressEvent event) {
@@ -1035,7 +1040,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		dist = Math.toDegrees(dist);
 		dist = dist * 60 * 1151.5;
 		dist = dist * 1.609344;
-		// System.out.println(dist);
 		return dist;
 	}
 
@@ -1165,11 +1169,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		VerticalPanel rtabPanel = new VerticalPanel();
 		rtabPanel.add(sortPanel);
 		rtabPanel.add(resultsScroll);
-		// mainHorzPanel.add(resultsScroll);
 
 		flowpanel = new FlowPanel();
-		//	flowpanel.add(sortPanel);
-		//	flowpanel.add(resultsScroll);
 		flowpanel.add(rtabPanel);
 		tabs.add(flowpanel, "Results");
 
@@ -1255,32 +1256,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void displayData() {
-
-		/**
-		 * 
-		 * Display the data that is downloaded on the client
-		 * 
-		 **/
-		// ParkingLocation[] parkingLoc = allParkings.toArray(new
-		// ParkingLocation[totalNum]);
 		displayParkings(allParkings);
-
-		/**
-		 * server side
-		 * 
-		 * loadDataService.getParking(new AsyncCallback<ParkingLocation[]>() {
-		 * 
-		 * @Override public void onFailure(Throwable caught) {
-		 *           Window.alert("Error getting parking"); }
-		 * @Override public void onSuccess(ParkingLocation[] result) {
-		 *           resultsFlexTable.removeAllRows(); idList.clear();
-		 *           //mapOperator.drawLocs(result, infoWindow);
-		 *           displayParkings(result); //
-		 *           Window.alert("Successfully displayed data"); }
-		 * 
-		 *           });
-		 **/
-
 	}
 
 	private void displayParkings(List<ParkingLocation> parkingLocations) {
@@ -1307,9 +1283,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		VerticalPanel info = new VerticalPanel();
 
-		// Exception in this line when I try to display all data:
-		// this exception only seems to occur on development mode-- and not
-		// appengine.
 		HTML street = new HTML("<b>" + parkingLoc.getStreet() + "</b>");
 		HTML rate = new HTML("<u>Rate:</u> $" + parkingLoc.getPrice() + "/hr");
 		HTML limit = new HTML("<u>Limit:</u> " + parkingLoc.getLimit() + "hr/s");
@@ -1380,13 +1353,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			mapOperator.drawCircle(searchPoint, maxRadius);
 
 		}
-		/**
-		 * 
-		 * client side filtering
-		 * 
-		 **/
-		System.out
-		.println("Filtering with maxPrice = " + maxPrice
+
+		System.out.println("Filtering with maxPrice = " + maxPrice
 				+ " and minTime = " + minTime + " and maxRadius = "
 				+ maxRadius);
 
@@ -1530,41 +1498,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		displayDir.setPanel(null);
 		System.out.println("In searchLoc");
 
-		/**
-		 * com.google.gwt.maps.client.base.LatLng location =
-		 * com.google.gwt.maps.client.base.LatLng
-		 * .newInstance(theMap.getCenter().lat(), theMap.getCenter().lng());
-		 * 
-		 * // dummy map widget com.google.gwt.maps.client.MapOptions options =
-		 * com.google.gwt.maps.client.MapOptions .newInstance();
-		 * options.setCenter(location); options.setZoom(17);
-		 * options.setMapTypeId(com.google.gwt.maps.client.MapTypeId.ROADMAP);
-		 * options.setDraggable(true); options.setMapTypeControl(true);
-		 * options.setScaleControl(true); options.setScrollWheel(true); MapImpl
-		 * impl = MapImpl.newInstance(mapPanel.getElement(), options); MapWidget
-		 * mapWidget = MapWidget.newInstance(impl); PlacesService ps =
-		 * PlacesService.newInstance(mapPanel.getElement()); //PlacesService ps
-		 * = PlacesService.newInstance(mapWidget.getElement()); //
-		 * PlacesService.create(theMap); PlaceSearchRequest psr =
-		 * PlaceSearchRequest.newInstance(); psr.setName(address);
-		 * psr.setLocation(location);
-		 * 
-		 * ps.search(psr, new PlaceSearchHandler() {
-		 * 
-		 * @Override public void onCallback(JsArray<PlaceResult> results,
-		 *           PlacesServiceStatus status) { if (status ==
-		 *           PlacesServiceStatus.OK) { fAddress =
-		 *           results.get(0).getFormatted_Address(); } else { fAddress =
-		 *           address; } }
-		 * 
-		 *           });
-		 **/
 		GeocoderRequest request = GeocoderRequest.create();
 		request.setAddress(address + " Vancouver");
 		request.setRegion("ca");
-
-		// To remove places functionality, simply change all following instances
-		// of fAddress to address
 
 		geocoder.geocode(request, new Geocoder.Callback() {
 
@@ -1591,7 +1527,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void downloadData() {
-		//Window.alert("Please wait while data is loading");
 		loadDataService.getParking(new AsyncCallback<ParkingLocation[]>() {
 
 			@Override
@@ -1606,7 +1541,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				}
 				totalNum = allParkings.size();
 				loadingPage.hide();
-				//Window.alert("Data has been downloaded to client successfully.");
 				filterParkings();
 
 			}
@@ -1749,7 +1683,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			@Override
 			public void onSuccess(String[] result) {
 				faveFlexTable.removeAllRows();
-				idList.clear();
+				faveList.clear();
 				if (result.length == 0) {
 					faveFlexTable.setText(0, 0,
 							"You haven't added anything to favorites yet.");
@@ -1830,10 +1764,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 							o2.getStartLat(), o2.getStartLong());
 					double distanceEnd2 = distance(pointx, pointy,
 							o2.getEndLat(), o2.getEndLong());
-					// System.out.println("Distance to " + o1.getStreet() +
-					// " is " + distance1);
-					// System.out.println("Distance to " + o2.getStreet() +
-					// " is " + distance2);
 
 					double distance1 = distanceStart1;
 					double distance2 = distanceStart2;
@@ -1899,11 +1829,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 				@Override
 				public void onSuccess(JavaScriptObject result) {
-					// change info window to link to FB event
 					JSONObject res = new JSONObject(result);
 					String id = res.get("id").toString();
-					// Window.alert("Created new Facebook Event with id " +
-					// id);
+
 					Label eventTitle = new Label(
 							"Successfully created Facebook event " + title);
 					String url = "<a href=\"http://www.facebook.com/events/"
@@ -2007,9 +1935,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		mainPanel.add(rightVertPanel);
 
 		mapPanel.setSize("100%", "100%");
-		rightVertPanel.setSize(Window.getClientWidth()-550 + "px", Window.getClientHeight()-30 + "px");
+		rightVertPanel.setSize(Window.getClientWidth()-500 + "px", Window.getClientHeight()-30 + "px");
 		vp1.setSize("200px", "100%");
-		vp2.setSize("300px", "100%");
+		vp2.setSize("250px", "100%");
 		vp1.add(new HTML("<center><b>ParkMe<br>Administrator</b></center>"));
 		signOutLink.setSize("200px", "3em");
 		signOutLink.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -2040,7 +1968,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		ticketscroll.setHeight("170px");
 
 		getMostFaved();
-		getMostTicketed();
+		getMostTicketed("fine");
 		userInfoService.getNumUsers(new AsyncCallback<Long>() {
 
 			@Override
@@ -2052,35 +1980,45 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			@Override
 			public void onSuccess(Long result) {
 				mainStatsVP.add(new HTML("<br><br><b>Number of registered users:</b> " + result));
-				mainStatsVP.add(new HTML("<b>Number of parkings added to fave:</b>"));
-				mainStatsVP.add(new HTML("<b>Number of parkings that have tickets:</b>"));
+
+
 			}
 		});
-		//statsScroll.add(mainStatsVP);
-		//vp2.add(statsScroll);
+		fave.getNumFaves(new AsyncCallback<Long>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+
+			}
+
+			@Override
+			public void onSuccess(Long result) {
+				mainStatsVP.add(new HTML("<b>Number of total favorites:</b> " + result));
+
+			}
+		});
+		ticket.getNumTickets(new AsyncCallback<Long>() {
+
+			@Override
+			public void onFailure(Throwable caught) {				
+			}
+
+			@Override
+			public void onSuccess(Long result) {
+				mainStatsVP.add(new HTML("<b>Number of tickets uploaded:</b> " + result));
+			}
+
+		});
+
 		vp2.add(mainStatsVP);
-
-
-		// number of registered users:
-		// number of parkings put to fave
-
-
 
 		viewAsDriver.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				RootPanel.get("parkMe").clear();
 				mainPanel.clear();
-				//				statsScroll.clear();
 				loadParkMe();
 				initializeSliderValues();
-				//				initializeFlexTables();
-				//				initializeLayout();
-				//				addListenerToSortBox();
-				//				initializeSliderValues();
-				//				downloadData();
-				//				addListenersToSliders();
-				//				addListenerToMarker();
 				System.out.println("finished click handler");
 			}
 		});
@@ -2089,7 +2027,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			public void onClick(ClickEvent event) {
 				RootPanel.get("parkMe").clear();
 				mainPanel.clear();
-				//statsScroll.clear();
 				loadBusiness();
 			}
 		});
@@ -2135,7 +2072,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					faveStatsList.add(fs.get(i).getParkingID());				
 				}
 				String[] faveStatsArray = faveStatsList.toArray(new String[faveStatsList.size()]);
-				System.out.println(faveStatsList.get(0));
+				
 				parkService.getParkings(faveStatsArray,
 						new AsyncCallback<ParkingLocation[]>() {
 
@@ -2154,7 +2091,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	}
 
-	private void getMostTicketed() {
+	private void getMostTicketed(final String comp) {
+		ticketStatsFT.removeAllRows();
+		ticketStatsList.clear();
 		System.out.println("Getting most ticketed");
 		//ticketStatsList.add("header");				
 
@@ -2186,7 +2125,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
 
 			}
 
@@ -2197,8 +2135,12 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				for (ParkingStats f : result) {
 					fs.add(f);
 				}
-				Collections.sort(fs, byFine);
-
+				if (comp.equals("fine")) {
+					Collections.sort(fs, byFine);
+				}
+				else if (comp.equals("count")) {
+					Collections.sort(fs, byCount);
+				}
 				for (int i = 0; i < fs.size(); i++ ) {
 					int row = ticketStatsFT.getRowCount();
 					ticketStatsFT.setText(row, 0, fs.get(i).getParkingID());
@@ -2208,7 +2150,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 				}
 				String[] ticketStatsArray = ticketStatsList.toArray(new String[ticketStatsList.size()]);
-				System.out.println(ticketStatsList.get(0));
+
 				parkService.getParkings(ticketStatsArray,
 						new AsyncCallback<ParkingLocation[]>() {
 
@@ -2222,9 +2164,12 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 							}
 
 						});
+
+
 			}
 		});
 	}
+
 
 	private void initBusinessLayout() {
 		signOutLink.setHref(loginInfo.getLogoutUrl());
@@ -2262,12 +2207,14 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		buttons.add(createEvent);
 		buttons.add(getDirections);
 		main.add(buttons);
-
+		
 		createEvent.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				//infoWindow.open(theMap);
+				//mainPan.clear();
 				buttonPanel.add(eventCreate);
-				buttonPanel.add(eventCancel);
+			//	buttonPanel.add(eventCancel);
 				eventName.setText("Event Name");
 				eventTime.setText("YYYY-MM-DD");
 				mainPan.add(eventName);
@@ -2275,15 +2222,17 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				mainPan.add(buttonPanel);
 				infoWindow.setContent(mainPan);
 				infoWindow.open(theMap);
-				eventCancel.addClickHandler(new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						// TODO Auto-generated method stub
-						//popUp.hide();
-						infoWindow.close();
-					}
-				});
+//				
+//				eventCancel.addClickHandler(new ClickHandler() {
+//
+//					@Override
+//					public void onClick(ClickEvent event) {
+//						// TODO Auto-generated method stub
+//						//popUp.hide();
+//						infoWindow.close();
+//					}
+//				});
+				
 				eventCreate.addClickHandler(new ClickHandler() {
 
 					@Override

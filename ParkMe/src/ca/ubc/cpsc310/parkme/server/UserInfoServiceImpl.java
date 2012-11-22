@@ -139,19 +139,11 @@ public class UserInfoServiceImpl extends RemoteServiceServlet implements UserInf
 	
 	public Long getNumUsers() {
 		PersistenceManager pm = getPersistenceManager();
-		ParkingStats[] faves;
 		Long number = 0L;
 		try {
 			Query q = pm.newQuery(UserInfo.class);
-			q.setResult("count(username) as count");
-			q.setResultClass(HashMap.class); 
-			Collection results = (Collection) q.execute();
-			Iterator iter = results.iterator();
-			while (iter.hasNext()) {
-				Map row = (Map) iter.next();
-				number = (Long) row.get("count");
-		
-			}
+			q.setResult("count(username)");
+			number = (Long) q.execute();
 		} finally {
 			pm.close();
 		}
