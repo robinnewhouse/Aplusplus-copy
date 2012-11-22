@@ -1,0 +1,142 @@
+ParkMe Test Plan
+	{actions in bracket should happen}
+
+Driver Usage Testing
+	Sign in as driver
+	{the parking data should load automatically}
+	{the parking locations should display in results tab and on map}
+	{colors should differ by price (from green to red)}
+	{street names should be displayed}
+	Slide filters price->$1.00 and time->3hrs
+	{9 results should be displayed} 
+	{automatically update locations on the table and map view}
+	Slide max price to $5.00
+	Slide min time limit to 0 hrs
+	click first entry
+	{popup should appear on map}
+
+
+Login Testing
+	{website initially shows welcome screen with graphic and greeting}
+	Click Sign In
+	Sign in with a gmail account not on the list of administrators (view list below)
+	{user type page should appear}
+	try to sign in as an administrator
+		{sign in should be rejected}
+	try to sign in as driver
+		{prompt for facebook login}
+	Sing in with facebook account
+	Sign out 
+		{returns to sign in page}
+
+	Sign in with administrator account
+	on user type page select administrator type and click sign in
+		{sign in should be accepted}
+	sign out
+		{returns to sign in page}
+
+Admin Testing
+	Sing in as Admin
+	Click "Load Data" Button
+		{successfully loads data and displays it to map}
+	Click "Load Street Information" Button
+		{street information will take some time, but after about half an hour the names f the streets will be displayed in their popups}
+		{if many streets are already loaded, the info window}
+	Average User Criteria
+		{Average radius is a number between 0 and 1000 meters in a reasonable format}		
+		{Average radius is a number between 0 and 5 hours in a reasonable format}
+	Most Favorited Locations
+		{a table of data is visible with column 1: Parking ID, Column 2: count of users who have this location as a favorite}
+		{rows are sorted in descending order by count}
+		Click on a parking ID
+			{popup should appear on map and map in centered to that location with proper info}
+	Most Ticketed Locations
+		{a table of data is visible with column 1: Parking ID, Column 2: count of users who have gotten a ticket at this location, column 3: the total amount of fines reported by users at this location}
+		Click on a parking ID
+			{popup should appear on map and map in centered to that location with proper info}
+		Click on count
+			{table should reload sorted by ticket count}
+		Click on count again
+			{table should reload still sorted by ticket count}
+		Click on total fine
+			{table should reload sorted by total fine}
+		Click on total fine again
+			{table should reload still sorted by total fine}
+	{bottom should display # of total favorites, tickets uploaded, registered users}
+	Click View as driver
+			{all driver functionality should work as normal (see driver tests)}
+
+
+ADMIN EMAILS
+		alyanna@alyannauy.com
+		franceskrussell@gmail.com
+		robinnewhouse@gmail.com
+		wbkdef@gmail.com
+
+
+
+
+TESTING TO ORGANIZE
+
+ParkMeVancouver Demo
+1)
+-	Intro
+-	Try to log in as admin, get denied
+-	Log in as driver
+-	Briefly explain what’s being displayed
+-	Filter: change price, time limit, and walking distance sliders
+o	Effect of each
+o	Changing distance slider has no effect
+-	Sort by time limit and price
+o	Scroll down list to show that they’re in order
+-	Click on result in list to show popup appearing
+-	Click on polyline to show that old popup goes away and new one comes up
+2)
+-	Search for 123 Georgia St
+o	Only results matching current criteria show up
+-	Change filters, show result
+-	Sort by distance
+o	Click the first few results in order to show they’re properly sorted
+-	Click on marker
+-	Click on Directions to Here button
+o	Route appears on map
+o	Directions tab automatically opens, with direction displayed
+o	It automatically detects your location
+-	Go to Results tab and back to Directions to show they’re still there
+-	Click on Create Event button, enter info, and click okay
+-	Go to Facebook events page
+o	Info and address are correct
+3)
+-	Search for 310 Granville St
+o	Directions cleared on map and in Directions tab
+-	Click on a couple polylines and add them to Favourites
+-	Go to Favourites tab
+-	Click on a favourite, see that it shows up
+-	Remove one favourite
+-	Go to History tab
+o	Previous searches have been saved
+-	Go to Statistics tab
+-	Calculate average price within 100 m of 678 Burrard St
+-	Click on a polyline
+-	Add a ticket to that location
+-	Go to Tickets tab, show that it appears
+-	Log out
+-	Log in again
+o	Last slider values are saved
+o	Favourites are saved
+o	Search history is saved
+-	Log out
+4)
+-	Admin logs in
+-	Explain Load Data, Load Street Information (just click once a month)
+-	Point out:
+o	Number of users
+o	Number of total favourites
+o	Number of tickets uploaded
+o	Average user criteria
+-	Explain Most Favourited Locations
+o	Click on locations in list, see them appear on map
+-	Explain Most Ticketed Locations
+o	Click on locations in list, see them appear on map
+o	Sort by count and total fine
+-	Click View As Driver
