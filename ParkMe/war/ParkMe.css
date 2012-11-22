@@ -91,13 +91,7 @@ h1 {
 	z-index: 10;
 }
 
-.main {
-	
-}
 
-.tab {
-	
-}
 #header {
 	height: 30px;
 	width: 100%;
@@ -126,6 +120,7 @@ h1 {
 #parkMe {
 	position: fixed;
 	top: 30px;
+	left: 0px;
 }
 .signout a:link, a:visited, a:active{
 	color: #cccccc;
