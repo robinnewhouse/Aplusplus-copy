@@ -1796,11 +1796,13 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 				fine.addKeyPressHandler(new KeyPressHandler() {
 					public void onKeyPress(KeyPressEvent event) {
+						//event.stopPropagation();
 						if (event.getCharCode() == KeyCodes.KEY_ENTER) {
+							//event.stopPropagation();
 							addFineToServer(parkingLoc);
-							event.stopPropagation();
+							
 						}
-						event.stopPropagation();
+						
 					}
 				});
 			}
