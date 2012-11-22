@@ -11,7 +11,8 @@ public class Slider extends SliderBarHorizontal{
 	Image less = new Image("/images/Slider/minush.png");
 	Image scaleH = new Image("/images/Slider/scalehthinblack.png");
 	Image more = new Image("/images/Slider/plush.png");
-	Image drag = new Image("/images/Slider/draghthin.png");
+	Image drag = new Image("/images/Slider/image.png");
+
 	
 	public Slider(int maxValue) {
 		boolean showRows = true;
@@ -26,6 +27,7 @@ public class Slider extends SliderBarHorizontal{
 		this.setWidth("200px");
 		this.drawMarks("white",6);
 		this.setMaxValue(maxValue);
+		drag.setSize("30px", "30px");
 	}
 
 }

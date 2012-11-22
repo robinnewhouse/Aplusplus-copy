@@ -1116,9 +1116,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		filterPanel.add(maxPriceLabel, 1, 10);
 		filterPanel.add(minTimeLabel, 1, 40);
 		filterPanel.add(maxRadiusLabel, 1, 70);
-		filterPanel.add(priceFilterSlider, 130, 15);
-		filterPanel.add(timeFilterSlider, 130, 45);
-		filterPanel.add(radiusFilterSlider, 130, 75);
+		filterPanel.add(priceFilterSlider, 130, 5);
+		filterPanel.add(timeFilterSlider, 130, 35);
+		filterPanel.add(radiusFilterSlider, 130, 65);
 		filterPanel.add(maxPriceValueLabel, 350, 10);
 		filterPanel.add(minTimeValueLabel, 350, 40);
 		filterPanel.add(maxRadiusValueLabel, 350, 70);
@@ -2131,11 +2131,11 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		mapPanel.setSize("100%", "100%");
 
-		rightVertPanel.setSize(Window.getClientWidth()-500 + "px", Window.getClientHeight()-50 + "px");
+		rightVertPanel.setSize(Window.getClientWidth()-470 + "px", Window.getClientHeight()-50 + "px");
 
 		
 		vp1.setSize("200px", "100%");
-		vp2.setSize("260px", "100%");
+		vp2.setSize("230px", "100%");
 		vp1.add(new HTML("<center><b>ParkMe<br>Administrator</b></center>"));
 		signOutLink.setSize("200px", "3em");
 		signOutLink.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
