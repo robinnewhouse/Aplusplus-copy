@@ -98,7 +98,7 @@ import com.kiouri.sliderbar.client.event.BarValueChangedHandler;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
-	
+
 	List<String> adminEmails = new ArrayList<String>();
 
 	// FB EVENT POPUP
@@ -297,7 +297,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		initializeFlexTables();
 		initializeLayout();
 		createMap();
-		
+
 		addListenersToButtons();
 		addListenerToResults();
 		addListenerToSortBox();
@@ -323,7 +323,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		loadingPage.setStyleName("loading");
 		HTML page = new HTML("<br><br><center>Please wait while ParkMe is loading<br><br><img src=\"http://i.imgur.com/NXS4H.gif\"></center>");
 		loadingPage.add(page);
-		
+
 	}
 	private void loadFacebook(final String type) {
 
@@ -474,14 +474,19 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 					usertype = "admin";
 				} else if (adminButton.getValue()) {
 					Window.alert("Only specified users can be admin.");
+					return;
 				} else {
 					Window.alert("Please select one of the choices above.");
 					return;
 				}
 				setUserPanel.setVisible(false);
 				if (userInfo == null) {
-				userInfo = new UserInfoClient(loginInfo.getNickname(),
-						usertype, 5.00, 0, 0);}
+					userInfo = new UserInfoClient(loginInfo.getNickname(),
+							usertype, 5.00, 0, 0);
+				}
+				else {
+					userInfo.setUserType(usertype);
+				}
 				userInfoService.setUserInfo(userInfo,
 						new AsyncCallback<Void>() {
 
@@ -666,7 +671,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				if (row == -1) {
 					return;
 				}
-				
+
 				String parkingID = faveStatsList.get(row);
 
 				if (parkingID.equals("header")) {
@@ -697,7 +702,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				}
 			}
 		});
-		
+
 		ticketStatsFT.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 
@@ -705,7 +710,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				if (row == -1) {
 					return;
 				}
-				
+
 				String parkingID = ticketStatsList.get(row);
 
 				if (parkingID.equals("header")) {
@@ -772,7 +777,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 
 		searchBox.getTextBox().addKeyPressHandler(new KeyPressHandler() {
-			
+
 			public void onKeyPress(KeyPressEvent event) {
 				if (event.getCharCode() == KeyCodes.KEY_ENTER) {
 					mapOperator.clearMarker();
@@ -1409,7 +1414,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			}
 			// System.out.println("Found " + filtered.size() + " locations");
 		}
-		
+
 		filteredParkings = filtered;
 
 		displayParkings(filtered);
@@ -1616,11 +1621,11 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				loadingPage.hide();
 				//Window.alert("Data has been downloaded to client successfully.");
 				filterParkings();
-				
+
 			}
 		});
 		loadingPage.show();
-		
+
 	}
 
 	private void displayFavorites(ParkingLocation[] parkingLocs) {
@@ -2060,16 +2065,16 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			public void onClick(ClickEvent event) {
 				RootPanel.get("parkMe").clear();
 				mainPanel.clear();
-//				statsScroll.clear();
+				//				statsScroll.clear();
 				loadParkMe();
 				initializeSliderValues();
-//				initializeFlexTables();
-//				initializeLayout();
-//				addListenerToSortBox();
-//				initializeSliderValues();
-//				downloadData();
-//				addListenersToSliders();
-//				addListenerToMarker();
+				//				initializeFlexTables();
+				//				initializeLayout();
+				//				addListenerToSortBox();
+				//				initializeSliderValues();
+				//				downloadData();
+				//				addListenersToSliders();
+				//				addListenerToMarker();
 				System.out.println("finished click handler");
 			}
 		});
@@ -2234,7 +2239,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		} else if (usertype.equals("business")) {
 			loadBusiness();
 		} else {
-			Window.alert("Can't figure out usertype");
+		//	Window.alert("Can't figure out usertype");
 			loadSetUserType();
 		}
 	}
