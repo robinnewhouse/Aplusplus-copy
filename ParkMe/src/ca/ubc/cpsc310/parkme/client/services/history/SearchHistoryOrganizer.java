@@ -11,6 +11,9 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 //The intention of this class is to put most of the code 
 //related to the search history in one class
 public class SearchHistoryOrganizer {
+	//Constants
+	public static final int MAX_HISTORY = 30;  //The maximum number of past search strings that are kept *on the server*
+	
 	// Variables to get through constructor
 	private final FlexTable histFlexTable;
 	private final MultiWordSuggestOracle oracle;
@@ -45,6 +48,7 @@ public class SearchHistoryOrganizer {
 	}
 
 	public void addAndSaveSearch(String search) {
+		System.out.println("Starting SearchHistoryOrganizer.addAndSaveSearch");
 		// Decided to have a good history it was good to include the
 		// multiplicity of searchs as well
 		// if(!searchHistList.contains(search)){
@@ -57,7 +61,8 @@ public class SearchHistoryOrganizer {
 		searchHistList.add(search);
 		oracle.add(search);
 		int rows = histFlexTable.getRowCount();
-		histFlexTable.setText(rows, 0, search);
+		histFlexTable.insertRow(0);
+		histFlexTable.setText(0, 0, search);
 	}
 
 	private void saveSearch(String search) {
