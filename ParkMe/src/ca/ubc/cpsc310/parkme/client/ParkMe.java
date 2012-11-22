@@ -39,6 +39,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -60,11 +61,14 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -1217,7 +1221,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		// Set sizes for elements
 
-		String scrollHeight = Window.getClientHeight() - 265 + "px";
+		String scrollHeight = Window.getClientHeight() - 295 + "px";
 		String scrollWidth = 0.4 * Window.getClientWidth() - 60 + "px";
 		resultsScroll.setSize(scrollWidth, scrollHeight);
 		faveScroll.setSize(scrollWidth, scrollHeight);
@@ -1231,7 +1235,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		histFlexTable.setSize(scrollWidth, "100%");
 		leftVertPanel.setSize(0.3 * Window.getClientWidth() + "px", "100%");
 		rightVertPanel.setSize(0.7 * Window.getClientWidth() - 120 + "px",
-				Window.getClientHeight() - 20 + "px");
+				Window.getClientHeight() - 50 + "px");
 
 		mapPanel.setSize("100%", "100%");
 		mainPanel.setSpacing(0);
@@ -1921,37 +1925,50 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		// buttons to load data & street info
 		// no option to filter
 		// whole page about statistics
-
+		SimplePanel dummyPanel = new SimplePanel();
+		dummyPanel.setSize("200px", "20px");
+		VerticalPanel signoutPanel = new VerticalPanel();
 		ScrollPanel favescroll = new ScrollPanel();
 		VerticalPanel vp1 = new VerticalPanel();
 		VerticalPanel vp2 = new VerticalPanel();
 		Button viewAsDriver = new Button("View As Driver");
 		Button viewAsBusiness = new Button("View As Business Owner");
 		signOutLink.setHref(loginInfo.getLogoutUrl());
+		//signOutLink.setStyleName("signout");
+		signoutPanel.setSize("200px", "50px");
+		signoutPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		signoutPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		signoutPanel.add(signOutLink);
 		RootPanel.get("parkMe").add(mainPanel);
-
+	//	RootPanel.get("righttext").add(signOutLink);
+	//	signOutLink.setTabIndex(10);
+	//	HTMLPanel htmlPanel = HTMLPanel.wrap(RootPanel.get("righttext").getElement());
+	//	htmlPanel.add(signOutLink);
+	//	mainPanel.add(htmlPanel);
 		mainPanel.add(vp1);
 		mainPanel.add(vp2);
 		mainPanel.add(rightVertPanel);
 
 		mapPanel.setSize("100%", "100%");
-		rightVertPanel.setSize(Window.getClientWidth()-500 + "px", Window.getClientHeight()-30 + "px");
+		rightVertPanel.setSize(Window.getClientWidth()-500 + "px", Window.getClientHeight()-60 + "px");
 		vp1.setSize("200px", "100%");
 		vp2.setSize("250px", "100%");
 		vp1.add(new HTML("<center><b>ParkMe<br>Administrator</b></center>"));
 		signOutLink.setSize("200px", "3em");
 		signOutLink.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		vp1.add(signOutLink);
+		//vp1.add(signOutLink);
+		
 		loadDataButton.setSize("200px", "3em");
 		getAddressesButton.setSize("200px", "3em");
 		viewAsDriver.setSize("200px", "3em");
 		viewAsBusiness.setSize("200px", "3em");
+		vp1.add(dummyPanel);
 		vp1.add(loadDataButton);
 		vp1.add(getAddressesButton);
 		mainPanel.setSpacing(10);
 		vp1.add(viewAsDriver);
 		vp1.add(viewAsBusiness);
-
+		vp1.add(signoutPanel);
 		avgCritVP.add(new HTML("<b>Average User Criterias:</b>"));
 		mainStatsVP.add(avgCritVP);
 		calculateAvgCriteria();
@@ -1964,8 +1981,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		mainStatsVP.add(ticketscroll);
 		faveStatsFT.setCellPadding(5);
 		ticketStatsFT.setCellPadding(5);
-		favescroll.setHeight("170px");
-		ticketscroll.setHeight("170px");
+		favescroll.setHeight("160px");
+		ticketscroll.setHeight("160px");
 
 		getMostFaved();
 		getMostTicketed("fine");

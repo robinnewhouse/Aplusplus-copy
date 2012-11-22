@@ -98,3 +98,35 @@ h1 {
 .tab {
 	
 }
+#header {
+	height: 30px;
+	width: 100%;
+	background-color: #000000;
+	position: fixed;
+	top:0px;
+	left:0px;
+	color: #ffffff;
+	
+}
+#text {
+	padding: 6px;
+	padding-left: 10px;
+}
+#righttext {
+	padding: 6px;
+	padding-right: 10px;
+	text-align: right;
+	position: fixed;
+	right: 0px;
+}
+
+#righttext a:link {
+	color: #ffffff;
+}
+#parkMe {
+	position: fixed;
+	top: 30px;
+}
+.signout a:link, a:visited, a:active{
+	color: #cccccc;
+}
