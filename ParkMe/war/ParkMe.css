@@ -146,3 +146,6 @@ h1 {
 .signout a:link, a:visited, a:active{
 	color: #cccccc;
 }
+.scroll {
+	overflow-y: hidden;
+}

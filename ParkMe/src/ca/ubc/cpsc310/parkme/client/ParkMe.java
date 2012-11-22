@@ -1007,8 +1007,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 				Double radius = result.getRadius();
 				Double price = result.getMaxPrice();
-				Double time = result.getMinTime();
-
+				Double time = (double) (Math.round(result.getMinTime()*100)/100);
+				
 				Label radiusLabel = new Label("Average Radius: " + radius + "m");
 				Label priceLabel = new Label("Average Max Price: $" + price
 						+ "/hr");
@@ -1171,6 +1171,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		ticketFlexTable.setCellPadding(5);
 
 		resultsScroll.add(resultsFlexTable);
+		resultsScroll.setStyleName("scroll");
 		faveScroll.add(faveFlexTable);
 
 		VerticalPanel histPanel = new VerticalPanel();
@@ -2142,11 +2143,11 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		mapPanel.setSize("100%", "100%");
 
-		rightVertPanel.setSize(Window.getClientWidth()-470 + "px", Window.getClientHeight()-50 + "px");
+		rightVertPanel.setSize(Window.getClientWidth()-490 + "px", Window.getClientHeight()-50 + "px");
 
 		
 		vp1.setSize("200px", "100%");
-		vp2.setSize("230px", "100%");
+		vp2.setSize("250px", "100%");
 		vp1.add(new HTML("<center><b>ParkMe<br>Administrator</b></center>"));
 		signOutLink.setSize("200px", "3em");
 		signOutLink.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -2166,10 +2167,10 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		calculateAvgCriteria();
 
 		favescroll.add(faveStatsFT);
+		ticketscroll.add(ticketStatsFT);
 		mainStatsVP.add(new HTML("<br><br><b>Most Favorited Locations:</b>"));
 		mainStatsVP.add(favescroll);
 		mainStatsVP.add(new HTML("<br><br><b>Most Ticketed Locations:</b>"));
-		ticketscroll.add(ticketStatsFT);
 		mainStatsVP.add(ticketscroll);
 		faveStatsFT.setCellPadding(5);
 		ticketStatsFT.setCellPadding(5);
