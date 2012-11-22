@@ -346,12 +346,12 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		fbCore.init(apiKey, status, cookie, xfbml);
 		System.out.println("load facebook");
-
+		fbPanel.setStyleName("fb");
 		fbPanel.add(new HTML(
 				"This app uses Facebook Connect. Please click to login "));
 		fbPanel.add(new HTML(
 				"<fb:login-button autologoutlink='true' scope='publish_stream,read_stream,create_event' /> "));
-
+		fbPanel.add(new HTML ( "<hr/><div id=\"comments\"><fb:comments xid='gwtfb' numposts='3' publish_feed='true'/></div>" ));
 		class SessionChangeCallback implements AsyncCallback<JavaScriptObject> {
 			public void onSuccess(JavaScriptObject response) {
 				System.out.println("SessionChangeCallback");
@@ -462,7 +462,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private void loadLogin() {		
 		// Assemble login panel.
 		VerticalPanel loginPanel = new VerticalPanel();
-		loginPanel.setSize("100%", "100%");
+		loginPanel.setSize(Window.getClientWidth() + "px", Window.getClientHeight()-30 + "px");
 		loginPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		RootPanel.get("parkMe").add(loginPanel);
 		
@@ -484,6 +484,13 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	private void loadSetUserType() {
+		VerticalPanel mainUserPanel = new VerticalPanel();
+		mainUserPanel.setStyleName("usertypeBG");
+		mainUserPanel.setSize(Window.getClientWidth() + "px", Window.getClientHeight()-30 + "px");
+		mainUserPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		mainUserPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		
+		setUserPanel.setStyleName("usertype");
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 
 		setUserPanel.add(setUserLabel);
@@ -492,8 +499,9 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		setUserPanel.add(adminButton);
 		setUserPanel.add(setUserButton);
 		setUserPanel.add(signOutLink);
-		RootPanel.get("parkMe").add(setUserPanel);
-
+		mainUserPanel.add(setUserPanel);
+		//RootPanel.get("parkMe").add(setUserPanel);
+		RootPanel.get("parkMe").add(mainUserPanel);
 		// Listen for mouse events on the Set User Type button.
 		setUserButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
@@ -541,7 +549,13 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		if (fbCore.getAuthResponse() != null) {
 			loadCorrectPage(type);
 		} else {
-			RootPanel.get("parkMe").add(fbPanel);
+			VerticalPanel fbBG = new VerticalPanel();
+			fbBG.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+			fbBG.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+			fbBG.setSize(Window.getClientWidth() + "px", Window.getClientHeight()-30 + "px");
+			fbBG.setStyleName("usertypeBG");
+			fbBG.add(fbPanel);
+			RootPanel.get("parkMe").add(fbBG);
 			FBXfbml.parse();
 		}
 
@@ -2090,17 +2104,14 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	private void loadDriver() {
 		// stub
+		RootPanel.get("parkMe").clear();
 		loadParkMe();
 	}
 
-	private void loadBusiness() {
-		// stub
-		addListenersToButtons();
-		initBusinessLayout();
-	}
 
 	private void loadAdmin() {
 		// stub
+		RootPanel.get("parkMe").clear();
 		addListenersToButtons();
 		addListenerToStatsResults();
 		initAdminLayout();
@@ -2220,10 +2231,16 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			public void onClick(ClickEvent event) {
 				RootPanel.get("parkMe").clear();
 				mainPanel.clear();
-
-				loadParkMe();
+	
+				addListenersToFlexTables(); 
+				addListenerToSortBox();
 				initializeSliderValues();
-			
+				initializeLoadingPage();
+				initializeDriverLayout();
+				downloadData(); 
+				addListenersToSliders();
+				addListenerToMarker();
+				
 				System.out.println("finished click handler");
 			}
 		});
