@@ -11,10 +11,10 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
-import ca.ubc.cpsc310.parkme.client.TicketInfo;
-import ca.ubc.cpsc310.parkme.client.TicketService;
 import ca.ubc.cpsc310.parkme.client.services.parking.Fave;
 import ca.ubc.cpsc310.parkme.client.services.parking.ParkingStats;
+import ca.ubc.cpsc310.parkme.client.services.parking.TicketInfo;
+import ca.ubc.cpsc310.parkme.client.services.parking.TicketService;
 import ca.ubc.cpsc310.parkme.client.services.user.NotLoggedInException;
 
 import com.google.appengine.api.users.User;
