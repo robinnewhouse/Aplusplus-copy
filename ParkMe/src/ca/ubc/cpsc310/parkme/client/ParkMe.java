@@ -194,7 +194,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	// SORTING
 	private Label sortLabel = new Label("Sort by:");
 	private ListBox sortBox = new ListBox();
-	private HorizontalPanel sortPanel = new HorizontalPanel();
+	private AbsolutePanel sortPanel = new AbsolutePanel();
 
 	// FILTER UI STUFF
 	private Button setColor = new Button("Set Colors");
@@ -532,24 +532,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		showFaves();
 		searchHistoryOrganizer.loadAndShowSearchHistory();
 	}
-
-	// private void addListenerToTabs() {
-	// tabs.addSelectionHandler(new SelectionHandler<Integer>() {
-	// public void onSelection(SelectionEvent<Integer> event) {
-	// switch (event.getSelectedItem()) {
-	// case 0: case 3:
-	// // display search results on map
-	// break;
-	// case 1:
-	// // display favourites on map
-	// break;
-	// case 2:
-	// // display parking history on map
-	// break;
-	// }
-	// }
-	// });
-	// }
 
 	private void addListenerToResults() {
 		resultsFlexTable.addClickHandler(new ClickHandler() {
@@ -1128,8 +1110,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		sortBox.addItem("Time Limit");
 		sortBox.addItem("Distance");
 		sortBox.setVisibleItemCount(1);
-		sortPanel.add(sortLabel);
-		sortPanel.add(sortBox);
+		sortPanel.add(sortLabel, 1, 5);
+		sortPanel.add(sortBox, 50, 1);
 
 		// Set up searchPanel
 		searchBox.setHeight("1em");
@@ -1168,6 +1150,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		// mainHorzPanel.add(resultsScroll);
 
 		flowpanel = new FlowPanel();
+		flowpanel.add(sortPanel);
 		flowpanel.add(resultsScroll);
 		tabs.add(flowpanel, "Results");
 
@@ -1208,7 +1191,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		leftVertPanel.add(searchLabel);
 		leftVertPanel.add(searchPanel);
 		leftVertPanel.add(filterPanel);
-		leftVertPanel.add(sortPanel);
 		leftVertPanel.add(tabs);
 		mainPanel.add(leftVertPanel);
 		mainPanel.add(rightVertPanel);
