@@ -61,7 +61,8 @@ public class SearchHistoryOrganizer {
 		searchHistList.add(search);
 		oracle.add(search);
 		int rows = histFlexTable.getRowCount();
-		histFlexTable.setText(rows, 0, search);
+		histFlexTable.insertRow(0);
+		histFlexTable.setText(0, 0, search);
 	}
 
 	private void saveSearch(String search) {
