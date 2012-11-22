@@ -62,6 +62,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -442,17 +443,28 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		});
 	}
 
-	private void loadLogin() {
-		// LOGIN
-		Anchor signInLink = new Anchor("Sign In");
-		VerticalPanel loginPanel = new VerticalPanel();
-		Label loginLabel = new Label(
-				"Please sign in to your Google Account to access the ParkMe application.");
+	private void loadLogin() {		
 		// Assemble login panel.
-		signInLink.setHref(loginInfo.getLoginUrl());
-		loginPanel.add(loginLabel);
-		loginPanel.add(signInLink);
+		VerticalPanel loginPanel = new VerticalPanel();
+		loginPanel.setSize("100%", "100%");
+		loginPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		RootPanel.get("parkMe").add(loginPanel);
+		
+		//Heading and Subheading
+		loginPanel.add(new HTML("<H1>Park Me</H1>"));
+		loginPanel.add(new HTML("<H2>The Perfect Spot is just around the corner</H2>"));
+		
+		Image car = new Image();
+		car.setUrl("/images/car.jpg");
+		loginPanel.add(car);
+		
+		Label loginLabel = new Label("Please sign in to your Google Account to access the ParkMe application.");
+		loginPanel.add(loginLabel);		
+
+		Anchor signInLink = new Anchor("Sign In");
+		signInLink.setSize("2em", "2em");
+		signInLink.setHref(loginInfo.getLoginUrl());
+		loginPanel.add(signInLink);
 	}
 
 	private void loadSetUserType() {
