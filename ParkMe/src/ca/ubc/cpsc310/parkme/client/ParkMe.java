@@ -40,7 +40,6 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -62,7 +61,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -70,7 +68,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -351,7 +348,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				"This app uses Facebook Connect. Please click to login "));
 		fbPanel.add(new HTML(
 				"<fb:login-button autologoutlink='true' scope='publish_stream,read_stream,create_event' /> "));
-		fbPanel.add(new HTML ( "<hr/><div id=\"comments\"><fb:comments xid='gwtfb' numposts='3' publish_feed='true'/></div>" ));
+		fbPanel.add(new HTML(
+				"<hr/><div id=\"comments\"><fb:comments xid='gwtfb' numposts='3' publish_feed='true'/></div>"));
 		class SessionChangeCallback implements AsyncCallback<JavaScriptObject> {
 			public void onSuccess(JavaScriptObject response) {
 				System.out.println("SessionChangeCallback");
@@ -459,23 +457,27 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		});
 	}
 
-	private void loadLogin() {		
+	private void loadLogin() {
 		// Assemble login panel.
 		VerticalPanel loginPanel = new VerticalPanel();
-		loginPanel.setSize(Window.getClientWidth() + "px", Window.getClientHeight()-30 + "px");
+		loginPanel.setSize(Window.getClientWidth() + "px",
+				Window.getClientHeight() - 30 + "px");
 		loginPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		RootPanel.get("parkMe").add(loginPanel);
 
-		//Heading and Subheading
 		loginPanel.add(new HTML("<H1>Park Me</H1>"));
-		loginPanel.add(new HTML("<H2>The Perfect Spot is just around the corner</H2>"));
+
+		loginPanel.add(new HTML(
+				"<H2>The Perfect Spot is just around the corner</H2>"));
 
 		Image car = new Image();
 		car.setUrl("/images/car.jpg");
 		loginPanel.add(car);
 
-		Label loginLabel = new Label("Please sign in to your Google Account to access the ParkMe application.");
-		loginPanel.add(loginLabel);		
+
+		Label loginLabel = new Label(
+				"Please sign in to your Google Account to access the ParkMe application.");
+		loginPanel.add(loginLabel);
 
 		Anchor signInLink = new Anchor("Sign In");
 		signInLink.setSize("2em", "2em");
@@ -486,9 +488,12 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 	private void loadSetUserType() {
 		VerticalPanel mainUserPanel = new VerticalPanel();
 		mainUserPanel.setStyleName("usertypeBG");
-		mainUserPanel.setSize(Window.getClientWidth() + "px", Window.getClientHeight()-30 + "px");
+		mainUserPanel.setSize(Window.getClientWidth() + "px",
+				Window.getClientHeight() - 30 + "px");
 		mainUserPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		mainUserPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+
+		mainUserPanel
+				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
 		setUserPanel.setStyleName("usertype");
 		signOutLink.setHref(loginInfo.getLogoutUrl());
@@ -500,7 +505,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		setUserPanel.add(setUserButton);
 		setUserPanel.add(signOutLink);
 		mainUserPanel.add(setUserPanel);
-		//RootPanel.get("parkMe").add(setUserPanel);
+		// RootPanel.get("parkMe").add(setUserPanel);
 		RootPanel.get("parkMe").add(mainUserPanel);
 		// Listen for mouse events on the Set User Type button.
 		setUserButton.addClickHandler(new ClickHandler() {
@@ -553,7 +558,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			VerticalPanel fbBG = new VerticalPanel();
 			fbBG.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 			fbBG.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-			fbBG.setSize(Window.getClientWidth() + "px", Window.getClientHeight()-30 + "px");
+			fbBG.setSize(Window.getClientWidth() + "px",
+					Window.getClientHeight() - 30 + "px");
 			fbBG.setStyleName("usertypeBG");
 			fbBG.add(fbPanel);
 			RootPanel.get("parkMe").add(fbBG);
@@ -940,7 +946,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			else {
 				final double radius = Double.parseDouble(avgPriceRadius
 						.getText().replaceAll("[^\\d.]", ""));
-				// removes non-numerical characters
+				// removes non numerical characters
 
 				GeocoderRequest request = GeocoderRequest.create();
 				request.setAddress(address + " Vancouver");
@@ -1021,6 +1027,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 				Label priceLabel = new Label("Average Max Price: "
 						+ formattedPrice + "/hr");
+
 				//	Double time = (double) (Math.round(result.getMinTime() * 100) / 100);
 				Label timeLabel = new Label("Average Min Time: " + radiusformat + "hrs");
 				Label radiusLabel = new Label("Average Radius: " + timeformat + "m");
@@ -1131,7 +1138,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 
 		signoutPanel.setSize("100px", "30px");
-		signoutPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		signoutPanel
+				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		signoutPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		signoutPanel.add(signOutLink);
 
@@ -1256,8 +1264,10 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		String scrollHeight = Window.getClientHeight() - 295 + 5 + "px";
 		String scrollWidth = 0.4 * Window.getClientWidth() - 60 + "px";
-		//	resultsScroll.setSize("100%", "100%");
-		resultsScroll.setSize(scrollWidth, Window.getClientHeight() - 335 + 15 + "px");
+
+		// resultsScroll.setSize("100%", "100%");
+		resultsScroll.setSize(scrollWidth, Window.getClientHeight() - 335 + 15
+				+ "px");
 		rtabPanel.setSize(scrollWidth, scrollHeight);
 		faveScroll.setSize(scrollWidth, scrollHeight);
 		histScroll.setSize(scrollWidth, scrollHeight);
@@ -1270,13 +1280,14 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		faveFlexTable.setSize(scrollWidth, "100%");
 		histFlexTable.setSize(scrollWidth, "100%");
 		ticketFlexTable.setSize(scrollWidth, "100%");
-		leftVertPanel.setSize(0.3 * Window.getClientWidth() + "px", Window.getClientHeight() - 35 + "px");
+		leftVertPanel.setSize(0.3 * Window.getClientWidth() + "px",
+				Window.getClientHeight() - 35 + "px");
 		rightVertPanel.setSize(0.7 * Window.getClientWidth() - 120 + "px",
 				Window.getClientHeight() - 50 + "px");
 
 		mapPanel.setSize("100%", "100%");
-		//mainPanel.setSpacing(0);
-		//mainPanel.setSize("100%", "100%");
+		// mainPanel.setSpacing(0);
+		// mainPanel.setSize("100%", "100%");
 
 	}
 
@@ -1773,6 +1784,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				infoWindow.setContent(ticketPan);
 				infoWindow.open(theMap);
 
+
 				addFine.addClickHandler(new ClickHandler() {
 
 					@Override
@@ -1788,6 +1800,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 							addFineToServer(parkingLoc);
 							event.stopPropagation();
 						}
+						event.stopPropagation();
 					}
 				});
 			}
@@ -2104,7 +2117,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		loadParkMe();
 	}
 
-
 	private void loadAdmin() {
 		// stub
 		RootPanel.get("parkMe").clear();
@@ -2127,7 +2139,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		Button viewAsDriver = new Button("View As Driver");
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		signoutPanel.setSize("200px", "50px");
-		signoutPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		signoutPanel
+				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		signoutPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		signoutPanel.add(signOutLink);
 		RootPanel.get("parkMe").add(mainPanel);
@@ -2138,7 +2151,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		mapPanel.setSize("100%", "100%");
 
-		rightVertPanel.setSize(Window.getClientWidth()-470 + "px", Window.getClientHeight()-50 + "px");
+		rightVertPanel.setSize(Window.getClientWidth() - 470 + "px",
+				Window.getClientHeight() - 50 + "px");
 
 
 		vp1.setSize("200px", "100%");
@@ -2146,7 +2160,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 		vp1.add(new HTML("<center><b>ParkMe<br>Administrator</b></center>"));
 		signOutLink.setSize("200px", "3em");
 		signOutLink.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		//vp1.add(signOutLink);
+
 
 		loadDataButton.setSize("200px", "3em");
 		getAddressesButton.setSize("200px", "3em");
@@ -2219,7 +2233,6 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 		});
 
-
 		vp2.add(mainStatsVP);
 
 		viewAsDriver.addClickHandler(new ClickHandler() {
@@ -2228,12 +2241,12 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				RootPanel.get("parkMe").clear();
 				mainPanel.clear();
 
-				addListenersToFlexTables(); 
+				addListenersToFlexTables();
 				addListenerToSortBox();
 				initializeSliderValues();
 				initializeLoadingPage();
 				initializeDriverLayout();
-				downloadData(); 
+				downloadData();
 				addListenersToSliders();
 				addListenerToMarker();
 
@@ -2503,21 +2516,26 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 			TicketServiceAsync ticket = GWT.create(TicketService.class);
 			ticket.addTicket(parkingLoc.getParkingID(), doubleAmount,
 					new AsyncCallback<Void>() {
-				@Override
-				public void onSuccess(Void result) {
-					NumberFormat formatter = NumberFormat.getCurrencyFormat("CAD");
-					VerticalPanel success = new VerticalPanel();
-					String formattedFine = formatter.format(doubleAmount);
-					success.add(new Label("Successfully uploaded " + formattedFine + " fine on to server."));
-					infoWindow.setContent(success);
-					infoWindow.open(theMap);
-					displayTicket(parkingLoc, new TicketInfo(parkingLoc.getParkingID(), doubleAmount));
-				}
+						@Override
+						public void onSuccess(Void result) {
+							NumberFormat formatter = NumberFormat
+									.getCurrencyFormat("CAD");
+							VerticalPanel success = new VerticalPanel();
+							String formattedFine = formatter
+									.format(doubleAmount);
+							success.add(new Label("Successfully uploaded "
+									+ formattedFine + " fine on to server."));
+							infoWindow.setContent(success);
+							infoWindow.open(theMap);
+							displayTicket(parkingLoc,
+									new TicketInfo(parkingLoc.getParkingID(),
+											doubleAmount));
+						}
 
-				@Override
-				public void onFailure(Throwable caught) {
-				}
-			});
+						@Override
+						public void onFailure(Throwable caught) {
+						}
+					});
 
 		}
 	}
