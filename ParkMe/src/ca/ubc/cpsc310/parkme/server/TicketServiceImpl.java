@@ -42,7 +42,7 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 		PersistenceManager pm = getPersistenceManager();
 		TicketInfo[] tickets;
 		try {
-			Query q = pm.newQuery(ParkingFave.class, "user == u");
+			Query q = pm.newQuery(Ticket.class, "user == u");
 			q.declareParameters("com.google.appengine.api.users.User u");
 			q.setOrdering("createDate");
 			List<Ticket> pTicket = (List<Ticket>) q.execute(getUser());
@@ -58,17 +58,16 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 		}
 		return tickets;
 	}
-	
-	
+
 	public ParkingStats[] getMostTicketed() {
 		PersistenceManager pm = getPersistenceManager();
 		ParkingStats[] tickets;
 		try {
 			Query q = pm.newQuery(Ticket.class);
-			
+
 			q.setGrouping("parkingID");
 			q.setResult("count(user) as count, parkingID, sum(fine) as sum");
-			q.setResultClass(HashMap.class); 
+			q.setResultClass(HashMap.class);
 			Collection results = (Collection) q.execute();
 			int size = results.size();
 			int i = 0;
@@ -81,7 +80,7 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 				Double sum = (Double) row.get("sum");
 				tickets[i] = new ParkingStats(parkingID, count, sum);
 				i++;
-				
+
 			}
 		} finally {
 			pm.close();
