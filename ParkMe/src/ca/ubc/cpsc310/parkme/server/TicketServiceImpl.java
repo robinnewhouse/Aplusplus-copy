@@ -13,6 +13,7 @@ import javax.jdo.Query;
 
 import ca.ubc.cpsc310.parkme.client.TicketInfo;
 import ca.ubc.cpsc310.parkme.client.TicketService;
+import ca.ubc.cpsc310.parkme.client.services.parking.Fave;
 import ca.ubc.cpsc310.parkme.client.services.parking.ParkingStats;
 import ca.ubc.cpsc310.parkme.client.services.user.NotLoggedInException;
 
@@ -88,6 +89,20 @@ public class TicketServiceImpl extends RemoteServiceServlet implements
 		return tickets;
 	}
 
+	public Long getNumTickets() {
+		PersistenceManager pm = getPersistenceManager();
+		Long number = 0L;
+		try {
+			Query q = pm.newQuery(Ticket.class);
+			q.setResult("count(id)");
+			number = (Long) q.execute();
+		} finally {
+			pm.close();
+		}
+		return number;
+	
+	}
+	
 	private void checkLoggedIn() throws NotLoggedInException {
 		if (getUser() == null) {
 			throw new NotLoggedInException("Not logged in.");

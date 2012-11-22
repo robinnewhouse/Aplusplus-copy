@@ -70,6 +70,20 @@ public class FaveImpl extends RemoteServiceServlet implements Fave {
 		return faves;
 	}
 	
+	public Long getNumFaves() {
+		PersistenceManager pm = getPersistenceManager();
+		Long number = 0L;
+		try {
+			Query q = pm.newQuery(ParkingFave.class);
+			q.setResult("count(id)");
+			number = (Long) q.execute();
+		} finally {
+			pm.close();
+		}
+		return number;
+	
+	}
+	
 	public String[] getFaves() throws NotLoggedInException {
 
 		checkLoggedIn();

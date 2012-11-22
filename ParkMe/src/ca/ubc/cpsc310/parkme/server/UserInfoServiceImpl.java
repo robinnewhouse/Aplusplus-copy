@@ -1,6 +1,10 @@
 package ca.ubc.cpsc310.parkme.server;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -8,6 +12,7 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
 import ca.ubc.cpsc310.parkme.client.services.parking.ParkingLocation;
+import ca.ubc.cpsc310.parkme.client.services.parking.ParkingStats;
 import ca.ubc.cpsc310.parkme.client.services.user.Criteria;
 import ca.ubc.cpsc310.parkme.client.services.user.NotLoggedInException;
 import ca.ubc.cpsc310.parkme.client.services.user.UserInfoClient;
@@ -130,6 +135,20 @@ public class UserInfoServiceImpl extends RemoteServiceServlet implements UserInf
 		if (getUser() == null) {
 			throw new NotLoggedInException("Not logged in.");
 		}
+	}
+	
+	public Long getNumUsers() {
+		PersistenceManager pm = getPersistenceManager();
+		Long number = 0L;
+		try {
+			Query q = pm.newQuery(UserInfo.class);
+			q.setResult("count(username)");
+			number = (Long) q.execute();
+		} finally {
+			pm.close();
+		}
+		return number;
+	
 	}
 
 	private User getUser() {

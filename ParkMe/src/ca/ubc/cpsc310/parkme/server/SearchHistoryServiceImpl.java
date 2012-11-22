@@ -8,6 +8,7 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
+import ca.ubc.cpsc310.parkme.client.services.history.SearchHistoryOrganizer;
 import ca.ubc.cpsc310.parkme.client.services.history.SearchHistoryService;
 import ca.ubc.cpsc310.parkme.client.services.user.NotLoggedInException;
 
@@ -19,6 +20,9 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class SearchHistoryServiceImpl extends RemoteServiceServlet implements SearchHistoryService {
 
+	int MAX_HISTORY = SearchHistoryOrganizer.MAX_HISTORY;
+	
+	
 	private static final PersistenceManagerFactory PMF =
 			JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
@@ -35,6 +39,7 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 	}
 
 	public ArrayList<String> getHist() throws NotLoggedInException {
+		System.out.println(" in SearchHistoryServiceImpl.getHist() delete extras loop.  Max History is: "+MAX_HISTORY);
 		checkLoggedIn();
 		PersistenceManager pm = PMF.getPersistenceManager();
 		ArrayList<String> searchStrings=new ArrayList<String>();;
@@ -43,11 +48,37 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 			q.declareParameters("com.google.appengine.api.users.User u");
 			q.setOrdering("createDate");
 			List<SearchString> pHist;
-			pHist = (List<SearchString>) q.execute(getUser());
-			for (int i = 0; i < pHist.size(); i++) {	
-				searchStrings.add(pHist.get(i).getSearchString());
+			List<SearchString> pHistResults = (List<SearchString>) q.execute(getUser());
+			List<SearchString> pHistToDelete=pHistResults.subList(0, pHistResults.size()-MAX_HISTORY);
+			List<SearchString> pHistToReturn=pHistResults.subList(pHistResults.size()-MAX_HISTORY, pHistResults.size());
+			
+			System.out.println(" in SearchHistoryServiceImpl.getHist() delete extras loop.  Max History is: "+MAX_HISTORY+
+					", pHistResults.size() is: "+pHistResults.size()+", pHistToDelete.size() is: "+pHistToDelete.size()+", pHistToReturn.size() is: "+pHistToReturn.size());
+			
+			for(SearchString str: pHistToDelete){
+				pm.deletePersistent(str);				
 			}
-		} finally {
+			
+			/*/THIS DOESN'T WORK - WILL HAVE TO DELETE
+			while (pHist.size()>MAX_HISTORY) { //Delete excess History
+				System.out.println(" in SearchHistoryServiceImpl.getHist() delete extras loop.  Max History is: "+MAX_HISTORY+
+						", pHist.size() is: "+pHist.size());
+				SearchString histString = pHist.get(0);
+				if(histString==null){
+					System.out.println("Null Object Returned in SearchHistoryServiceImpl.getHist()");
+				}
+				pm.deletePersistent(histString);
+				pHist.remove(0);				
+			}*/
+			for (int i = 0; i < pHistToReturn.size(); i++) {	
+				searchStrings.add(pHistToReturn.get(i).getSearchString());
+			}
+		} 
+		catch(Exception exception) {
+			System.out.println("Exception in SearchHistoryServiceImpl.getHist: " + exception.getMessage());
+			//throw exception;
+		}
+		finally {
 			pm.close();
 		}
 		/**
@@ -75,28 +106,28 @@ public class SearchHistoryServiceImpl extends RemoteServiceServlet implements Se
 
 	@Override
 	public void clear() throws Exception {
-		System.out.println("Starting SearchHistoryServiceImpl.clear()");
+		//System.out.println("Starting SearchHistoryServiceImpl.clear()");
 		checkLoggedIn();
 		PersistenceManager pm = PMF.getPersistenceManager();
 		try {
-			System.out.println("At start of try");
+			//System.out.println("At start of try");
 			Query q = pm.newQuery(SearchString.class, "user == u");
 			q.declareParameters("com.google.appengine.api.users.User u");
-			System.out.println("About to Query");
+			//System.out.println("About to Query");
 			List<SearchString> fullHistory = (List<SearchString>) q.execute(getUser());
-			System.out.println("About to Loop");			
+			//System.out.println("About to Loop");			
 			for (SearchString histString : fullHistory) {
 					String toDelete = histString.getSearchString();
-					System.out.println("About to delete " + histString.getSearchString() + " from favorites.");
+					//System.out.println("About to delete " + histString.getSearchString() + " from favorites.");
 					if(histString==null){
 						System.out.println("Null Object Returned in SearchHistoryServiceImpl.clear()");
 					}
 					else{
 						pm.deletePersistent(histString);
 					}
-					System.out.println("Deleted " + toDelete + " from favorites.");
+					//System.out.println("Deleted " + toDelete + " from favorites.");
 			}
-			System.out.println("Finishing Try");
+			//System.out.println("Finishing Try");
 		} 
 		catch(Exception exception) {
 			System.out.println("Exception in SearchHistoryServiceImpl.clear: " + exception.getMessage());

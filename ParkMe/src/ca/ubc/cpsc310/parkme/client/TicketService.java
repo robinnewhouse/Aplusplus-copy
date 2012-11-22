@@ -12,5 +12,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface TicketService extends RemoteService{
 	void addTicket(String parkingID, Double fine) throws NotLoggedInException;
 	TicketInfo[] getTickets() throws NotLoggedInException;
-	public ParkingStats[] getMostTicketed();
+	ParkingStats[] getMostTicketed();
+	Long getNumTickets();
 }
