@@ -1,6 +1,5 @@
 /** Add css rules here for your application. */
 /** Example rules used by the template application (remove for your app) */
-
 body {
 	overflow: hidden;
 }
@@ -81,11 +80,21 @@ h1 {
 .street {
 	font-style: bold;
 }
+
 .loading {
 	background: rgba(0, 0, 0, 0.8);
 	color: #fff;
 	font-size: 200%;
 	font-style: bold;
 	-moz-border-radius: 15px;
-border-radius: 15px;
+	border-radius: 15px;
+	z-index: 10;
+}
+
+.main {
+	
+}
+
+.tab {
+	
 }
