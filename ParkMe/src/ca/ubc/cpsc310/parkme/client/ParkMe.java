@@ -220,7 +220,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 
 	private Button loadDataButton = new Button("Load Data");
 	private Button displayDataButton = new Button("Display All Data");
-	private Button clearDataButton = new Button("Clear Data");
+	private Button clearDataButton = new Button("Clear Results");
 	private HorizontalPanel mainPanel = new HorizontalPanel();
 	private Button filterButton = new Button("Filter Results");
 	private Button downloadData = new Button("Download Data to Client");
@@ -1029,8 +1029,8 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 						+ formattedPrice + "/hr");
 
 				//	Double time = (double) (Math.round(result.getMinTime() * 100) / 100);
-				Label timeLabel = new Label("Average Min Time: " + radiusformat + "hrs");
-				Label radiusLabel = new Label("Average Radius: " + timeformat + "m");
+				Label timeLabel = new Label("Average Min Time: " + timeformat + "hrs");
+				Label radiusLabel = new Label("Average Radius: " + radiusformat + "m");
 
 				avgCritVP.add(radiusLabel);
 				avgCritVP.add(priceLabel);
@@ -2106,7 +2106,7 @@ public class ParkMe implements EntryPoint, ValueChangeHandler<String> {
 				if (status.equals(DirectionsStatus.OK)) {
 					displayDir.setMap(theMap);
 					displayDir.setPanel(dirScroll.getElement());
-					tabs.selectTab(4);
+					tabs.selectTab(5);
 					displayDir.setDirections(result);
 				}
 			}
